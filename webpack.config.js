@@ -42,7 +42,7 @@ const htmlPlugins = generateHtmlPlugins("./src/pages/");
 module.exports = {
   entry: "./src/scripts/scripts.js",
   output: {
-    path: path.resolve(__dirname, "gh-pages"), // Output folder
+    path: path.resolve(__dirname, "docs"), // Output folder
     filename: "js/app.js" // JS output path
   },
 
