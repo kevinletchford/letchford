@@ -154,7 +154,7 @@ main {
 .social-nav a {
   background: #24272c;
   padding: 0 0.75rem 0.75rem;
-  display:block;
+  display: flex;
   color: rgba(157, 160, 164, 0.5);
   align-items: center;
 
@@ -163,8 +163,8 @@ main {
   }
 
   svg {
-    width:26px;
-    max-width: 26px;
+    width:100%;
+    max-width: 100%;
     height:100%;
     transition: 0.5s;
     &:hover {
