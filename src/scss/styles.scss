@@ -109,7 +109,7 @@ img {
 
 .grid {
   display: grid;
-  grid-template-columns: 1fr 500px 1fr;
+  grid-template-columns: 1fr fit-content(500px)1fr;
   grid-template-rows: auto 1fr;
   grid-row-gap: 2rem;
   min-height: 100vh;
@@ -127,6 +127,7 @@ main {
   display: flex;
   justify-content: center;
   flex-direction: column;
+  padding:1rem;
 }
 
 .social-nav {
