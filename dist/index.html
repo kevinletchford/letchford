@@ -1,81 +1,168 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Kevin Letchford</title>
+    <link rel="stylesheet" href="./css/styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Jura:400,700|Roboto:300"
+      rel="stylesheet"
+    />
+    <link href="css/styles.css" rel="stylesheet" />
+  </head>
 
-<head>
-	<meta charset="UTF-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<meta http-equiv="X-UA-Compatible" content="ie=edge" />
-	<title>Kevin Letchford</title>
-	<link rel="stylesheet" href="./css/styles.css" />
-	<link href="https://fonts.googleapis.com/css?family=Jura:400,700|Roboto:300" rel="stylesheet" />
-	<link href="css/styles.css" rel="stylesheet">
-</head>
+  <body>
+    <div class="grid">
+      <header>
+        <nav class="social-nav">
+          <a href="https://dribbble.com/kevinletchford">
+            <svg
+              width="27"
+              height="26"
+              viewBox="0 0 27 26"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M13.4528 0C6.02604 0 0 5.82322 0 13C0 20.1768 6.02604 26 13.4528 26C20.865 26 26.9056 20.1768 26.9056 13C26.9056 5.82322 20.865 0 13.4528 0ZM22.3386 5.9924C23.9436 7.88177 24.9066 10.2929 24.9358 12.9013C24.5565 12.8308 20.7628 12.0835 16.94 12.5488C16.8525 12.3655 16.7795 12.1681 16.692 11.9707C16.4585 11.4349 16.1959 10.885 15.9332 10.3633C20.1646 8.69957 22.0906 6.30261 22.3386 5.9924ZM13.4528 1.91757C16.371 1.91757 19.0411 2.97505 21.0692 4.70933C20.865 4.99132 19.1286 7.2332 15.0432 8.71367C13.161 5.37202 11.0745 2.63666 10.7535 2.21367C11.6143 2.01627 12.519 1.91757 13.4528 1.91757ZM8.56485 2.96096C8.87125 3.35574 10.914 6.10522 12.8254 9.37635C7.45594 10.7581 2.71391 10.7299 2.20322 10.7299C2.94734 7.28959 5.35486 4.42733 8.56485 2.96096ZM1.95518 13.0141C1.95518 12.9013 1.95518 12.7885 1.95518 12.6757C2.45127 12.6898 8.02499 12.7603 13.7592 11.0965C14.0948 11.7169 14.4012 12.3514 14.693 12.9859C14.5471 13.0282 14.3866 13.0705 14.2407 13.1128C8.31681 14.9599 5.16517 20.0076 4.90255 20.4306C3.07867 18.4707 1.95518 15.8623 1.95518 13.0141ZM13.4528 24.1106C10.7973 24.1106 8.34598 23.2364 6.40538 21.7701C6.60968 21.3612 8.94422 17.0184 15.4225 14.833C15.4517 14.8189 15.4663 14.8189 15.4955 14.8048C17.1151 18.8514 17.7717 22.2494 17.9468 23.2223C16.5607 23.8004 15.0432 24.1106 13.4528 24.1106ZM19.8582 22.2072C19.7415 21.5304 19.1287 18.2874 17.6258 14.2972C21.2297 13.7473 24.3813 14.6497 24.7753 14.7766C24.2792 17.8644 22.4408 20.5293 19.8582 22.2072Z"
+                fill="currentColor"
+              />
+            </svg>
+          </a>
+          <a href="https://github.com/kevinletchford">
+            <svg
+              width="27"
+              height="26"
+              viewBox="0 0 27 26"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M13.4528 0.541626C6.02012 0.541626 0 6.382 0 13.5928C0 19.3679 3.85086 24.2457 9.19835 25.975C9.87099 26.0892 10.1232 25.6977 10.1232 25.3551C10.1232 25.0451 10.1064 24.0173 10.1064 22.9243C6.7264 23.5279 5.85196 22.1249 5.58291 21.3908C5.43157 21.0156 4.77574 19.8573 4.204 19.5473C3.73315 19.3026 3.06051 18.699 4.18718 18.6827C5.24659 18.6664 6.00331 19.6289 6.25555 20.0204C7.4663 21.9944 9.40014 21.4397 10.1737 21.0971C10.2914 20.2488 10.6445 19.6778 11.0313 19.3516C8.03804 19.0253 4.91027 17.8996 4.91027 12.9076C4.91027 11.4883 5.43157 10.3137 6.28918 9.40008C6.15465 9.0738 5.6838 7.73606 6.42371 5.94153C6.42371 5.94153 7.55038 5.59894 10.1232 7.27927C11.1995 6.98562 12.3429 6.83879 13.4864 6.83879C14.6299 6.83879 15.7734 6.98562 16.8496 7.27927C19.4225 5.58262 20.5491 5.94153 20.5491 5.94153C21.289 7.73606 20.8182 9.0738 20.6837 9.40008C21.5413 10.3137 22.0626 11.4719 22.0626 12.9076C22.0626 17.9159 18.918 19.0253 15.9247 19.3516C16.4124 19.7594 16.8328 20.5425 16.8328 21.766C16.8328 23.5116 16.816 24.9146 16.816 25.3551C16.816 25.6977 17.0682 26.1055 17.7409 25.975C23.0547 24.2457 26.9056 19.3516 26.9056 13.5928C26.9056 6.382 20.8855 0.541626 13.4528 0.541626Z"
+                fill="currentColor"
+              />
+            </svg>
+          </a>
+          <a href="https://codepen.io/letchford/">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="27"
+              height="26"
+              fill="none"
+              viewBox="0 0 512 512"
+            >
+              <path
+                fill="currentColor"
+                d="M502.285 159.704l-234-156c-7.987-4.915-16.511-4.96-24.571 0l-234 156C3.714 163.703 0 170.847 0 177.989v155.999c0 7.143 3.714 14.286 9.715 18.286l234 156.022c7.987 4.915 16.511 4.96 24.571 0l234-156.022c6-3.999 9.715-11.143 9.715-18.286V177.989c-.001-7.142-3.715-14.286-9.716-18.285zM278 63.131l172.286 114.858-76.857 51.429L278 165.703V63.131zm-44 0v102.572l-95.429 63.715-76.857-51.429L234 63.131zM44 219.132l55.143 36.857L44 292.846v-73.714zm190 229.715L61.714 333.989l76.857-51.429L234 346.275v102.572zm22-140.858l-77.715-52 77.715-52 77.715 52-77.715 52zm22 140.858V346.275l95.429-63.715 76.857 51.429L278 448.847zm190-156.001l-55.143-36.857L468 219.132v73.714z"
+              />
+            </svg>
+          </a>
+          <a href="https://twitter.com/kevinletchford"
+            ><svg
+              width="27"
+              height="21"
+              viewBox="0 0 27 21"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M27 2.48463C26.0062 2.90626 24.94 3.19221 23.8196 3.31987C24.9636 2.66395 25.8392 1.62358 26.2542 0.38771C25.1812 0.995128 23.9968 1.43619 22.7347 1.67529C21.7241 0.642987 20.2867 0 18.6922 0C15.6334 0 13.1532 2.3748 13.1532 5.3021C13.1532 5.71726 13.2021 6.12276 13.2966 6.51051C8.69401 6.28916 4.61273 4.1777 1.88118 0.969275C1.40369 1.7512 1.13206 2.66231 1.13206 3.63488C1.13206 5.47496 2.11064 7.09854 3.59537 8.04842C2.68765 8.01936 1.83393 7.78026 1.08653 7.38284V7.44908C1.08653 10.0177 2.99643 12.1615 5.52888 12.6494C5.06489 12.769 4.57562 12.8352 4.06946 12.8352C3.7118 12.8352 3.36592 12.8013 3.02678 12.7366C3.73201 14.8449 5.77691 16.378 8.19972 16.42C6.305 17.8417 3.91593 18.6866 1.32106 18.6866C0.873972 18.6866 0.433589 18.6607 0 18.6139C2.45149 20.1212 5.36189 21 8.48993 21C18.6788 21 24.2482 12.9192 24.2482 5.91116L24.2297 5.22458C25.3179 4.48139 26.2593 3.54764 27 2.48463Z"
+                fill="currentColor"
+              />
+            </svg>
+          </a>
+        </nav>
+      </header>
+      <main>
+        <h1>Kevin <span>Letchford</span></h1>
+        <div class="mail-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+            <path
+              d="M0 128c0-35.35 28.65-64 64-64h384c35.3 0 64 28.65 64 64v256c0 35.3-28.7 64-64 64H64c-35.35 0-64-28.7-64-64V128zm48 0v22.1l172.5 141.6c20.6 17 50.4 17 71 0L464 150.1v-23c0-7.9-7.2-16-16-16H64c-8.84 0-16 8.1-16 16v.9zm0 84.2V384c0 8.8 7.16 16 16 16h384c8.8 0 16-7.2 16-16V212.2L322 328.8c-38.4 31.5-93.6 31.5-132.9 0L48 212.2z"
+            />
+          </svg>
 
-<body>
-	<div class="grid">
-		<header>
-			<nav class="social-nav">
-				<a href="https://dribbble.com/kevinletchford">
-					<svg width="27" height="26" viewBox="0 0 27 26" fill="none" xmlns="http://www.w3.org/2000/svg">
-						<path fill-rule="evenodd" clip-rule="evenodd" d="M13.4528 0C6.02604 0 0 5.82322 0 13C0 20.1768 6.02604 26 13.4528 26C20.865 26 26.9056 20.1768 26.9056 13C26.9056 5.82322 20.865 0 13.4528 0ZM22.3386 5.9924C23.9436 7.88177 24.9066 10.2929 24.9358 12.9013C24.5565 12.8308 20.7628 12.0835 16.94 12.5488C16.8525 12.3655 16.7795 12.1681 16.692 11.9707C16.4585 11.4349 16.1959 10.885 15.9332 10.3633C20.1646 8.69957 22.0906 6.30261 22.3386 5.9924ZM13.4528 1.91757C16.371 1.91757 19.0411 2.97505 21.0692 4.70933C20.865 4.99132 19.1286 7.2332 15.0432 8.71367C13.161 5.37202 11.0745 2.63666 10.7535 2.21367C11.6143 2.01627 12.519 1.91757 13.4528 1.91757ZM8.56485 2.96096C8.87125 3.35574 10.914 6.10522 12.8254 9.37635C7.45594 10.7581 2.71391 10.7299 2.20322 10.7299C2.94734 7.28959 5.35486 4.42733 8.56485 2.96096ZM1.95518 13.0141C1.95518 12.9013 1.95518 12.7885 1.95518 12.6757C2.45127 12.6898 8.02499 12.7603 13.7592 11.0965C14.0948 11.7169 14.4012 12.3514 14.693 12.9859C14.5471 13.0282 14.3866 13.0705 14.2407 13.1128C8.31681 14.9599 5.16517 20.0076 4.90255 20.4306C3.07867 18.4707 1.95518 15.8623 1.95518 13.0141ZM13.4528 24.1106C10.7973 24.1106 8.34598 23.2364 6.40538 21.7701C6.60968 21.3612 8.94422 17.0184 15.4225 14.833C15.4517 14.8189 15.4663 14.8189 15.4955 14.8048C17.1151 18.8514 17.7717 22.2494 17.9468 23.2223C16.5607 23.8004 15.0432 24.1106 13.4528 24.1106ZM19.8582 22.2072C19.7415 21.5304 19.1287 18.2874 17.6258 14.2972C21.2297 13.7473 24.3813 14.6497 24.7753 14.7766C24.2792 17.8644 22.4408 20.5293 19.8582 22.2072Z" fill="currentColor" />
-					</svg>
-				</a>
-				<a href="https://github.com/kevinletchford">
-					<svg width="27" height="26" viewBox="0 0 27 26" fill="none" xmlns="http://www.w3.org/2000/svg">
-						<path fill-rule="evenodd" clip-rule="evenodd" d="M13.4528 0.541626C6.02012 0.541626 0 6.382 0 13.5928C0 19.3679 3.85086 24.2457 9.19835 25.975C9.87099 26.0892 10.1232 25.6977 10.1232 25.3551C10.1232 25.0451 10.1064 24.0173 10.1064 22.9243C6.7264 23.5279 5.85196 22.1249 5.58291 21.3908C5.43157 21.0156 4.77574 19.8573 4.204 19.5473C3.73315 19.3026 3.06051 18.699 4.18718 18.6827C5.24659 18.6664 6.00331 19.6289 6.25555 20.0204C7.4663 21.9944 9.40014 21.4397 10.1737 21.0971C10.2914 20.2488 10.6445 19.6778 11.0313 19.3516C8.03804 19.0253 4.91027 17.8996 4.91027 12.9076C4.91027 11.4883 5.43157 10.3137 6.28918 9.40008C6.15465 9.0738 5.6838 7.73606 6.42371 5.94153C6.42371 5.94153 7.55038 5.59894 10.1232 7.27927C11.1995 6.98562 12.3429 6.83879 13.4864 6.83879C14.6299 6.83879 15.7734 6.98562 16.8496 7.27927C19.4225 5.58262 20.5491 5.94153 20.5491 5.94153C21.289 7.73606 20.8182 9.0738 20.6837 9.40008C21.5413 10.3137 22.0626 11.4719 22.0626 12.9076C22.0626 17.9159 18.918 19.0253 15.9247 19.3516C16.4124 19.7594 16.8328 20.5425 16.8328 21.766C16.8328 23.5116 16.816 24.9146 16.816 25.3551C16.816 25.6977 17.0682 26.1055 17.7409 25.975C23.0547 24.2457 26.9056 19.3516 26.9056 13.5928C26.9056 6.382 20.8855 0.541626 13.4528 0.541626Z" fill="currentColor" />
-					</svg>
-				</a>
-				<a href="https://codepen.io/letchford/">
-					<svg xmlns="http://www.w3.org/2000/svg" width="27" height="26" fill="none" viewBox="0 0 512 512">
-						<path fill="currentColor" d="M502.285 159.704l-234-156c-7.987-4.915-16.511-4.96-24.571 0l-234 156C3.714 163.703 0 170.847 0 177.989v155.999c0 7.143 3.714 14.286 9.715 18.286l234 156.022c7.987 4.915 16.511 4.96 24.571 0l234-156.022c6-3.999 9.715-11.143 9.715-18.286V177.989c-.001-7.142-3.715-14.286-9.716-18.285zM278 63.131l172.286 114.858-76.857 51.429L278 165.703V63.131zm-44 0v102.572l-95.429 63.715-76.857-51.429L234 63.131zM44 219.132l55.143 36.857L44 292.846v-73.714zm190 229.715L61.714 333.989l76.857-51.429L234 346.275v102.572zm22-140.858l-77.715-52 77.715-52 77.715 52-77.715 52zm22 140.858V346.275l95.429-63.715 76.857 51.429L278 448.847zm190-156.001l-55.143-36.857L468 219.132v73.714z" />
-					</svg>
-				</a>
-				<a href="https://twitter.com/kevinletchford"><svg width="27" height="21" viewBox="0 0 27 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-						<path d="M27 2.48463C26.0062 2.90626 24.94 3.19221 23.8196 3.31987C24.9636 2.66395 25.8392 1.62358 26.2542 0.38771C25.1812 0.995128 23.9968 1.43619 22.7347 1.67529C21.7241 0.642987 20.2867 0 18.6922 0C15.6334 0 13.1532 2.3748 13.1532 5.3021C13.1532 5.71726 13.2021 6.12276 13.2966 6.51051C8.69401 6.28916 4.61273 4.1777 1.88118 0.969275C1.40369 1.7512 1.13206 2.66231 1.13206 3.63488C1.13206 5.47496 2.11064 7.09854 3.59537 8.04842C2.68765 8.01936 1.83393 7.78026 1.08653 7.38284V7.44908C1.08653 10.0177 2.99643 12.1615 5.52888 12.6494C5.06489 12.769 4.57562 12.8352 4.06946 12.8352C3.7118 12.8352 3.36592 12.8013 3.02678 12.7366C3.73201 14.8449 5.77691 16.378 8.19972 16.42C6.305 17.8417 3.91593 18.6866 1.32106 18.6866C0.873972 18.6866 0.433589 18.6607 0 18.6139C2.45149 20.1212 5.36189 21 8.48993 21C18.6788 21 24.2482 12.9192 24.2482 5.91116L24.2297 5.22458C25.3179 4.48139 26.2593 3.54764 27 2.48463Z" fill="currentColor" />
-					</svg>
-				</a>
-			</nav>
-		</header>
-		<main>
-			<h1>Kevin <span>Letchford</span></h1>
-			<h2>Web Developer</h2>
-			<p> I have 11 years experience of Web Development, creating desktop and mobile web applications. I excel at developing responsive, fast & optimised experiences. Leveraging modern optimisation testing solutions. I am currently seeking a role that will allow me to further my development skills and further transition to Full Stack developer. </p>
-			<h2>Skills</h2>
-			<h3>Frontend</h3>
-			<ul>
-				<li>JavaScript</li>
-				<li>React</li>
-				<li>Typescript</li>
-				<li>Vue</li>
-			</ul>
-			<h3>CSS & Design</h3>
-			<ul>
-				<li> Modern Responsive CSS technologies: grid, flexbox, custom properties. </li>
-				<li>CSS frameworks: Tailwind, and bootstrap</li>
-				<li>Design tools: Figma, Adobe XD and Illustrator</li>
-			</ul>
-			<h3>Project Management</h3>
-			<ul>
-				<li>Git/Github</li>
-				<li>Agile/Scrum</li>
-				<li>Jira</li>
-			</ul>
-			<h2>Work Experience</h2>
-			<h3>Evolution Internet</h3>
-			<h4>2011-2014 Frontend Designer</h4>
-			<p> Working with UI/UX tools to create designs and implementing them with CSS, HTML and JavaScript. </p>
-			<h4>2015-2019 Frontend Developer</h4>
-			<p> Specialised in Frontend Development using JavaScript and integrating into Umbraco/.Net Applications. Creating new frontend features and implementing customer conversion optimisations. Working on in house website optimisation tools, contributing support and bug fixes for customers. </p>
-			<h4>2020-2022 Full Stack Development</h4>
-			<p> Creating features and fixing bugs with .Net. Leveraging MVC, to create dashboards, api end points, internal workflows and reports. </p>
-			<h2>Volunteering</h2>
-			<h3>2017-2019 Codebar</h3>
-			<p> Volunteer as a code tutor at Codebar in Tunbridge Wells for minority group members to learn programming. </p>
-			<h3>2022-present Samaritans</h3>
-			<p> Listening volunteer, answering calls and messages from people who really need someone to talk to. </p>
-		</main>
-	</div>
-	<script src="js/app.js"></script>
-</body>
+          <a class="button" href="mailto:kevin@letchford.co"
+            >kevin@letchford.co</a
+          >
+        </div>
 
+        <h2>Web Developer</h2>
+        <p>
+          With 11 years experience of Web Development, including the creation of
+          desktop and mobile web applications, I excel at developing responsive,
+          fast & optimised experiences. I am currently seeking a role that will
+          allow me to further my development skills and further transition to
+          Full Stack developer.
+        </p>
+        <h2>Skills</h2>
+        <h3>Frontend</h3>
+        <ul>
+          <li>JavaScript</li>
+          <li>React</li>
+          <li>Typescript</li>
+          <li>Vue</li>
+        </ul>
+        <h3>Backend</h3>
+        <ul>
+          <li>.Net C#</li>
+          <li>MVC, API Development</li>
+          <li>SQL Server</li>
+          <li>Umbraco CMS</li>
+        </ul>
+        <h3>CSS & Design</h3>
+        <ul>
+          <li>
+            Modern Responsive CSS technologies: grid, flexbox, custom properties
+          </li>
+          <li>CSS frameworks: Tailwind, and bootstrap</li>
+          <li>Design tools: Figma, Adobe XD and Illustrator</li>
+        </ul>
+        <h3>Project Management</h3>
+        <ul>
+          <li>Git/Github</li>
+          <li>Agile/Scrum</li>
+          <li>Jira</li>
+        </ul>
+        <h2>Work Experience</h2>
+        <h3>Evolution Internet</h3>
+        <h4>2020-2022 Full Stack Development</h4>
+        <p>
+          Creating features and fixing bugs with .Net. Leveraging MVC, to create
+          dashboards, API end points, internal workflows and reports.
+        </p>
+        <h4>2015-2019 Frontend Developer</h4>
+        <p>
+          Specialised in Frontend Development using JavaScript and integrating
+          into Umbraco/.Net Applications. Creating new frontend features and
+          implementing customer conversion optimisations. Working on in-house
+          website optimisation tools, contributing support and bug fixes for
+          customers.
+        </p>
+        <h4>2011-2014 Frontend Designer</h4>
+        <p>
+          Working with UI/UX tools to create designs and implementing them with
+          CSS, HTML and JavaScript.
+        </p>
+        <h2>Volunteering</h2>
+        <h3>2022-present Samaritans</h3>
+        <p>
+          Listening volunteer, answering calls and messages from people who
+          really need someone to talk to.
+        </p>
+        <h3>2017-2019 Codebar</h3>
+        <p>
+          Coached at Codebar in Tunbridge Wells, supporting underrepresented
+          junior developers.
+        </p>
+      </main>
+    </div>
+    <script src="js/app.js"></script>
+  </body>
 </html>
