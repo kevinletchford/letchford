@@ -1,0 +1,24 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "include": [".astro/types.d.ts", 
+    "**/*",    
+    "src/**/*.d.ts",
+    "src/**/*.ts",
+    "src/**/*.astro"],
+  "exclude": ["dist"],           
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@components/*": ["src/components/*"],
+      "@assets/*": ["src/assets/*"],
+      "@src/*": ["src/*"]
+    },
+    "types": [
+      "vite-plugin-glsl/ext"
+    ]
+  },
+    "files": [
+    "node_modules/gsap/types/index.d.ts"
+  ]
+}
+
