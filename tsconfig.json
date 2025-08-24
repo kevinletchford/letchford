@@ -9,6 +9,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
+      "@scripts/*": ["src/scripts/*"],
       "@components/*": ["src/components/*"],
       "@assets/*": ["src/assets/*"],
       "@src/*": ["src/*"]

@@ -1,0 +1,5 @@
+---
+const { class: className = "w-full h-[360px] rounded-xl", speed = 1 } = Astro.props;
+---
+<canvas data-canvas="particle" data-speed={String(speed)} class={className} style="background:#0a0a0b"></canvas>
+<script src="@scripts/demos/particle-canvas.ts" />

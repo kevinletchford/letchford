@@ -139,7 +139,7 @@ function updateTrail() {
 }
 
 function updateWorldRotation() {
-  const speed = 0.02;
+  const speed = 0.005;
   if (keys['ArrowUp']) pitch += speed;
   if (keys['ArrowDown']) pitch -= speed;
   if (keys['ArrowLeft']) yaw += speed;
