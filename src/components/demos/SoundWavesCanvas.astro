@@ -1,0 +1,43 @@
+---
+const { class: className = "w-full h-[360px] rounded-xl", speed = 1 } = Astro.props;
+const vizId = "soundwaves-1"; // unique per instance
+---
+<div class="relative">
+  <canvas
+    id={vizId}
+    data-canvas="sound-waves"
+    data-mode="both"
+    data-speed={String(speed)}
+    class={className}
+    style="background:#0a0a0b"
+  ></canvas>
+
+  <!-- overlay button in bottom-right -->
+<button
+  data-audio-toggle
+  data-target={vizId}
+  aria-pressed="false"
+  class="absolute bottom-3 right-3 w-10 h-10 rounded-full grid place-items-center
+         bg-emerald-600/70 hover:bg-emerald-600/90 text-white shadow-lg transition"
+>
+  <!-- Screen reader text (updated by script) -->
+  <span class="sr-only" data-role="sr">Start recording</span>
+
+  <!-- Record (mic) -->
+  <span data-role="record" aria-hidden="true">
+    <svg viewBox="0 0 24 24" class="w-5 h-5" fill="currentColor">
+      <path d="M12 14a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v5a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 14 0h-2zM11 19h2v2h-2z" />
+    </svg>
+  </span>
+
+  <!-- Stop (square) -->
+  <span data-role="stop" aria-hidden="true" style="display:none">
+    <svg viewBox="0 0 24 24" class="w-5 h-5" fill="currentColor">
+      <rect x="6" y="6" width="12" height="12" rx="2" />
+    </svg>
+  </span>
+</button>
+</div>
+
+<!-- your script that binds the button (already supports this) -->
+<script src="@scripts/demos/sound-waves-canvas.ts" />
