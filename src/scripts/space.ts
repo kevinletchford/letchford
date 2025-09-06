@@ -1,5 +1,7 @@
 // src/scripts/space.ts
 import * as THREE from 'three';
+import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader.js';
+import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
 import marsVertexShader from '@src/shaders/mars/vertex.glsl'
 import marsFragmentShader from '@src/shaders/mars/fragment.glsl'
 
@@ -38,22 +40,23 @@ scene.add(directionalLight);
 // Group for planet, clouds, and trail (rotates under ship)
 const world = new THREE.Group();
 world.position.y = -2;
+world.position.x = 8;
 scene.add(world);
 
 //Planet Textures
-const marsDayTexture = textureLoader.load('./mars/mars.jpg');
+const marsDayTexture = textureLoader.load('/mars/mars.jpg');
 marsDayTexture.colorSpace = THREE.SRGBColorSpace;
 marsDayTexture.anisotropy = 8;
 
-const marsNightTexture = textureLoader.load('./mars/mars-night.jpg')
+const marsNightTexture = textureLoader.load('/mars/mars-night.jpg')
 marsNightTexture.colorSpace = THREE.SRGBColorSpace
 marsNightTexture.anisotropy = 8;
 
-const marsSpecular = textureLoader.load('./mars/mars-specular.jpg')
+const marsSpecular = textureLoader.load('/mars/mars-specular.jpg')
 marsSpecular.anisotropy = 8;
 
 // After you create `textureLoader`, somewhere near your other textures:
-const starsTex = textureLoader.load('./stars/stars.jpg');
+const starsTex = textureLoader.load('/stars/stars.jpg');
 starsTex.colorSpace = THREE.SRGBColorSpace;                   // if authored in sRGB
 starsTex.mapping = THREE.EquirectangularReflectionMapping;    // treat as 360° pano
 starsTex.anisotropy = renderer.capabilities.getMaxAnisotropy();
@@ -84,14 +87,62 @@ const cloudGeometry = new THREE.SphereGeometry(planetRadius + 0.1, 64, 64);
 const clouds = new THREE.Mesh(cloudGeometry, cloudMaterial);
 world.add(clouds);
 
-// Spacecraft
-const pyramidGeometry = new THREE.ConeGeometry(0.25, 0.25, 10);
-pyramidGeometry.rotateX(92);
-const pyramidMaterial = new THREE.MeshPhongMaterial({ color: 0xffcc00 });
-const spacecraft = new THREE.Mesh(pyramidGeometry, pyramidMaterial);
-spacecraft.position.set(0, -(planetRadius + 3), 0);
-scene.add(spacecraft);
+// // Spacecraft
+// const pyramidGeometry = new THREE.ConeGeometry(0.25, 0.25, 10);
+// pyramidGeometry.rotateX(92);
+// const pyramidMaterial = new THREE.MeshPhongMaterial({ color: 0xffcc00 });
+// const spacecraft = new THREE.Mesh(pyramidGeometry, pyramidMaterial);
+// spacecraft.position.set(0, -(planetRadius + 3), 0);
+// scene.add(spacecraft);
 
+
+let satellite = new THREE.Group<THREE.Object3DEventMap>;
+let satelliteRotateX = -0.5;
+let satelliteRotateY = 0.125; 
+
+const mtlLoader = new MTLLoader();
+const objLoader = new OBJLoader();
+// load a resource
+
+mtlLoader.load('/satellite/Satellite.mtl', (materials) => {
+  materials.preload();
+  const objLoader = new OBJLoader();
+  objLoader.setMaterials(materials);
+  objLoader.load(
+    // resource URL
+    '/satellite/Satellite.obj',
+    // called when resource is loaded
+    function ( object ) {
+      satellite = object;
+      satellite.traverse((child) => {
+        if (child instanceof THREE.Mesh) {
+          child.material.color.set(0xffffff); 
+          child.material.needsUpdate = true;
+          const texture = child.material.map;
+          child.material = new THREE.MeshStandardMaterial({
+            map: texture,
+            color: new THREE.Color(0xffffff),
+            emissive: new THREE.Color(0x222222), // subtle boost
+            roughness: 1.0,
+            metalness: 0.0
+          });
+        }
+      });
+      satellite.scale.set(0.05,0.05,0.05),
+      satellite.rotateX(satelliteRotateX);
+      satellite.rotateY(satelliteRotateY);
+      satellite.position.set(10, -(planetRadius + 3), 0);
+      scene.add( satellite );
+    }
+  );
+});
+
+const satelliteLight = new THREE.AmbientLight(0xffffff, 0.5);
+const satelliteLight2 = new THREE.DirectionalLight(0xffffff, 0.5);
+satelliteLight.position.set(20, -(planetRadius + 5), 0);
+satelliteLight2.position.set(20, -(planetRadius + 10), -10);
+
+scene.add(satelliteLight2);
 
 const sunSpherical = new THREE.Spherical(1, Math.PI * 0.5, 0.5)
 const sunDirection = new THREE.Vector3()
@@ -138,14 +189,40 @@ function updateTrail() {
   trailGeometry.setDrawRange(0, trailCount);
 }
 
+let targetRotateX = 0;
+let targetRotateY = 0;
+
 function updateWorldRotation() {
   const speed = 0.005;
-  if (keys['ArrowUp']) pitch += speed;
-  if (keys['ArrowDown']) pitch -= speed;
-  if (keys['ArrowLeft']) yaw += speed;
-  if (keys['ArrowRight']) yaw -= speed;
+  
+  // Adjust pitch/yaw based on keys
+  if (keys['ArrowUp']) {
+    pitch += speed;
+    targetRotateX = -0.75;  // <-- target value
+  }
+  if (keys['ArrowDown']) {
+    pitch -= speed;
+    targetRotateX = 0.0;
+  }
+  if (keys['ArrowLeft']) {
+    yaw += speed;
+    targetRotateY = -0.75;
+  }
+  if (keys['ArrowRight']) {
+    yaw -= speed;
+    targetRotateY = 0.0;
+  }
+
+  // Apply easing (lerp)
+  const ease = 0.1; // smaller = smoother
+  satelliteRotateX += (targetRotateX - satelliteRotateX) * ease;
+  satelliteRotateY += (targetRotateY - satelliteRotateY) * ease;
+
+  // Apply rotations
   world.rotation.set(pitch, yaw, 0);
+  satellite.rotation.set(satelliteRotateX, satelliteRotateY, 0);
 }
+
 
 const clock = new THREE.Clock();
 
@@ -158,8 +235,7 @@ function animate() {
   planet.rotateOnAxis(yAxis, PLANET_SPIN_RAD_PER_SEC * dt);
 
   updateWorldRotation();
-  updateTrail();
-  camera.lookAt(spacecraft.position);
+  camera.lookAt(planet.position);
   renderer.render(scene, camera);
 }
 

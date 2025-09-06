@@ -1,0 +1,112 @@
+---
+import Layout from "@layouts/Layout.astro";
+import SectionTransitions from "@components/SectionTransitions.astro";
+import Scroller from "@components/Scroller.astro";
+
+---
+
+<Layout>
+	    <style>
+      html, body, canvas {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        width: 100vw;
+        height: 100vh;
+        background: black;
+      }
+    </style>
+    <div class="relative">
+      <canvas id="webgl-canvas"></canvas>
+        <div class="snap-y snap-mandatory h-[100svh] overflow-y-auto overscroll-contain absolute inset-0 bg-gradient-to-r from-cyan-500/40 to-red-900/10">
+        <article class="max-w-5xl m-auto prose prose-invert prose-h2:mt-0 prose-headings:font-space grid grid-cols-1 gap-8 px-4">
+    
+            <section class="min-h-[100svh] snap-start flex flex-col justify-center drop-shadow-xl" id="header">
+                
+            <h1 class="text-red-400 md:text-7xl mb-3 load-effect">Kevin Letchford</h1>
+            <h2 class="mb-3">Design Engineer / Creative Developer</h2>
+            <p >
+            <a href="mailto:kevin@letchford.co" class="no-underline">kevin@letchford.co</a><br />
+            </p>
+            <p class="max-w-3xl md:text-lg">
+                I’m a Design Engineer with 14 years of experience bridging design and engineering to create responsive, performant, and intuitive digital experiences. Skilled in interaction design, animation, and creative coding, I specialise in turning design concepts into production-ready experiences that delight users. I thrive in cross-functional teams, collaborating with designers, engineers, and marketers to deliver polished, impactful products.
+            </p>
+            </section>
+
+            <section class="min-h-[100svh] snap-start flex flex-col justify-center" id="skills">
+            <h2>Skills</h2>
+
+            
+
+            <h3>Design &amp; Interaction</h3>
+            <ul>
+                <li>Three.js, GSAP, Framer Motion, Motion</li>
+                <li>Figma, Illustrator, After Effects</li>
+            </ul>
+
+            <h3>Frontend Development</h3>
+            <ul>
+                <li>JavaScript, React, TypeScript, Vue</li>
+                <li>CSS (Grid, Flexbox, Custom Properties, Tailwind)</li>
+            </ul>
+
+            <h3>Backend &amp; Systems</h3>
+            <ul>
+                <li>Node.js, .Net C#, API Development</li>
+                <li>SQL Server, Umbraco CMS</li>
+            </ul>
+
+            <h3>Collaboration &amp; Delivery</h3>
+            <ul>
+                <li>Git/GitHub, Agile/Scrum, Jira</li>
+            </ul>
+            </section>
+
+            <section class="min-h-[100svh] snap-start flex flex-col justify-center" id="experience">
+                <h2>Experience</h2>
+                <h3>Sitebulb — Design Engineer (2023–Present)</h3>
+                <ul>
+                    <li>Designed and coded interactive web experiences for marketing, including animations, prototypes, and fullstack implementations.</li>
+                    <li>Acted as the <strong>technical MVP</strong> for the marketing team, delivering across digital design, motion, print, and automation.</li>
+                    <li>Built creative automation tools that reduced manual design tasks and accelerated campaign delivery.</li>
+                    <li>Partnered with design and product stakeholders to translate creative briefs into performant, production-ready experiences.</li>
+                </ul>
+
+                <h3>Evolution Internet — Developer / Designer (2011–2023)</h3>
+                <h4>Full Stack Developer (2020–2022)</h4>
+                <ul>
+                    <li>Built dashboards, APIs, and workflow/reporting tools in .Net MVC.</li>
+                    <li>Improved internal workflows and reporting efficiency through automation.</li>
+                </ul>
+
+                <h4>Frontend Developer (2015–2019)</strong></h4>
+                <ul>
+                    <li>Delivered new frontend features in JavaScript and integrated them into Umbraco/.Net platforms.</li>
+                    <li>Implemented customer conversion optimisations and performance improvements.</li>
+                    <li>Contributed to in-house website optimisation tools, fixing bugs and supporting end-users.</li>
+                </ul>
+
+                <h4>Frontend Designer (2011–2014)</h4>
+                <ul>
+                    <li>Created UI/UX designs using design tools and implemented them with HTML, CSS, and JavaScript.</li>
+                    <li>Collaborated with clients to translate brand and product goals into usable, attractive web experiences.</li>
+                </ul>
+            </section>
+
+            <section class="min-h-[100svh] snap-start flex flex-col justify-center" id="education">
+                <h2>Education</h2>
+                <p><strong>2005–2008</strong> — Computer Animation and Visual Effects BSc (Hons)</p>
+                <h2>Volunteering</h2>
+                <h3>Samaritans (2022–2024)</h3>
+                <p>Listening volunteer, answering calls and messages with empathy and support.</p>
+                <h3>Codebar (2017–2019)</h3>
+                <p>Coach and mentor for underrepresented junior developers, supporting their growth in coding and design.</p>
+            </section>
+        </article>
+        </div>
+    </div>
+</Layout>
+
+
+ <script type="module" src="/src/scripts/space.ts"></script>
+ <script type="module" src="/src/scripts/text-animation.ts"></script>

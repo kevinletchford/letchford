@@ -1,18 +1,12 @@
 <div class="scrolling-text">
   <div class="rail">
-    <h4>Animate Anything...</h4>
-    <h4>Delivering silky-smooth performance</h4>
-    <h4>so you can focus on the fun stuff.</h4>
+      <h2>Design Engineer / Creative Developer</h2>
   </div>
 </div>
 
 
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+
 
 .scrolling-text {
   overflow: hidden;
@@ -23,14 +17,14 @@
   border-top: 3px dashed var(--grey);
   .rail {
     display: flex;
-    h4 {
+    h2 {
+      font-weight: thin;
       white-space: nowrap;
       font-size: 200px;
       font-weight: 900;
       letter-spacing: ls(120);
       line-height: 1em;
       margin: 0 2rem 0 0;
-      color: black;
     }
   }
 }
@@ -45,7 +39,7 @@ console.clear();
 
 gsap.registerPlugin(ScrollTrigger);
 
-const scrollingText = gsap.utils.toArray('.rail h4');
+const scrollingText = gsap.utils.toArray('.rail h2');
 
 const tl = horizontalLoop(scrollingText, {
   repeat: -1,
