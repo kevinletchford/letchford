@@ -5,7 +5,7 @@ import Scroller from "@components/Scroller.astro";
 
 ---
 
-<Layout>
+<Layout title="About | Kevin Letchford - Design Engineer">
 	    <style>
       html, body, canvas {
         margin: 0;
@@ -24,42 +24,49 @@ import Scroller from "@components/Scroller.astro";
             <section class="min-h-[100svh] snap-start flex flex-col justify-center drop-shadow-xl" id="header">
                 
             <h1 class="text-red-400 md:text-7xl mb-3 load-effect">Kevin Letchford</h1>
-            <h2 class="mb-3">Design Engineer / Creative Developer</h2>
-            <p >
-            <a href="mailto:kevin@letchford.co" class="no-underline">kevin@letchford.co</a><br />
+            <h2 class="mb-3 font-extralight">Design Engineer / Creative Developer</h2>
+
+            <p class="text-xl text-pretty text-white/90 max-w-2xl" data-speed="3">
+                I build experiences that are both smooth and engaging, blending design with engineering. I focus on creating interactive interfaces, keeping things fast, and turning complex ideas into something people can actually enjoy using.
             </p>
-            <p class="max-w-3xl md:text-lg">
+
+            <!-- <p class="max-w-3xl md:text-lg">
                 I’m a Design Engineer with 14 years of experience bridging design and engineering to create responsive, performant, and intuitive digital experiences. Skilled in interaction design, animation, and creative coding, I specialise in turning design concepts into production-ready experiences that delight users. I thrive in cross-functional teams, collaborating with designers, engineers, and marketers to deliver polished, impactful products.
-            </p>
+            </p> -->
             </section>
 
             <section class="min-h-[100svh] snap-start flex flex-col justify-center" id="skills">
             <h2>Skills</h2>
 
-            
-
-            <h3>Design &amp; Interaction</h3>
-            <ul>
-                <li>Three.js, GSAP, Framer Motion, Motion</li>
-                <li>Figma, Illustrator, After Effects</li>
-            </ul>
-
-            <h3>Frontend Development</h3>
-            <ul>
-                <li>JavaScript, React, TypeScript, Vue</li>
-                <li>CSS (Grid, Flexbox, Custom Properties, Tailwind)</li>
-            </ul>
-
-            <h3>Backend &amp; Systems</h3>
-            <ul>
-                <li>Node.js, .Net C#, API Development</li>
-                <li>SQL Server, Umbraco CMS</li>
-            </ul>
-
-            <h3>Collaboration &amp; Delivery</h3>
-            <ul>
-                <li>Git/GitHub, Agile/Scrum, Jira</li>
-            </ul>
+            <div class="grid grid-cols-1 md:grid-cols-2">
+                <div>
+                    <h3>Design &amp; Interaction</h3>
+                    <ul>
+                        <li>Three.js, GSAP, Framer Motion, Motion</li>
+                        <li>Figma, Illustrator, After Effects</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Frontend Development</h3>
+                    <ul>
+                        <li>JavaScript, React, TypeScript, Vue</li>
+                        <li>CSS (Grid, Flexbox, Custom Properties, Tailwind)</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Backend &amp; Systems</h3>
+                    <ul>
+                        <li>Node.js, .Net C#, API Development</li>
+                        <li>SQL Server, Umbraco CMS</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Collaboration &amp; Delivery</h3>
+                    <ul>
+                        <li>Git/GitHub, Agile/Scrum, Jira</li>
+                    </ul>
+                </div>
+            </div>
             </section>
 
             <section class="min-h-[100svh] snap-start flex flex-col justify-center" id="experience">
