@@ -4,3 +4,27 @@
 @theme {
   --font-space: 'Space Grotesk Variable', sans-serif;
 }
+
+
+.menu-section {
+  transition: all 150ms cubic-bezier(0.83, 0, 0.17, 1);
+  transition-behavior: allow-discrete;
+  opacity: 1;
+  scale:1;
+  transform-origin: top center;
+  position: absolute;
+  top:100%;
+}
+
+@starting-style {
+  .menu-section {
+    opacity: 0;
+    scale:0.9;
+  }
+}
+
+.menu-section_closed {
+  display: none;
+  opacity: 0;
+  scale:0.9;
+}

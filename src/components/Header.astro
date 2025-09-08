@@ -1,23 +1,28 @@
-<div class="grid grid-cols-5 gap-2 items-center justify-between p-4 w-full fixed top-0 z-20 bg-[linear-gradient(to_top,rgba(0,0,0,0),rgba(0,0,0,0.4))]">
+<div class="grid grid-cols-5 grid-row-2 gap-2 items-center justify-between p-4 w-full fixed top-0 z-20 bg-[linear-gradient(to_top,rgba(0,0,0,0),rgba(0,0,0,0.4))]">
     <a class="flex flex-col" href="/">
         <span class="bold">Kevin Letchford</span>
         <span class="text-white/60">Design Engineer</span>
     </a>
-    <div class="col-span-3  flex items-center justify-center">
-        <nav class="flex items-center justify-between border-white/10 border rounded-full gap-6 px-6 backdrop-blur-3xl">
+    <div class="col-span-3  flex items-center justify-center opacity-100">
+        <nav class="flex items-center justify-between border-white/20 border rounded-full gap-6 px-6 backdrop-blur-3xl">
             <a class="py-2 text-white/70" href="/about/">About</a>
-            <div class="relative ">
-
-            <details class="transition transition-discrete [--anchor-gap:--spacing(5)] backdrop:bg-transparent duration-200 ease-in-out">
-                <summary class="inline-flex items-center gap-x-1 py-2 text-white/70 cursor-pointer">
+                <a href="#" data-nav="case-studies"  class="nav-link inline-flex items-center gap-x-1 py-2 text-white/70 cursor-pointer">
                         <span>Case Studies</span>
                         <svg viewBox="0 0 20 20" fill="currentColor" data-slot="icon" aria-hidden="true" class="size-5">
                         <path d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" fill-rule="evenodd" />
                         </svg>
-                </summary>
-                <div id="desktop-menu-solutions" style="translate: -50%;left: 50%;" class="absolute top-full m-auto pt-4  transition transition-discrete [--anchor-gap:--spacing(5)] backdrop:bg-transparent duration-200 ease-in-out">
-                <div class="w-screen max-w-md flex-auto overflow-hidden rounded-3xl bg-gradient-to-b from-orange-900/90 to-orange-950/100  backdrop-blur-xl drop-shadow-2xl text-sm/6 outline-1 -outline-offset-1 outline-white/10 lg:max-w-3xl">
-                <div class="grid grid-cols-1 gap-x-6 gap-y-1 p-4 lg:grid-cols-2 bg-gradient-to-b from-gray-950/50 to-gray-950/50 ">
+                </a> 
+            <a class="py-2  text-white/70" href="#">Projects</a>
+        </nav>
+    </div>
+    <div class="flex justify-end items-center">
+        <a class="flex items-center justify-between border-white/20 border rounded-full gap-6 px-6 backdrop-blur-3xl py-2 text-white/70 " href="/contact/">Contact</a>
+    </div>
+
+    <div id="menu-case-studies" class="sub-menu col-start-2 col-end-5 transition-all  duration-500 ease-in-out menu-section menu-section_closed " >
+                <div id="desktop-menu-solutions" class=" top-full m-auto pt-4  transition transition-discrete [--anchor-gap:--spacing(5)] backdrop:bg-transparent duration-200 ease-in-out ">
+                <div class=" flex-auto overflow-hidden rounded-3xl drop-shadow-2xl text-sm/6 outline-1 -outline-offset-1 outline-white/10  backdrop-blur-3xl  bg-gradient-to-b from-blue-900/10 to-cyan-500/10">
+                <div class="grid grid-cols-1 gap-x-6 gap-y-1 p-4 lg:grid-cols-2 bg-gradient-to-b  ">
                     <div class="group relative flex gap-x-6 rounded-lg p-4 hover:bg-white/5">
                     <div class="mt-1 flex size-11 flex-none items-center justify-center rounded-lg bg-white/20 group-hover:bg-white/40">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" fill="currentColor" stroke-width="1.5" data-slot="icon" aria-hidden="true" class="size-6 text-white/40 group-hover:text-white">
@@ -43,7 +48,7 @@
                         Article Automation
                         <span class="absolute inset-0"></span>
                         </a>
-                        <p class="mt-1 text-gray-400">Automating the creation of content from Google Docs to Umbraco#</p>
+                        <p class="mt-1 text-gray-400">Automating the creation of content from Google Docs to Umbraco</p>
                     </div>
                     </div>
                     <div class="group relative flex gap-x-6 rounded-lg p-4 hover:bg-white/5">
@@ -110,15 +115,24 @@
                     </div>
                     <p class="mt-2 text-sm/6 text-gray-400">Empower your entire team with even more advanced tools.</p>
                 </div>
-                </div>
             </div>
-            </details>    
-            </div>
-            <a class="py-2  text-white/70" href="#">Projects</a>
-        </nav>
-    </div>
-    <div class="flex justify-end items-center">
-        <a class="flex items-center justify-between border-white/20 border rounded-full gap-6 px-6 backdrop-blur-3xl py-2 text-white/70 bg-gradient-to-b from-blue-900/40 to-cyan-500/40" href="/contact/">Contact</a>
     </div>
 </div>
+
+
+<script>
+const navLinkEls = document.querySelectorAll('.nav-link');
+const caseStudiesMenu = document.querySelector('#menu-case-studies');
+navLinkEls.forEach((navLink) => {
+  navLink.addEventListener('click', (event) => {
+     const target = event.currentTarget;
+     console.log(target)
+     if (target instanceof HTMLElement) {
+        caseStudiesMenu?.classList.toggle('menu-section_closed');
+    }
+
+
+  });
+});
+</script>
 
