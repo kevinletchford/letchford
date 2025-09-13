@@ -12,10 +12,11 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setClearColor(0x000000);
 
+const mtlLoader = new MTLLoader();
+const objLoader = new OBJLoader();
+
 const yAxis = new THREE.Vector3(0, 1, 0);
-
 const PLANET_SPIN_RAD_PER_SEC = 0.015;
-
 const scene = new THREE.Scene();
 const textureLoader = new THREE.TextureLoader()
 
@@ -26,11 +27,17 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   1000
 );
-camera.position.set(0, -30, 0);
+
 
 const planetRadius = 10;
+let initialLoad = true;
 let yaw = 0;   // rotation around Y-axis
 let pitch = 0; // rotation around X-axis
+let targetX = 0;
+let targetY = -2000; // default distance
+let targetZ = 200; // default distance
+
+camera.position.set(targetX, targetY, targetZ);
 
 // Lights
 scene.add(new THREE.AmbientLight(0xffffff, 0.4));
@@ -106,9 +113,9 @@ const positions = new Float32Array(particlesCount * 3)
 
 for(let i = 0; i < particlesCount; i++)
 {
-    positions[i * 3 + 0] = (Math.random() - 0.5) * 10
+    positions[i * 3 + 0] = (Math.random() - 0.5) * 100
     positions[i * 3 + 1] = objectsDistance * 0.5 - Math.random() * objectsDistance 
-    positions[i * 3 + 2] = (Math.random() - 0.5) * 10
+    positions[i * 3 + 2] = (Math.random() - 0.5) * 100
 }
 
 const particlesGeometry = new THREE.BufferGeometry()
@@ -122,15 +129,14 @@ const particlesMaterial = new THREE.PointsMaterial({
 })
 
 const particles = new THREE.Points(particlesGeometry, particlesMaterial)
-scene.add(particles)
+world.add(particles)
 
 
 let satellite = new THREE.Group<THREE.Object3DEventMap>;
 let satelliteRotateX = -0.5;
 let satelliteRotateY = 0.125; 
 
-const mtlLoader = new MTLLoader();
-const objLoader = new OBJLoader();
+
 // load a resource
 
 mtlLoader.load('/satellite/Satellite.mtl', (materials) => {
@@ -176,8 +182,6 @@ scene.add(satelliteLight2);
 const sunSpherical = new THREE.Spherical(1, Math.PI * 0.5, 0.5)
 const sunDirection = new THREE.Vector3()
 
-
-
 // Keys
 const keys: Record<string, boolean> = {};
 window.addEventListener('keydown', (e) => (keys[e.key] = true));
@@ -191,19 +195,19 @@ function updateWorldRotation() {
   const speed = 0.005;
   
   // Adjust pitch/yaw based on keys
-  if (keys['ArrowUp']) {
+  if (keys['w']) {
     pitch += speed;
     targetRotateX = -0.75;  // <-- target value
   }
-  if (keys['ArrowDown']) {
+  if (keys['s']) {
     pitch -= speed;
     targetRotateX = 0.0;
   }
-  if (keys['ArrowLeft']) {
+  if (keys['a']) {
     yaw += speed;
     targetRotateY = -0.75;
   }
-  if (keys['ArrowRight']) {
+  if (keys['d']) {
     yaw -= speed;
     targetRotateY = 0.0;
   }
@@ -219,33 +223,134 @@ function updateWorldRotation() {
 }
 
 
+let astronaut = new THREE.Group<THREE.Object3DEventMap>;
+
+// load a resource
+
+mtlLoader.load('/astronaut/Astronaut.mtl', (materials) => {
+  materials.preload();
+  const objLoader = new OBJLoader();
+  objLoader.setMaterials(materials);
+  objLoader.load(
+    // resource URL
+    '/astronaut/Astronaut.obj',
+    // called when resource is loaded
+    function ( object ) {
+      astronaut = object;
+      astronaut.traverse((child) => {
+        if (child instanceof THREE.Mesh) {
+          child.material.color.set(0xffffff); 
+          child.material.needsUpdate = true;
+          const texture = child.material.map;
+          child.material = new THREE.MeshStandardMaterial({
+            map: texture,
+            color: new THREE.Color(0xffffff),
+            emissive: new THREE.Color(0x222222), // subtle boost
+            roughness: 1.0,
+            metalness: 0.0
+          });
+        }
+      });
+      astronaut.rotateX( 1.25);
+      astronaut.rotateY( -1);
+      astronaut.position.set(10, -(planetRadius + 30), 0);
+      scene.add( astronaut );
+    }
+  );
+});
+
+// Set your base orientation once
+astronaut.rotation.set(0, 0, 0);
+astronaut.rotateX(1.25);
+astronaut.rotateY(-1);
+
+// Save the baseline quaternion to compose with the tumble every frame
+const baseQuat = astronaut.quaternion.clone();
+
+
 const clock = new THREE.Clock();
+
+let anchorSet = false;
+const basePos    = new THREE.Vector3();  // will be set after intro
+const offset     = new THREE.Vector3();
+const targetPos  = new THREE.Vector3();
+
+// rotation helpers
+const targetEuler = new THREE.Euler();
+const tumbleQuat  = new THREE.Quaternion();
+const desiredQuat = new THREE.Quaternion();
+
+// --- Tunables ---
+const driftAmp   = 0.35;     // roam radius (meters) — a bit more than before
+const k          = 0.35;     // mean reversion strength (lower = looser)
+const sigma      = 0.10;     // randomness strength (slightly more movement)
+const maxOffset  = driftAmp; // clamp radius
+
+const rotAmp     = THREE.MathUtils.degToRad(8); // ~8° wobble
+const speedX     = 0.050, speedY = 0.037, speedZ = 0.031; // Hz (periods ~20–32s)
+
+// Smoothing (exp easing by frequency)
+const posSmoothHz = 2.5;  // position ease
+const rotSmoothHz = 2.0;  // rotation ease
+
+// If you know intro length, keep this. Otherwise flip anchorSet externally when intro ends.
+const INTRO_SECONDS = 4.0;
 
 function animate() {
   requestAnimationFrame(animate);
 
-  const dt = clock.getDelta(); // seconds since last frame
+  let dt = clock.getDelta();
+  const t = clock.elapsedTime;
+  if (dt > 0.05) dt = 0.05; // cap dt for stability (tab switches, stalls)
 
-  // gentle axial spin (local Y)
+  // Your planet spin
   planet.rotateOnAxis(yAxis, PLANET_SPIN_RAD_PER_SEC * dt);
+
+  // Defer anchor until the intro settles
+  if (!anchorSet && t >= INTRO_SECONDS) {
+    basePos.copy(astronaut.position);
+    anchorSet = true;
+  }
+
+  if (anchorSet) {
+    // --- Mean-reverting drift (Ornstein–Uhlenbeck) ---
+    const sdt = Math.sqrt(dt);
+    offset.x += (-k * offset.x) * dt + sigma * sdt * (Math.random() * 2 - 1);
+    offset.y += (-k * offset.y) * dt + sigma * sdt * (Math.random() * 2 - 1);
+    offset.z += (-k * offset.z) * dt + sigma * sdt * (Math.random() * 2 - 1);
+
+    // Soft clamp so we never wander far
+    if (offset.length() > maxOffset) offset.setLength(maxOffset);
+
+    // Smoothly approach target position
+    targetPos.copy(basePos).add(offset);
+    const posAlpha = 1 - Math.exp(-posSmoothHz * dt);
+    astronaut.position.lerp(targetPos, posAlpha);
+
+    // --- Gentle tumbling, relative to your base orientation ---
+    // Slightly more motion, still smooth
+    targetEuler.set(
+      rotAmp * Math.sin(2 * Math.PI * speedX * t),
+      rotAmp * Math.sin(2 * Math.PI * speedY * t),
+      rotAmp * Math.cos(2 * Math.PI * speedZ * t),
+      'XYZ'
+    );
+    tumbleQuat.setFromEuler(targetEuler);
+
+    // desired = base * tumble  (DO NOT call rotateX/rotateY each frame)
+    desiredQuat.multiplyQuaternions(baseQuat, tumbleQuat);
+
+    const rotAlpha = 1 - Math.exp(-rotSmoothHz * dt);
+    astronaut.quaternion.slerp(desiredQuat, rotAlpha);
+  }
 
   updateWorldRotation();
   camera.lookAt(planet.position);
   renderer.render(scene, camera);
 }
 
-const updateSun = () =>
-{
-    // Sun direction
-    sunDirection.setFromSpherical(sunSpherical)
-    planetMaterial.uniforms.uSunDirection.value.copy(sunDirection)
-}
-
-
-
-updateSun()
-
 animate();
+
 
 window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight;
@@ -371,20 +476,30 @@ declare global {
   }
 })();
 
+ window.addEventListener('DOMContentLoaded', (e) =>{
+  setZoom('header', 0.5, 3);
+ });
+
 window.addEventListener('sectionchange', (e) => {
   const id = (e as CustomEvent<{ id: string }>).detail.id;
+  if(id != 'header' || initialLoad == false){
+    setZoom(id);
+  }
+  toggleActiveNavItem(id);
+});
 
+const setZoom = (id:string, delay = 0, duration = 1) => {
   // e.g. send analytics, trigger animations, etc.
-
- let targetX = 0;
- let targetY = -30; // default distance
- let targetZ = 0; // default distance
   switch (id) {
     case 'header':
-      targetY = -30;
+        targetX = 0;
+        targetY = -30;
+        targetZ = 0;
       break;
     case 'skills':
+      initialLoad = false;
       targetY = -20;
+      targetZ = 0;
       break;
     case 'experience':
       targetY = -20;
@@ -401,9 +516,21 @@ window.addEventListener('sectionchange', (e) => {
     x: targetX,
     y: targetY,
     z: targetZ,
-    duration: 1,
+    duration: duration,
+    delay: delay,
     ease: 'power2.inOut',
     onUpdate: () => {
     }
   });
-});
+}
+
+const toggleActiveNavItem = (navItem:string) =>{
+    const items = document.querySelectorAll(`a[data-nav-item]`);
+    const item = document.querySelector(`a[data-nav-item="${navItem}"]`);
+
+    items.forEach( x =>{
+      x.classList.remove('dot_active')
+    })
+
+    item?.classList.add('dot_active');
+}

@@ -28,3 +28,59 @@
   opacity: 0;
   scale:0.9;
 }
+
+section{
+    transform: perspective(75em)
+     rotateY(2deg);
+}
+
+
+.details {
+    padding: var(--xxs);
+    interpolate-size: allow-keywords;
+    &::details-content {
+        opacity: 0;
+        block-size: 0;
+        transition: content-visibility .25s allow-discrete,opacity .25s,block-size .25s;
+        overflow-y: clip
+    }
+
+    &[open]::details-content {
+        opacity:1;
+        block-size: auto
+    }
+
+    &[open]>summary {
+        &:after {
+            content:"-"
+        }
+    }
+
+    &>div {
+        padding: var(--xs)0
+    }
+
+    & summary {
+        cursor: pointer;
+        transition-behavior: allow-discrete;
+        grid-template-columns: 1fr 20px;
+        align-items: center;
+        list-style: none;
+        transition: all .25s;
+        display: grid;
+        &:after {
+            content: "+";
+            font-size: 2rem;
+            font-weight: 300
+        }
+    }
+}
+
+.dot{
+  transition: min-width cubic-bezier(0.33, 0, 0.67, 1) 400ms, background-color linear 250ms;
+}  
+
+.dot_active{
+  background:#ffffffb3;
+  min-width: 48px;
+}
