@@ -363,8 +363,6 @@ console.log(renderer.capabilities.getMaxAnisotropy());
 
 // observer.ts
 
-// observer.ts
-
 // Extend the window types for our global + event
 declare global {
   interface Window {

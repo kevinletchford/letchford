@@ -1,30 +1,167 @@
 ---
-import Layout from '../layouts/Layout.astro';
+import Layout from "@layouts/Layout.astro";
+
 
 ---
 
-<Layout>
-	    <style>
-      html, body, canvas {
-        margin: 0;
-        padding: 0;
-        overflow: hidden;
-        width: 100vw;
-        height: 100vh;
-        background: black;
-      }
-    </style>
+<Layout title="About | Kevin Letchford - Design Engineer">
     <div class="relative">
+    <nav class="bottom-6 right-6 gap-2 absolute z-30 items-center grid grid-cols-3">
+            <button class="text-xs rounded-lg border border-white/20 bg-black/20 text-white/70 size-6 col-start-2 col-end-3 items-center justify-center text-center">W</button>
+            <button class="text-xs rounded-lg border border-white/20 bg-black/20 text-white/70 size-6 row-start-2 items-center justify-center text-center">A</button>
+            <button class="text-xs rounded-lg border border-white/20 bg-black/20 text-white/70 size-6 row-start-2 items-center justify-center text-center">S</button>
+            <button class="text-xs rounded-lg border border-white/20 bg-black/20 text-white/70 size-6 row-start-2 items-center justify-center text-center">D</button>
+    </nav>
+     <nav class="bottom-6 gap-4 absolute z-30 items-center -translate-1/2 left-1/2 flex">
+        <a href="#header" data-nav-item="header" class="dot dot_active min-w-2 min-h-2 rounded-full bg-white/30 block "><span class="hidden">Header</span></a>
+        <a href="#skills" data-nav-item="skills" class="dot min-w-2 min-h-2 rounded-full bg-white/30 block "><span class="hidden">Skills</span></a>
+        <a href="#experience" data-nav-item="experience" class="dot min-w-2 min-h-2 rounded-full bg-white/30 block "><span class="hidden">Experience</span></a>
+        <a href="#education" data-nav-item="education" class="dot min-w-2 min-h-2 rounded-full bg-white/30 block "><span class="hidden">Education</span></a>
+     </nav>
       <canvas id="webgl-canvas"></canvas>
-      <div class="max-w-2xl flex flex-col gap-4 absolute bottom-12 left-12">
-        <h1 class="flex flex-col gap-1">
-          <span class="text-base/7 font-semibold text-red-400">Kevin Letchford</span>
-          <span class="font-space  max-w-lg text-4xl font-semibold tracking-tight text-pretty sm:text-5xl load-effect">Design Engineer</span>
-        </h1>
-        <p class="text-xl text-pretty text-white/60 load-effect" data-speed="3">I craft exceptional web experiences through the intersection of design and engineering. Specializing in interactive interfaces, performance optimization, and bringing complex ideas to life.</p>
-      </div>
-    </div>
+        <div class="snap-y snap-mandatory h-[100svh] overflow-y-auto overscroll-contain absolute inset-0 bg-gradient-to-r from-cyan-500/40 to-red-900/10 scroll-smooth">
+            <article class="max-w-5xl m-auto prose prose-invert prose-h2:mt-0 prose-h2:md:text-5xl prose-headings:font-space grid grid-cols-1 gap-8 px-4">
+                <section class="min-h-[100svh] snap-start flex flex-col justify-center drop-shadow-xl" id="header">   
+                    <h1 class="text-red-400 md:text-7xl mb-3 load-effect uppercase">Kevin Letchford</h1>
+                    <span class="mb-3 font-extralight text-xl md:text-4xl">Design Engineer / Creative Developer</span>
+                    <p class="text-xl text-pretty text-white/90 max-w-2xl">
+                        I build experiences that are both smooth and engaging, blending design with engineering. I focus on creating interactive interfaces, keeping things fast, and turning complex ideas into something people can actually enjoy using.
+                    </p>
+                </section>
 
+                <section class="min-h-[100svh] snap-start flex flex-col justify-center" id="skills">
+                    <h2>Skills</h2>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                        <div class="group relative flex gap-x-6 rounded-lg p-4 bg-black/20 backdrop-blur-2xl">
+                            <div class="mt-1 flex size-14 flex-none items-center justify-center rounded-lg bg-white/20 ">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" fill="currentColor" stroke-width="1.5" data-slot="icon" aria-hidden="true" class="size-8 text-white/40">
+                                <path d="M227.9 81.1C235.4 89.5 241.3 98.8 245.6 108.7C268.9 100.5 293.9 96.1 320 96.1C443.7 96.1 544 196.4 544 320.1C544 363.3 531.8 403.6 510.6 437.8C490.4 429.7 466.5 433.8 450.1 450.2C428.2 472.1 428.2 507.5 450.1 529.4C472 551.3 507.4 551.3 529.3 529.4C548.7 510 550.9 479.8 535.8 457.9C561.3 418.1 576 370.8 576 320.1C576 178.7 461.4 64.1 320 64.1C287.5 64.1 256.5 70.1 227.9 81.2zM394.4 531.4C371.1 539.6 346.1 544 320 544C196.3 544 96 443.7 96 320C96 276.8 108.2 236.5 129.4 202.3C149.6 210.4 173.5 206.3 189.9 189.9C211.8 168 211.8 132.6 189.9 110.7C168 88.8 132.6 88.8 110.7 110.7C91.3 130.1 89.1 160.3 104.2 182.2C78.7 222 64 269.3 64 320C64 461.4 178.6 576 320 576C352.5 576 383.5 570 412.1 558.9C404.6 550.5 398.7 541.2 394.4 531.3zM448 320C448 390.7 390.7 448 320 448C249.3 448 192 390.7 192 320C192 249.3 249.3 192 320 192C342.9 192 364.4 198 383 208.5C379.8 221.7 383.3 236.1 393.5 246.4C403.7 256.7 418.3 260.2 431.4 256.9C442 275.6 448 297.1 448 320zM457 237.3C465.2 222.1 463 202.7 450.1 189.9C437.2 177.1 417.9 174.8 402.7 183C378.6 168.4 350.2 160 320 160C231.6 160 160 231.6 160 320C160 408.4 231.6 480 320 480C408.4 480 480 408.4 480 320C480 289.7 471.6 261.4 457 237.3zM288 320C288 302.3 302.3 288 320 288C337.7 288 352 302.3 352 320C352 337.7 337.7 352 320 352C302.3 352 288 337.7 288 320zM384 320C384 284.7 355.3 256 320 256C284.7 256 256 284.7 256 320C256 355.3 284.7 384 320 384C355.3 384 384 355.3 384 320zM167.3 133.3C173.9 139.2 176.6 148.3 174.5 156.9C172.3 165.5 165.6 172.2 157 174.4C148.4 176.5 139.3 173.8 133.4 167.2C126.8 161.3 124.1 152.2 126.2 143.6C128.4 135 135.1 128.3 143.7 126.1C152.3 124 161.4 126.7 167.3 133.3zM472.7 472.7C478.6 466.1 487.7 463.4 496.3 465.5C504.9 467.7 511.6 474.4 513.8 483C515.9 491.6 513.2 500.7 506.6 506.6C500.7 513.2 491.6 515.9 483 513.8C474.4 511.6 467.7 504.9 465.5 496.3C463.4 487.7 466.1 478.6 472.7 472.7z"/>
+                                </svg>
+                            </div>
+                            <div class="">
+                                <h3 class=" font-bold not-prose m-0 p-0 text-sm md:text-xl">Design &amp; Interaction</h3>
+                                <ul class="mt-1 text-white/80 mb-0">
+                                    <li>Three.js, GSAP, Framer Motion</li>
+                                    <li>Figma, Illustrator, After Effects</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="group relative flex gap-x-6 rounded-lg p-4 bg-black/20 backdrop-blur-2xl">
+                            <div class="mt-1 flex size-14 flex-none items-center justify-center rounded-lg bg-white/20 ">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" fill="currentColor" stroke-width="1.5" data-slot="icon" aria-hidden="true" class="size-8 text-white/40">
+                                    <path d="M239.6 502.1C188.8 519 157.3 512.2 142.9 497.7C128.5 483.2 121.6 451.7 138.5 401C143.9 384.8 151.4 367.7 161 350.1C177.8 373.9 197.7 397.5 220.4 420.2C243.1 442.9 266.7 462.8 290.5 479.6C272.9 489.2 255.8 496.8 239.6 502.1zM120.2 119.7C81 158.9 92.1 237.9 141.3 320C92.1 402.1 81 481.1 120.2 520.3C159.4 559.5 238.4 548.4 320.5 499.2C402.6 548.4 481.6 559.5 520.8 520.3C560 481.1 548.9 402.1 499.7 320C548.9 237.9 560 158.9 520.8 119.7C481.6 80.5 402.6 91.6 320.5 140.8C238.4 91.6 159.4 80.5 120.2 119.7zM243 397.5C217.7 372.2 196.4 345.9 179.2 320C196.4 294.1 217.8 267.7 243 242.5C268.2 217.3 294.6 195.9 320.5 178.7C346.4 195.9 372.8 217.3 398 242.5C423.2 267.7 444.6 294.1 461.8 320C444.6 345.9 423.2 372.3 398 397.5C372.8 422.7 346.4 444.1 320.5 461.3C294.6 444.1 268.2 422.7 243 397.5zM220.3 219.8C197.6 242.5 177.7 266.1 160.9 289.9C151.3 272.3 143.7 255.2 138.4 239C121.5 188.2 128.4 156.7 142.8 142.3C157.2 127.9 188.8 121 239.5 137.9C255.7 143.3 272.8 150.8 290.4 160.4C266.6 177.2 243 197.1 220.3 219.8zM420.6 219.8C397.9 197.1 374.3 177.2 350.5 160.4C368.1 150.8 385.2 143.2 401.4 137.9C452.2 121 483.7 127.9 498.1 142.3C512.5 156.7 519.4 188.3 502.5 239C497.1 255.2 489.6 272.3 480 289.9C463.2 266.1 443.3 242.5 420.6 219.8zM420.6 420.1C443.3 397.4 463.2 373.8 480 350C489.6 367.6 497.2 384.7 502.5 400.9C519.4 451.7 512.6 483.2 498.1 497.6C483.6 512 452.1 518.9 401.4 502C385.2 496.6 368.1 489.1 350.5 479.5C374.3 462.7 397.9 442.8 420.6 420.1zM320.5 344C333.8 343.7 344.3 332.8 344 319.5C343.7 306.2 332.8 295.7 319.5 296C306.2 296.3 295.7 307.2 296 320.5C296.3 333.8 307.2 344.3 320.5 344z"/>
+                                </svg>
+                            </div>
+                            <div class="">
+                                <h3 class=" font-bold not-prose m-0 p-0 text-sm md:text-xl">Frontend Development</h3>
+                                <ul class="mt-1 text-white/80 mb-0 ">
+                                    <li>JavaScript, React, TypeScript, Vue</li>
+                                    <li>CSS, Tailwind</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="group relative flex gap-x-6 rounded-lg p-4 bg-black/20 backdrop-blur-2xl">
+                            <div class="mt-1 flex size-14 flex-none items-center justify-center rounded-lg bg-white/20 ">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" fill="currentColor" stroke-width="1.5" data-slot="icon" aria-hidden="true" class="size-8 text-white/40">
+                                    <path d="M96 320C96 196.3 196.3 96 320 96C381 96 436.3 120.4 476.7 160L432 160C423.2 160 416 167.2 416 176C416 184.8 423.2 192 432 192L512 192C518.1 192 523.6 188.6 526.3 183.1C529 177.6 528.4 171.2 524.8 166.3C478.1 104.2 403.8 64 320 64C178.6 64 64 178.6 64 320C64 461.4 178.6 576 320 576C411.2 576 491.3 528.3 536.6 456.5C539.7 451.6 539.9 445.3 537.1 440.2C534.3 435.1 528.9 431.9 523.1 431.9L480 432C471.2 432 464 439.2 464 448C464 456.8 471.2 464 480 464L491.6 464C450.5 512.9 388.9 544 320 544C224.9 544 143.7 484.8 111.2 401.2C150.4 414.8 215.2 433.5 320 433.5C439.5 433.5 507 409.2 543.8 395.9C548.8 394.1 553.2 392.5 557.1 391.2C558.8 390.6 560.3 389.8 561.7 388.8L563.4 387.5C566.4 385.2 568.5 382 569.3 378.4C573.7 359.7 576 340.1 576 320.1C576 314.4 575.8 308.7 575.4 303C574.8 294.6 567.9 288.1 559.4 288.1L496 288C487.2 288 480 295.2 480 304C480 312.8 487.2 320 496 320L544 320C544 334.8 542.6 349.3 539.8 363.3C537.7 364 535.6 364.8 533.3 365.6C497 378.7 433.8 401.4 320 401.4C206.2 401.4 143 378.7 106.7 365.6C104.4 364.8 102.3 364 100.2 363.3C97.5 349.3 96 334.8 96 320zM200 224C200 193.1 225.1 168 256 168C286.9 168 312 193.1 312 224C312 254.9 286.9 280 256 280C225.1 280 200 254.9 200 224zM344 224C344 175.4 304.6 136 256 136C207.4 136 168 175.4 168 224C168 272.6 207.4 312 256 312C304.6 312 344 272.6 344 224zM280 224C280 210.7 269.3 200 256 200C242.7 200 232 210.7 232 224C232 237.3 242.7 248 256 248C269.3 248 280 237.3 280 224zM432 224C423.2 224 416 231.2 416 240C416 248.8 423.2 256 432 256L512 256C520.8 256 528 248.8 528 240C528 231.2 520.8 224 512 224L432 224z"/>
+                                </svg>
+                            </div>
+                            <div class="">
+                                <h3 class=" font-bold not-prose m-0 p-0 text-sm md:text-xl">Backend &amp; Systems</h3>
+                                <ul class="mt-1 text-white/80 mb-0">
+                                    <li>.Net C#, Node.js, API Development</li>
+                                    <li>SQL Server, Umbraco CMS</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="group relative flex gap-x-6 rounded-lg p-4 bg-black/20 backdrop-blur-2xl">
+                            <div class="mt-1 flex size-14 flex-none items-center justify-center rounded-lg bg-white/20 ">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" fill="currentColor" stroke-width="1.5" data-slot="icon" aria-hidden="true" class="size-8 text-white/40">
+                                    <path d="M245.2 512.1L405.3 416L432 416C496.7 416 555.5 388.6 596.8 339.7C606.4 328.3 606.4 311.7 596.8 300.3C555.5 251.4 496.7 224 432 224L405.3 224L245.2 127.9C210.4 107 170.6 96 130 96L80 96C53.5 96 32 117.5 32 144L32 496C32 522.5 53.5 544 80 544L130 544C170.6 544 210.4 533 245.2 512.1zM64 304L64 224L144 224C159.3 224 172.9 231.1 181.7 242.3C187.5 249.6 196.9 256 208.7 256L432 256C486.9 256 536.4 278.9 571.5 320C536.4 361.1 486.9 384 432 384L208.7 384C196.9 384 187.5 390.4 181.7 397.7C172.9 408.9 159.3 416 144 416L64 416L64 336L176 336C184.8 336 192 328.8 192 320C192 311.2 184.8 304 176 304L64 304zM206.8 417.5C207.4 416.8 208 416.3 208.4 416.1C208.6 416 208.7 416 208.7 416L343.1 416L228.7 484.6C207.5 497.3 184.2 505.8 160 509.6L160 446.4C178.9 442.6 195.3 432.1 206.8 417.5zM64 448L128 448L128 512L80 512C71.2 512 64 504.8 64 496L64 448zM206.8 222.5C195.3 208 178.9 197.5 160 193.6L160 130.4C184.2 134.2 207.6 142.7 228.7 155.4L343.1 224L208.7 224C208.7 224 208.5 224 208.4 223.9C208 223.7 207.4 223.2 206.8 222.5zM128 192L64 192L64 144C64 135.2 71.2 128 80 128L128 128L128 192zM464 288C455.2 288 448 295.2 448 304L448 336C448 344.8 455.2 352 464 352C472.8 352 480 344.8 480 336L480 304C480 295.2 472.8 288 464 288z"/>
+                                </svg>
+                            </div>
+                            <div class="">
+                                <h3 class=" font-bold not-prose m-0 p-0 text-sm md:text-xl">Collaboration &amp; Delivery</h3>
+                                <ul class="mt-1 text-white/80 mb-0">
+                                    <li>Git/GitHub</li>
+                                    <li>Agile/Scrum, Jira</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="min-h-[100svh] snap-start flex flex-col justify-center" id="experience">
+                    <h2>Experience</h2>
+                    <div class="bg-black/20 backdrop-blur-2xl rounded-2xl py-2 px-5  mb-8">
+                        <details class="details">
+                            <summary class="not-prose">
+                                <h3 class="m-0 p-0 text-md md:text-2xl"><strong class="font-bold">Sitebulb:</strong> Design Engineer (2023–Present)</h3>
+                            </summary>
+                            <ul>
+                                <li>Designed and coded interactive web experiences for marketing, including animations, prototypes, and fullstack implementations.</li>
+                                <li>Acted as the <strong>technical MVP</strong> for the marketing team, delivering across digital design, motion, print, and automation.</li>
+                                <li>Built creative automation tools that reduced manual design tasks and accelerated campaign delivery.</li>
+                                <li>Partnered with design and product stakeholders to translate creative briefs into performant, production-ready experiences.</li>
+                            </ul>
+                        </details>
+                    </div>
+
+                    <div class=" bg-black/20 backdrop-blur-2xl rounded-2xl py-2 px-5 ">
+                        <div class="not-prose">
+                            <h3 class="m-0 py-2 text-md md:text-2xl"><strong class="font-bold">Evolution Internet:</strong> Developer / Designer (2011–2023)</h3>
+                        </div>
+        
+                        <details class="details">
+                            <summary class="not-prose"><h4 class="m-0 p-0 text-sm md:text-xl">Full Stack Developer (2020–2022)</h4></summary>
+                            <ul class="m-0">
+                                <li>Built dashboards, APIs, and workflow/reporting tools in .Net MVC.</li>
+                                <li>Improved internal workflows and reporting efficiency through automation.</li>
+                            </ul>
+                        </details>
+                        <details class="details">
+                            <summary class="not-prose"><h4 class="m-0 p-0 text-sm md:text-xl">Frontend Developer (2015–2019)</strong></h4></summary>
+                            <ul class="m-0">
+                                <li>Delivered new frontend features in JavaScript and integrated them into Umbraco/.Net platforms.</li>
+                                <li>Implemented customer conversion optimisations and performance improvements.</li>
+                                <li>Contributed to in-house website optimisation tools, fixing bugs and supporting end-users.</li>
+                            </ul>
+                        </details>
+                        <details class="details">
+                            <summary class="not-prose"><h4 class="m-0 p-0 text-sm md:text-xl">Frontend Designer (2011–2014)</h4></summary>
+                            <ul class="m-0">
+                                <li>Created UI/UX designs using design tools and implemented them with HTML, CSS, and JavaScript.</li>
+                                <li>Collaborated with clients to translate brand and product goals into usable, attractive web experiences.</li>
+                            </ul>
+                        </details>
+                    </div>
+        
+                </section>
+
+                <section class="min-h-[100svh] snap-start flex flex-col justify-center" id="education">
+                    <h2>Education</h2>
+                    <div class="bg-black/20 backdrop-blur-2xl rounded-2xl py-2 px-5  mb-12 ">
+                        <h3 class="m-0 py-2 text-sm md:text-xl not-prose"><strong class="font-bold">Computer Animation and Visual Effects BSc (Hons):</strong> (2005–2008)</h3>
+                    </div>
+                    <h2>Volunteering</h2>
+                    <div class="bg-black/20 backdrop-blur-2xl rounded-2xl py-2 px-5 ">
+
+                        <details class="details">
+                            <summary class="not-prose"><h4 class="m-0 p-0 text-sm md:text-xl"><strong>Samaritans</strong> (2015–2019)</strong></h4></summary>
+                            <p  class="m-0 not-prose">Listening volunteer, answering calls and messages with empathy and support.</p>
+                        </details>
+                        <details class="details">
+                            <summary class="not-prose"><h4 class="m-0 p-0 text-sm md:text-xl"><strong>Codebar</strong> (2017–2019)</h4></summary>
+                            <p class="m-0 not-prose">Coach and mentor for underrepresented junior developers, supporting their growth in coding and design.</p>
+                        </details>
+                    </div>
+                </section>
+            </article>
+        </div>
+    </div>
 </Layout>
+
+
  <script type="module" src="/src/scripts/space.ts"></script>
-<script type="module" src="/src/scripts/text-animation.ts"></script>
+ <script type="module" src="/src/scripts/text-animation.ts"></script>
