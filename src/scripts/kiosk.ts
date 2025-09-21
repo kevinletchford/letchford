@@ -68,9 +68,10 @@ const material = new THREE.ShaderMaterial({
     {
         uTime: new THREE.Uniform(0),
         uColor: new THREE.Uniform(new THREE.Color('#70c1ff')),
+        uAlpha: new THREE.Uniform(0.35),
     },
     transparent: false,
-    side: THREE.FrontSide,
+    side: THREE.DoubleSide,
     depthWrite: false,
     blending: THREE.AdditiveBlending
 })

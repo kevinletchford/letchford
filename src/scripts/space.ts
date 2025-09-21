@@ -522,13 +522,124 @@ const setZoom = (id:string, delay = 0, duration = 1) => {
   });
 }
 
-const toggleActiveNavItem = (navItem:string) =>{
-    const items = document.querySelectorAll(`a[data-nav-item]`);
-    const item = document.querySelector(`a[data-nav-item="${navItem}"]`);
+// === Config ===
+const WRAP_AROUND = false; // set true to wrap instead of disabling at ends
 
-    items.forEach( x =>{
-      x.classList.remove('dot_active')
-    })
+// --- Utilities ---
+const qs = <T extends Element>(sel: string, root: ParentNode = document) =>
+  root.querySelector(sel) as T | null;
 
-    item?.classList.add('dot_active');
+const qsa = <T extends Element>(sel: string, root: ParentNode = document) =>
+  Array.from(root.querySelectorAll(sel)) as T[];
+
+// Smoothly scroll to a section by id and mark its nav dot active
+function goToSection(id: string): void {
+  const target = document.getElementById(id);
+  if (!target) return;
+
+  target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  toggleActiveNavItem(id);
 }
+
+// Your provided helper (kept, just TS typed)
+const toggleActiveNavItem = (navItem: string): void => {
+  const items = qsa<HTMLAnchorElement>('a[data-nav-item]');
+  const item = qs<HTMLAnchorElement>(`a[data-nav-item="${navItem}"]`);
+
+  items.forEach((x) => x.classList.remove('dot_active'));
+  item?.classList.add('dot_active');
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  const prevBtn = qs<HTMLButtonElement>('.previous-section');
+  const nextBtn = qs<HTMLButtonElement>('.next-section');
+  const dotLinks = qsa<HTMLAnchorElement>('a[data-nav-item]');
+
+  // Ordered list of section ids based on the nav dots
+  const sectionIds: string[] = dotLinks
+    .map((a) => a.getAttribute('data-nav-item'))
+    .filter((x): x is string => Boolean(x));
+
+  const sections: HTMLElement[] = sectionIds
+    .map((id) => document.getElementById(id))
+    .filter((el): el is HTMLElement => Boolean(el));
+
+  // Click dots -> smooth scroll + sync
+  dotLinks.forEach((a) => {
+    a.addEventListener('click', (e) => {
+      e.preventDefault();
+      const id = a.getAttribute('data-nav-item');
+      if (id) goToSection(id);
+    });
+  });
+
+  const getActiveIndex = (): number => {
+    const active = qs<HTMLAnchorElement>('a[data-nav-item].dot_active');
+    const id = active?.getAttribute('data-nav-item') ?? null;
+    return id ? sectionIds.indexOf(id) : -1;
+  };
+
+  function setDisabled(btn: HTMLButtonElement | null, disabled: boolean): void {
+    if (!btn) return;
+    btn.setAttribute('aria-disabled', String(disabled));
+    btn.classList.toggle('opacity-40', disabled);
+    btn.classList.toggle('pointer-events-none', disabled);
+  }
+
+  function updateButtonsState(): void {
+    if (WRAP_AROUND) return; // no disabled state when wrapping
+    const i = getActiveIndex();
+    setDisabled(prevBtn, i <= 0);
+    setDisabled(nextBtn, i >= sectionIds.length - 1);
+  }
+
+  // Button handlers
+  prevBtn?.addEventListener('click', () => {
+    const i = getActiveIndex();
+    if (i < 0) return;
+    if (WRAP_AROUND) {
+      const j = (i - 1 + sectionIds.length) % sectionIds.length;
+      goToSection(sectionIds[j]);
+    } else if (i > 0) {
+      goToSection(sectionIds[i - 1]);
+    }
+  });
+
+  nextBtn?.addEventListener('click', () => {
+    const i = getActiveIndex();
+    if (i < 0) return;
+    if (WRAP_AROUND) {
+      const j = (i + 1) % sectionIds.length;
+      goToSection(sectionIds[j]);
+    } else if (i < sectionIds.length - 1) {
+      goToSection(sectionIds[i + 1]);
+    }
+  });
+
+  // Keep dots in sync when user scrolls manually
+  const observer = new IntersectionObserver(
+    (entries: IntersectionObserverEntry[]) => {
+      const visible = entries
+        .filter((e) => e.isIntersecting)
+        .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+
+      const id = visible?.target instanceof HTMLElement ? visible.target.id : null;
+      if (id) {
+        toggleActiveNavItem(id);
+        updateButtonsState();
+      }
+    },
+    {
+      root: null,
+      rootMargin: '0px',
+      threshold: [0.5],
+    }
+  );
+
+  sections.forEach((sec) => observer.observe(sec));
+
+  // Initialize state (use hash if present)
+  const initialId = (location.hash?.replace('#', '') || sectionIds[0]) ?? null;
+  if (initialId) toggleActiveNavItem(initialId);
+  updateButtonsState();
+});

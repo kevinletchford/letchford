@@ -1,159 +1,376 @@
 ---
-import Layout from "@layouts/Layout.astro";
+import Layout from "@layouts/FullPage.astro";
 ---
 
-<Layout>
-  <article class="max-w-5xl m-auto prose prose-invert prose-h2:mt-0 prose-headings:font-space grid grid-cols-1 gap-8 mt-24 mb-24 px-4">
-    <!-- Header -->
-    <header
-      class="bg-gradient-to-r from-cyan-900/40 to-blue-900/20 border border-slate-700 rounded-xl p-8 shadow-xl backdrop-blur-sm drop-shadow-2xl"
-      aria-labelledby="title"
-    >
-      <div class="uppercase tracking-widest font-semibold text-red-400 text-sm">
-        Case Study
-      </div>
-      <h1 id="title" class="mt-2 text-4xl font-bold text-white mb-3 font-space #tracking-tight load-effect">
-        Article Automation for Sitebulb
-      </h1>
-      <p class="mt-0 text-slate-300 text-lg mb-3">
-        Streamlining the editorial pipeline from Google Docs to CMS in minutes.
-      </p>
-      <div
-        class="inline-flex items-center gap-2 px-3 py-1 border border-slate-600 rounded-full text-sm text-slate-300 bg-slate-800/40"
+<Layout
+  title="Article Automation for Sitebulb | Kevin Letchford"
+>
+  <div class="relative h-full">
+        <div class="section-nav bottom-2 absolute z-30 -translate-1/2 left-1/2 flex gap-4">
+        <button class="previous-section size-7 rounded-full flex items-center justify-center border-white/20 border backdrop-blur-3xl text-white/70  cursor-pointer" aria-label="Previous slide">
+            <svg viewBox="0 0 640 640" fill="currentColor" data-slot="icon" aria-hidden="true" class=" size-4 text-white/70">
+                <path d="M308.7 212.7C314.9 206.5 325.1 206.5 331.3 212.7L491.3 372.7C497.5 378.9 497.5 389.1 491.3 395.3C485.1 401.5 474.9 401.5 468.7 395.3L320 246.6L171.3 395.3C165.1 401.5 154.9 401.5 148.7 395.3C142.5 389.1 142.5 378.9 148.7 372.7L308.7 212.7z"/>
+            </svg>
+        </button>
+     <nav class="gap-4  items-center  flex">
+      <a
+        href="#title"
+        data-nav-item="title"
+        class="dot dot_active min-w-3 min-h-3 rounded-full bg-white/30 block"
+        ><span class="hidden">Title</span></a
       >
-        Automation • Google Docs • CMS
-      </div>
-    </header>
-
-    <!-- Optional image strip; replace src paths or remove -->
-    <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:mx-0 lg:max-w-none lg:grid-cols-2 not-prose">
-      <img src="/case-studies/automation/document.png" class="w-full rounded-xl object-cover outline-1 -outline-offset-1 outline-slate-700" />
-      <img src="/case-studies/automation/load-document.png" class="w-full rounded-xl object-cover outline-1 -outline-offset-1 outline-slate-700" />
+      <a
+        href="#gallery"
+        data-nav-item="gallery"
+        class="dot min-w-3 min-h-3 rounded-full bg-white/30 block"
+        ><span class="hidden">Gallery</span></a
+      >
+      <a
+        href="#problem"
+        data-nav-item="problem"
+        class="dot min-w-3 min-h-3 rounded-full bg-white/30 block"
+        ><span class="hidden">Problem</span></a
+      >
+      <a
+        href="#solution"
+        data-nav-item="solution"
+        class="dot min-w-3 min-h-3 rounded-full bg-white/30 block"
+        ><span class="hidden">Solution</span></a
+      >
+      <a
+        href="#tech"
+        data-nav-item="tech"
+        class="dot min-w-3 min-h-3 rounded-full bg-white/30 block"
+        ><span class="hidden">Tech</span></a
+      >
+      <a
+        href="#impact"
+        data-nav-item="impact"
+        class="dot min-w-3 min-h-3 rounded-full bg-white/30 block"
+        ><span class="hidden">Impact</span></a
+      >
+     </nav>
+        <button class="next-section size-7 rounded-full flex items-center justify-center border-white/20 border backdrop-blur-3xl text-white/70 cursor-pointer" aria-label="Next slide">
+            <svg viewBox="0 0 640 640" fill="currentColor" data-slot="icon" aria-hidden="true" class="size-4 text-text/70">
+                <path d="M308.7 427.3C314.9 433.5 325.1 433.5 331.3 427.3L491.3 267.3C497.5 261.1 497.5 250.9 491.3 244.7C485.1 238.5 474.9 238.5 468.7 244.7L320 393.4L171.3 244.7C165.1 238.5 154.9 238.5 148.7 244.7C142.5 250.9 142.5 261.1 148.7 267.3L308.7 427.3z"/>
+            </svg>
+        </button>
     </div>
+    <canvas id="webgl-canvas"></canvas>
+    <div
+      class="snap-y snap-mandatory h-[100svh] overflow-y-auto overscroll-contain absolute inset-0 bg-gradient-to-r from-cyan-500/40 to-red-900/10 scroll-smooth"
+    >
+      <article
+        class="max-w-full m-auto prose prose-invert prose-h2:mt-0 prose-h2:md:text-5xl prose-headings:font-space grid grid-cols-1 gap-8"
+      >
+        <section
+          class="p-8 min-h-[100svh] snap-start flex flex-col justify-center max-w-5xl m-auto"
+          aria-labelledby="title"
+          id="title"
+        >
+          <div
+            class="uppercase tracking-widest font-semibold text-red-400 text-sm"
+          >
+            Case Study
+          </div>
+          <h1
+            id="title"
+            class="mt-2 text-4xl md:text-6xl font-bold text-white mb-3 font-space #tracking-tight load-effect"
+          >
+           Article Automation for Sitebulb
+          </h1>
+          <p class="mt-0 text-slate-300 mb-3 text-xl md:text-2xl ">
+           Streamlining the editorial pipeline from Google Docs to CMS in minutes.
+          </p>
+          <div
+            class="mr-auto inline-flex items-center gap-2 px-3 py-1 border border-slate-600 rounded-full text-sm text-slate-300 bg-slate-800/40"
+          >
+            Automation • Google Docs • CMS
+          </div>
+        </section>
 
-    <!-- Problem -->
-    <section aria-labelledby="problem-heading">
-      <div class="bg-slate-900/40 border border-slate-700 rounded-lg p-6 shadow-lg backdrop-blur-sm">
-        <h2 id="problem-heading" class="mt-0">The Problem</h2>
-        <p class="text-slate-300">
-          At Sitebulb, a significant portion of blog content was sourced from guest contributors who submitted drafts via Google Docs. Converting these raw documents into fully-published blog posts was a highly manual, time-consuming process. It involved:
-        </p>
-        <ul class="list-disc text-slate-300 space-y-2">
-          <li>Copying and formatting content for the CMS</li>
-          <li>Extracting and uploading images</li>
-          <li>Pulling out quotes and embeds</li>
-          <li>Creating author pages</li>
-          <li>Generating social share images</li>
-          <li>Adding jump links and related content manually</li>
-        </ul>
-        <p class="text-slate-300 mb-0">
-          This process took up to <strong class="text-white">2 hours per article</strong>, which was not scalable for a growing content strategy. The goal was to design and build a system to <strong class="text-white">automate and accelerate</strong> this entire pipeline.
-        </p>
-      </div>
-    </section>
-
-    <!-- Solution -->
-    <section aria-labelledby="solution-heading">
-      <div class="bg-slate-900/40 border border-slate-700 rounded-lg p-6 shadow-lg backdrop-blur-sm">
-        <h2 id="solution-heading" class="text-2xl font-semibold text-white mb-4">The Solution</h2>
-        <p class="text-slate-300">
-          A <strong class="text-white">custom admin interface</strong> was developed to take a Google Docs URL and turn it into a structured, CMS-ready article in a matter of minutes.
-        </p>
-
-        <h3 class="mt-6 text-xl font-semibold text-white">Key Features</h3>
-        <ul class="list-disc text-slate-300 space-y-3 mb-0">
-          <li>
-            <strong class="text-white">Google Docs Parsing</strong><br />
-            The user enters a Google Docs URL into the admin tool. Using Google Auth and the Google Docs + Drive APIs, the tool reads and processes the document contents.
-          </li>
-          <li>
-            <strong class="text-white">Content Extraction &amp; Processing</strong><br />
-            The parser loops through all document elements:
-            <ul class="list-disc ml-5 mt-1 space-y-1">
-              <li>Extracts structured content (headings, body, images, quotes)</li>
-              <li>Caches and downloads inline images</li>
-              <li>Pulls metadata such as authorship and embeds</li>
-              <li>Strips out meta tags and unsupported formatting</li>
-            </ul>
-          </li>
-          <li>
-            <strong class="text-white">Custom Admin Interface</strong><br />
-            Built with <strong class="text-white">Vite</strong>, <strong class="text-white">TypeScript</strong>, <strong class="text-white">React</strong>, <strong class="text-white">Shadcn</strong>, <strong class="text-white">React Query</strong>, and <strong class="text-white">Tailwind</strong>, the interface previews all parsed content for review and modification before publishing.
-          </li>
-          <li>
-            <strong class="text-white">Dynamic Publishing Logic</strong><br />
-            Once approved, the system:
-            <ul class="list-disc ml-5 mt-1 space-y-1">
-              <li>Creates new CMS entries if they don't already exist (e.g., authors, tags)</li>
-              <li>Associates new content with existing references when available</li>
-              <li>Transitions from manual jump link generation to JavaScript-powered embedding based on <code>&lt;h2&gt;</code> and <code>&lt;h3&gt;</code> elements</li>
-            </ul>
-          </li>
-          <li>
-            <strong class="text-white">Smart Related Content</strong><br />
-            Hand-curated related articles were replaced with <strong class="text-white">tag-driven automation</strong>, improving editorial speed while maintaining relevance.
-          </li>
-          <li>
-            <strong class="text-white">Social Share Image Generation</strong><br />
-            Using <strong class="text-white">Playwright</strong>, the system auto-generates social images based on the article title, meta description, and thumbnail image.
-          </li>
-          <li>
-            <strong class="text-white">Illustration Workflow</strong><br />
-            At the time of implementation, <strong class="text-white">Sora</strong> (without a public API) was used to create thumbnails via manual prompting. Other AI alternatives were evaluated but did not meet quality standards.
-          </li>
-        </ul>
-      </div>
-    </section>
-
-    <!-- Optional image strip; replace src paths or remove -->
-    <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:mx-0 lg:max-w-none lg:grid-cols-2 not-prose">
-      <img src="/case-studies/automation/preview.png" class="w-full rounded-xl object-cover outline-1 -outline-offset-1 outline-slate-700" />
-      <img src="/case-studies/automation/published.png"º class="w-full rounded-xl object-cover outline-1 -outline-offset-1 outline-slate-700" />
-    </div>
-
-    <!-- Technologies Used -->
-    <section aria-labelledby="tech-heading">
-      <div class="bg-slate-900/40 border border-slate-700 rounded-lg p-6 shadow-lg backdrop-blur-sm">
-        <h2 id="tech-heading" class="text-2xl font-semibold text-white mb-0">Technologies Used</h2>
-        <div class="overflow-x-auto">
-          <table class="table-auto border-collapse w-full text-left text-slate-300">
-            <thead>
-              <tr class="bg-slate-800/60">
-                <th scope="col" class="border border-slate-700 px-4 py-2 font-semibold text-slate-200">Stack Area</th>
-                <th scope="col" class="border border-slate-700 px-4 py-2 font-semibold text-slate-200">Tools &amp; Frameworks</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <th scope="row" class="border border-slate-700 px-4 py-2 text-slate-200 font-medium">Frontend</th>
-                <td class="border border-slate-700 px-4 py-2">Vite, TypeScript, React, Shadcn, React Query, Tailwind</td>
-              </tr>
-              <tr>
-                <th scope="row" class="border border-slate-700 px-4 py-2 text-slate-200 font-medium">Backend / CMS</th>
-                <td class="border border-slate-700 px-4 py-2">Umbraco (C#), custom APIs</td>
-              </tr>
-              <tr>
-                <th scope="row" class="border border-slate-700 px-4 py-2 text-slate-200 font-medium">Automation</th>
-                <td class="border border-slate-700 px-4 py-2">Google Docs &amp; Drive APIs, Google Auth</td>
-              </tr>
-              <tr>
-                <th scope="row" class="border border-slate-700 px-4 py-2 text-slate-200 font-medium">Testing / Assets</th>
-                <td class="border border-slate-700 px-4 py-2">Playwright (tests + image automation)</td>
-              </tr>
-            </tbody>
-          </table>
+        <section
+          id="gallery"
+          class="grid grid-cols-1 gap-8 lg:mx-0 not-prose min-h-[100svh] snap-start items-center relative"
+        >
+        <div class="absolute bottom-5 right-5 m-auto flex gap-2">
+          <button class="previous-slide size-10 rounded-full flex items-center justify-center border-white/20 border backdrop-blur-3xl text-white/70  cursor-pointer" aria-label="Previous slide">
+                <svg viewBox="0 0 20 20" fill="currentColor" data-slot="icon" aria-hidden="true" class=" size-5 text-white/70">
+                  <path d="M18 10a.75.75 0 0 1-.75.75H4.66l2.1 1.95a.75.75 0 1 1-1.02 1.1l-3.5-3.25a.75.75 0 0 1 0-1.1l3.5-3.25a.75.75 0 1 1 1.02 1.1l-2.1 1.95h12.59A.75.75 0 0 1 18 10Z" clip-rule="evenodd" fill-rule="evenodd" />
+                </svg>
+          </button>
+          <button class="next-slide size-10 rounded-full flex items-center justify-center border-white/20 border backdrop-blur-3xl text-white/70 cursor-pointer" aria-label="Next slide">
+            <svg viewBox="0 0 20 20" fill="currentColor" data-slot="icon" aria-hidden="true" class="size-5 text-text/70">
+              <path d="M2 10a.75.75 0 0 1 .75-.75h12.59l-2.1-1.95a.75.75 0 1 1 1.02-1.1l3.5 3.25a.75.75 0 0 1 0 1.1l-3.5 3.25a.75.75 0 1 1-1.02-1.1l2.1-1.95H2.75A.75.75 0 0 1 2 10Z" clip-rule="evenodd" fill-rule="evenodd" />
+            </svg>
+          </button>
         </div>
-      </div>
-    </section>
+          <div
+            class="snap-x snap-mandatory overflow-x-scroll overflow-y-hidden relative gallery gallery_sm scroll-smooth"
+          >
 
-    <!-- Impact -->
-    <section aria-labelledby="impact-heading">
-      <div class="bg-slate-900/40 border border-slate-700 rounded-lg p-6 shadow-lg backdrop-blur-sm">
-        <h2 id="impact-heading" class="mt-0">Impact</h2>
-        <p class="text-slate-300 mb-0">
+            <div
+              class="grid grid-flow-col auto-cols-auto w-fit gap-8 gallery__container"
+            >
+              <div
+                class="snap-center min-w-4xl gallery__item"
+                id="gallery-item-1"
+              >
+              <div class="w-full rounded-2xl bg-gradient-to-t from-amber-500/40 to-red-900/10 overflow-hidden relative">
+                <img
+                  src="/case-studies/automation/1.png"
+                  alt=""
+                  class="drop-shadow-2xl"
+                />
+                <span class="bg-lines"></span>
+              </div>
+              
+              <p class="mt-5 text-center md:text-lg max-w-prose m-auto text-balance">External authors write the article in Google Docs. </p>
+              </div>
+              <div
+                class="snap-center min-w-4xl gallery__item"
+                id="gallery-item-2"
+              >
+              <div class="w-full rounded-2xl bg-gradient-to-t from-blue-500/40 to-red-900/10">
+                <img
+                  src="/case-studies/automation/2.png"
+                  alt=""
+                  class="drop-shadow-2xl"
+                />
+              </div>
+              <p class="mt-5 text-center md:text-lg max-w-prose m-auto text-balance">The URL for the Google doc is submitted into app.</p>
+              </div>
+              <div
+                class="snap-center min-w-4xl gallery__item"
+                id="gallery-item-3"
+              >
+              <div class="w-full rounded-2xl bg-gradient-to-t from-pink-500/40 to-purple-900/10">
+                <img
+                  src="/case-studies/automation/3.png"
+                  alt=""
+                  class="drop-shadow-2xl"
+                />
+              </div>
+              <p class="mt-5 text-center md:text-lg max-w-prose m-auto text-balance">The app goes and collects all the meta data, author data, people who are mentioned, quotes and embeds.</p>
+              </div>
+              <div
+                class="snap-center min-w-4xl gallery__item"
+                id="gallery-item-4"
+              >
+              <div class="w-full rounded-2xl bg-gradient-to-t from-orange-500/40 to-yellow-900/10">
+                <img
+                  src="/case-studies/automation/4.png"
+                  alt=""
+                  class="drop-shadow-3xl"
+                />
+              </div>
+              <p class="mt-5 text-center md:text-lg max-w-prose m-auto text-balance">It then creates caches of all the images, and generates a live preview of the Google doc.</p>
+              </div>
+              <div
+                class="snap-center min-w-4xl gallery__item"
+                id="gallery-item-5"
+              >
+              <div class="w-full rounded-2xl bg-gradient-to-t from-rose-500/40 to-silver-900/10">
+                <img
+                  src="/case-studies/automation/5.png"
+                  alt=""
+                  class="drop-shadow-2xl"
+                />
+              </div>
+              <p class="mt-5 text-center md:text-lg max-w-prose m-auto text-balance">
+                After the document has been published, the app generates share and social images.
+              </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section
+          class="min-h-[100svh] snap-start flex flex-col justify-center items-center"
+          aria-labelledby="problem-heading"
+          id="problem"
+        >
+          <div class="max-w-5xl">
+            <h2 id="problem-heading" class="mt-0">The Problem</h2>
+            <div
+              class="text-slate-300 mb-0 text-xl/10 md:text-2xl/10  bg-black/50 backdrop-blur-2xl rounded-2xl p-8"
+            >
+            <p class="mt-0">
+              At Sitebulb, a significant portion of blog content was sourced from guest contributors who submitted drafts via Google Docs. Converting these raw documents into fully-published blog posts was a highly manual, time-consuming process. It involved:
+            </p>
+            <ul class="list-disc text-slate-300 space-y-2">
+              <li>Copying and formatting content for the CMS</li>
+              <li>Extracting and uploading images</li>
+              <li>Pulling out quotes and embeds</li>
+              <li>Creating author pages</li>
+              <li>Generating social share images</li>
+              <li>Adding jump links and related content manually</li>
+            </ul>
+            <p class="text-slate-300 mb-0">
+              This process took up to <strong class="text-white">2 hours per article</strong>, which was not scalable for a growing content strategy. The goal was to design and build a system to <strong class="text-white">automate and accelerate</strong> this entire pipeline.
+            </p>
+          </div>
+          </div>
+        </section>
+        <section
+          class="min-h-[100svh] snap-start flex flex-col justify-center items-center"
+          aria-labelledby="solution-heading"
+          id="solution"
+        >
+          <div class="max-w-5xl">
+            <h2
+              id="solution-heading"
+              class=""
+            >
+              The Solution
+            </h2>
+            <p
+              class="text-slate-300 text-xl/10 md:text-2xl/10  bg-black/50 backdrop-blur-2xl rounded-2xl p-8 mb-8"
+            >
+            A <strong class="text-white">custom admin interface</strong> was developed to take a Google Docs URL and turn it into a structured, CMS-ready article in a matter of minutes.
+            </p>
+
+            <div class=" bg-black/50 backdrop-blur-2xl rounded-2xl p-8">
+                <div class="not-prose">
+                    <h3 class="m-0 py-2 text-md md:text-2xl"><strong class="font-bold">Key Features</strong></h3>
+                </div>
+                <details class="details">
+                    <summary class="not-prose"><h4 class="m-0 p-0 text-sm md:text-xl">Google Docs Parsing</h4></summary>
+                    <p>The user enters a Google Docs URL into the admin tool. Using Google Auth and the Google Docs + Drive APIs, the tool reads and processes the document contents.</p>
+                </details>
+                <details class="details">
+                    <summary class="not-prose"><h4 class="m-0 p-0 text-sm md:text-xl">Content Extraction &amp; Processing</h4></summary>
+                  <p>The parser loops through all document elements:</p>
+                  <ul class="list-disc ml-5 mt-1 space-y-1">
+                    <li>Extracts structured content (headings, body, images, quotes)</li>
+                    <li>Caches and downloads inline images</li>
+                    <li>Pulls metadata such as authorship and embeds</li>
+                    <li>Strips out meta tags and unsupported formatting</li>
+                  </ul>
+                </details>
+                <details class="details">
+               <summary class="not-prose"><h4 class="m-0 p-0 text-sm md:text-xl">Custom Admin Interface</h4></summary>
+                    <p>Built with <strong class="text-white">Vite</strong>, <strong class="text-white">TypeScript</strong>, <strong class="text-white">React</strong>, <strong class="text-white">Shadcn</strong>, <strong class="text-white">React Query</strong>, and <strong class="text-white">Tailwind</strong>, the interface previews all parsed content for review and modification before publishing.</p>
+                </details>
+
+                <details class="details">
+                    <summary class="not-prose"><h4 class="m-0 p-0 text-sm md:text-xl">Dynamic Publishing Logic</h4></summary>
+                    <p>Once approved, the system:</p>
+                    <ul class="list-disc ml-5 mt-1 space-y-1">
+                      <li>Creates new CMS entries if they don't already exist (e.g., authors, tags)</li>
+                      <li>Associates new content with existing references when available</li>
+                      <li>Transitions from manual jump link generation to JavaScript-powered embedding based on <code>&lt;h2&gt;</code> and <code>&lt;h3&gt;</code> elements</li>
+                    </ul>
+                </details>
+                <details class="details">
+                    <summary class="not-prose"><h4 class="m-0 p-0 text-sm md:text-xl">Smart Related Content</h4></summary>
+                    <p>Hand-curated related articles were replaced with <strong class="text-white">tag-driven automation</strong>, improving editorial speed while maintaining relevance.</p>
+                </details>
+                <details class="details">
+                    <summary class="not-prose"><h4 class="m-0 p-0 text-sm md:text-xl">Social Share Image Generation</h4></summary>
+                    <p>Using <strong class="text-white">Playwright</strong>, the system auto-generates social images based on the article title, meta description, and thumbnail image.</p>
+                </details>
+                <details class="details">
+                    <summary class="not-prose"><h4 class="m-0 p-0 text-sm md:text-xl">Illustration Workflow</h4></summary>
+                    <p>At the time of implementation, <strong class="text-white">Sora</strong> (without a public API) was used to create thumbnails via manual prompting. Other AI alternatives were evaluated but did not meet quality standards.</p>
+                </details>
+            </div>
+          </div>
+        </section>
+        <section
+          class="min-h-[100svh] snap-start flex flex-col justify-center items-center"
+          aria-labelledby="tech-heading"
+          id="tech"
+        >
+          <div class="max-w-5xl">
+            <h2
+              id="tech-heading"
+             
+            >
+              Technologies Used
+            </h2>
+            <div class="overflow-x-auto w-full text-slate-300 mb-0 text-xl/10 md:text-2xl/10  bg-black/50 backdrop-blur-2xl rounded-2xl p-8">
+              <table
+                class="table-auto border-collapse w-full text-left text-slate-300 not-prose"
+              >
+                <thead>
+                  <tr class="">
+                    <th
+                      scope="col"
+                      class=" px-4 py-2 font-semibold text-white"
+                      >Stack Area</th
+                    >
+                    <th
+                      scope="col"
+                      class=" px-4 py-2 font-semibold text-white"
+                      >Tools &amp; Frameworks</th
+                    >
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th
+                      scope="row"
+                      class=" px-4 py-2 text-slate-200 font-medium"
+                      >Frontend</th
+                    >
+                    <td class=" px-4 py-2"
+                      >Vite, TypeScript, React, Shadcn, React Query, Tailwind</td
+                    >
+                  </tr>
+                  <tr>
+                    <th
+                      scope="row"
+                      class=" px-4 py-2 text-slate-200 font-medium"
+                      >Backend / CMS</th
+                    >
+                    <td class=" px-4 py-2"
+                      >Umbraco (C#), custom APIs</td
+                    >
+                  </tr>
+                  <tr>
+                    <th
+                      scope="row"
+                      class=" px-4 py-2 text-slate-200 font-medium"
+                      >Automation</th
+                    >
+                    <td class=" px-4 py-2"
+                      >Google Docs &amp; Drive APIs, Google Auth</td
+                    >
+                  </tr>
+                                    <tr>
+                    <th
+                      scope="row"
+                      class=" px-4 py-2 text-slate-200 font-medium"
+                      >Testing / Assets</th
+                    >
+                    <td class=" px-4 py-2"
+                      >Playwright (tests + image automation)h</td
+                    >
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+        <section
+          class="min-h-[100svh] snap-start flex flex-col justify-center items-center"
+          aria-labelledby="impact-heading"
+          id="impact"
+        >
+          <div class="max-w-5xl">
+            <h2 id="impact-heading" class="mt-0">Impact</h2>
+            <p
+              class="text-slate-300 mb-0 text-xl/10 md:text-2xl/10  bg-black/50 backdrop-blur-2xl rounded-2xl p-8"
+            >
           This solution reduced editorial production time by <strong class="text-white">over 85%</strong>—from approximately 2 hours down to <strong class="text-white">just 15 minutes per article</strong>. The automation not only saved time but also improved content consistency, ensured better SEO hygiene (thanks to structured metadata), and allowed the content team to focus more on quality and strategy rather than tedious formatting.
-        </p>
-      </div>
-    </section>
-  </article>
+
+            </p>
+          </div>
+        </section>
+      </article>
+    </div>
+  </div>
 </Layout>
+ <script type="module" src="/src/scripts/kiosk.ts"></script>
+<script type="module" src="/src/scripts/case-study.ts"></script>

@@ -1,10 +1,43 @@
+@font-face {
+    font-family: 'Gotham';
+    src: url('/fonts/gotham_black-webfont.woff2') format('woff2');
+    font-weight: 900;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Gotham';
+    src: url('/fonts/gotham_bold-webfont.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Gotham';
+    src: url('/fonts/gotham_book-webfont.woff2') format('woff2');
+    font-weight: 450;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Gotham';
+    src: url('/fonts/gotham_light-webfont.woff2') format('woff2');
+    font-weight: 200;
+    font-style: normal;
+}
+
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
+
 @theme {
-  --font-space: 'Space Grotesk Variable', sans-serif;
+  --font-space: 'Gotham', sans-serif;
 }
 
+body{
+  font-family: Gotham;
+  font-weight:450;
+}
 
 .menu-section {
   transition: scale 150ms cubic-bezier(0.83, 0, 0.17, 1), opacity  150ms cubic-bezier(0.83, 0, 0.17, 1), display  150ms cubic-bezier(0.83, 0, 0.17, 1);
@@ -77,7 +110,10 @@ section{
 }
 
 .dot{
-  transition: min-width cubic-bezier(0.33, 0, 0.67, 1) 400ms, background-color linear 250ms;
+  transition: min-width cubic-bezier(0.33, 0, 0.67, 1) 400ms, background-color linear 250ms, scale cubic-bezier(0.33, 0, 0.67, 1) 200ms;
+  &:hover{
+    scale:125%;
+  }
 }  
 
 .dot_active{
@@ -85,14 +121,6 @@ section{
   min-width: 48px;
 }
 
-html, body, canvas {
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-  width: 100vw;
-  height: 100vh;
-  background: black;
-}
 
 .gallery{
   --gallery-padding: max(6.25vw,(100vw - 1260px)/2, 0px, 0px);
@@ -106,13 +134,90 @@ html, body, canvas {
   
   .gallery__item{
     width: var(--shared-media-gallery-width);
-    opacity: 0.6;
-    transition:opacity cubic-bezier(0.83, 0, 0.17, 1) 400ms, scale cubic-bezier(0.83, 0, 0.17, 1) 400ms;
-    scale:0.9;
+    img{
+      opacity: 0.9;
+      transition:opacity cubic-bezier(0.83, 0, 0.17, 1) 400ms, scale cubic-bezier(0.83, 0, 0.17, 1) 400ms;
+      scale:0.9;
+    }
+    p{
+        max-width: 45ch;
+        transition:opacity cubic-bezier(0.83, 0, 0.17, 1) 600ms, translate cubic-bezier(0.83, 0, 0.17, 1) 600ms;
+        translate: 0 10%;
+        opacity: 0;
+    }
+
+    .rounded-2xl:after{
+      opacity: 0;
+      transition:opacity cubic-bezier(0.83, 0, 0.17, 1) 600ms;
+    }
   }
 
-  .gallery__item.is-visible{
-    opacity: 1;
-    scale:1;
+  .gallery__item.is-visible {
+    img{
+      opacity: 1;
+      scale:1;
+    }
+    p{
+      translate: 0 0;
+      opacity: 1;
+    }
+    .rounded-2xl:after{
+      opacity: 0.8;  
+    }
+  }
+
+  &.gallery_sm{
+    --gallery-padding: max(12vw,(100vw - 900px)/2, 0px, 0px);
+    --shared-media-gallery-width: min(max(76vw - 0px, 280px), 900px);
+
+    .gallery__item{
+      opacity: 1;
+      scale: 1;
+      overflow: hidden;
+      perspective: 1px;
+
+      .rounded-2xl{
+        position: relative;
+        overflow: hidden;
+      }
+
+      .rounded-2xl:before{
+        content:"";
+        display: block;
+        position: absolute;
+        inset:1rem;
+        background: rgba(0, 0, 0, 0.259);
+        transform: translateZ(0px);
+        filter: blur(20px);
+        border-radius: 12px;
+      }
+
+      .rounded-2xl:after{
+        display:block;
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-size: 20px 20px;
+        background-image:  repeating-linear-gradient(0deg, #ffffff, #ffffff 1px, #e5e5f700 1px, #e5e5f700);
+        z-index: -1;
+        mask: linear-gradient(180deg, #0000 0%, #000 660%);
+        animation: mist 1s infinite linear;
+        mix-blend-mode: luminosity;
+        filter: drop-shadow(0 44px 3px white);
+      }
+
+      img{
+        transform: translateZ(-2px);
+      }
+    }
+  }
+}
+
+@keyframes mist {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 0 -20px ;
   }
 }
