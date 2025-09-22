@@ -23,7 +23,6 @@ export class TextAnimator {
     }
     this.textElement = textElement;
 
-    // read speed multiplier from attribute, fallback to 1
     const attr = this.textElement.getAttribute("data-speed");
     this.speed = attr ? parseFloat(attr) : 1;
 
@@ -31,13 +30,43 @@ export class TextAnimator {
   }
 
   private splitText(): void {
-    this.splitter = new SplitText(this.textElement, { type: "words,chars" });
+    this.splitter = new SplitText(this.textElement, { type: "lines,words,chars" });
     this.chars = (this.splitter.chars as Element[]).map((el) => el as HTMLElement);
     this.originalChars = this.chars.map((char) => char.innerHTML);
+
+    gsap.set(this.chars, { display: "inline-block", willChange: "opacity,transform" });
+  }
+
+  private freezeLines(): void {
+    const rect = this.textElement.getBoundingClientRect();
+    gsap.set(this.textElement, { height: rect.height, display: "inline-block" });
+
+    const lines = (this.splitter.lines as HTMLElement[]) || [];
+    lines.forEach((line) => {
+      const h = line.getBoundingClientRect().height;
+      gsap.set(line, { height: h, overflow: "hidden" });
+    });
+  }
+
+  private unfreezeLines(): void {
+    gsap.set(this.textElement, { clearProps: "height,display" });
+    const lines = (this.splitter.lines as HTMLElement[]) || [];
+    lines.forEach((line) => gsap.set(line, { clearProps: "height,overflow" }));
   }
 
   public animate(): void {
     this.reset();
+    this.freezeLines();
+
+    const repeats = 3;
+    const perCharDur = 0.03 / this.speed;
+    const perCharDelay = 0.07 / this.speed;
+    const repeatDelay = 0.04 / this.speed;
+    const lastIndex = this.chars.length - 1;
+    const lastCharEnd =
+      ((lastIndex + 1) * perCharDelay) +
+      repeats * (perCharDur + repeatDelay) +
+      perCharDur + 0.2;
 
     this.chars.forEach((char, index) => {
       const initialHTML = char.innerHTML;
@@ -47,29 +76,29 @@ export class TextAnimator {
         char,
         { opacity: 0 },
         {
-          duration: 0.03 / this.speed, // faster/slower
-          onStart: () => gsap.set(char, { "--opa": 1 } as any),
+          duration: perCharDur,
+          onStart: () => { gsap.set(char, { "--opa": 1 } as any); }, // <- wrap in { }
           onComplete: () => {
-            gsap.delayedCall(0.03 / this.speed, () => {
+            gsap.delayedCall(perCharDur, () => {
               char.innerHTML = initialHTML;
             });
           },
-          repeat: 3,
+          repeat: repeats,
           onRepeat: () => {
             repeatCount++;
-            if (repeatCount === 1) {
-              gsap.set(char, { "--opa": 0 } as any);
-            }
+            if (repeatCount === 1) { gsap.set(char, { "--opa": 0 } as any); } // already void (block form)
             char.innerHTML =
               lettersAndSymbols[Math.floor(Math.random() * lettersAndSymbols.length)];
           },
           repeatRefresh: true,
-          repeatDelay: 0.04 / this.speed,
-          delay: ((index + 1) * 0.07) / this.speed, // adjust stagger
+          repeatDelay,
+          delay: ((index + 1) * perCharDelay),
           opacity: 1,
         }
       );
     });
+
+    gsap.delayedCall(lastCharEnd, () => this.unfreezeLines());
   }
 
   public reset(): void {
@@ -77,6 +106,7 @@ export class TextAnimator {
       gsap.killTweensOf(char);
       char.innerHTML = this.originalChars[i];
     });
+    this.unfreezeLines();
   }
 
   public destroy(): void {
@@ -91,18 +121,15 @@ export const initTextEffects = (): Cleanup => {
   const loadNodes = Array.from(document.querySelectorAll<HTMLElement>(".load-effect"));
   const hoverNodes = Array.from(document.querySelectorAll<HTMLElement>(".hover-effect"));
 
-  // Create animators (dedupe in case an element has both classes)
   const uniqueNodes = Array.from(new Set([...loadNodes, ...hoverNodes]));
   const animators = new Map<HTMLElement, TextAnimator>(
     uniqueNodes.map((el) => [el, new TextAnimator(el)])
   );
 
-  // --- Hide load-effect text initially ---
   loadNodes.forEach((el) => {
-    el.style.opacity = "0"; // will be revealed when animation starts
+    el.style.opacity = "0";
   });
 
-  // Hover handlers
   const listeners: Array<() => void> = [];
   hoverNodes.forEach((el) => {
     const animator = animators.get(el)!;
@@ -111,14 +138,11 @@ export const initTextEffects = (): Cleanup => {
     listeners.push(() => el.removeEventListener("mouseenter", onEnter));
   });
 
-  // Load-effect after window load
   const onLoad = () => {
     setTimeout(() => {
       loadNodes.forEach((el, i) => {
         const animator = animators.get(el)!;
-        // reveal before animation starts
         el.style.opacity = "1";
-        // stagger optional
         setTimeout(() => animator.animate(), i * 80);
       });
     }, 300);
@@ -126,12 +150,10 @@ export const initTextEffects = (): Cleanup => {
   window.addEventListener("load", onLoad);
   listeners.push(() => window.removeEventListener("load", onLoad));
 
-  // Cleanup
   return () => {
     listeners.forEach((off) => off());
     animators.forEach((a) => a.destroy());
   };
 };
 
-// Auto-init
 const destroyTextEffects = initTextEffects();
