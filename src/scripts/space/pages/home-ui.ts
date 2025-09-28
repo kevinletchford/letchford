@@ -124,16 +124,16 @@ export function mountHomeUI() {
 })();
 
 
-  let initialLoad = true;
-  let targetX = 0, targetY = -30, targetZ = 0;
+  let initialLoad = false;
+  let targetX = -20, targetY = -30, targetZ = 80;
 
   const setZoom = (id: string, delay = 0, duration = 1) => {
    console.log(id)
     switch (id) {
-      case "header":     targetX = 0;  targetY = -30; targetZ = 0;  break;
-      case "skills":     initialLoad = false; targetY = -20; targetZ = 0;  break;
-      case "experience": targetY = -20; targetZ = 10; break;
-      case "education":  targetY = -60; targetZ = 10; break;
+      case "header":     targetX = -20;  targetY = -30; targetZ = 80;  break;
+      case "skills":     initialLoad = false;   targetX = -20; targetY = -30; targetZ = 70;  break;
+      case "experience": targetX = -10; targetY = -40; targetZ = 70; break;
+      case "education":  targetX = -20; targetY = -30; targetZ = 100; break;
     }
     // delegate camera tween to your SpaceManager
     import("../manager").then(({ SpaceManager }) => {
@@ -228,9 +228,6 @@ export function mountHomeUI() {
   const initialId = (location.hash?.replace('#', '') || sectionIds[0]) ?? null;
   if (initialId) toggleActiveNavItem(initialId);
   updateButtonsState();
-
-  // Call the intro zoom once the page content is mounted
-  setZoom('header', 0.5, 3);
 
   // ---- return disposer ----
   return {

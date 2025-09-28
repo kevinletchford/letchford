@@ -7,6 +7,7 @@ import marsFragmentShader from "@src/shaders/mars/fragment.glsl";
 import type { Ctx, LoadResult, PageLoader } from "../types";
 import { gsap } from "gsap";
 import { mountHomeUI } from "./home-ui"; // <- uses AbortController internally and returns { dispose }
+import { mountTextEffects } from "../ui/text-animator";
 
 const MTL = (lm: THREE.LoadingManager) => new MTLLoader(lm);
 const OBJ = (lm: THREE.LoadingManager) => new OBJLoader(lm);
@@ -20,15 +21,13 @@ function upgradeToStandard(T: typeof THREE, mesh: THREE.Mesh) {
 }
 
 const loadHome: PageLoader = async ({ three: T,camera,renderer,scene, textureLoader, loadingManager }: Ctx): Promise<LoadResult> => {
-    //     gsap.to(scene.position, {
-    //   x: 8, y: -2, z:0,    duration: 2,
-    // delay: 0.25, ease: "power2.inOut",
-    // });
   const group = new T.Group();
+  group.position.set( -10, -30, 50);
   let cancelled = false;
     console.log("just before homeui")
   // --- Mount homepage DOM listeners (AbortController inside) ---
   const { dispose: disposeUI } = mountHomeUI();
+    const uiText = await mountTextEffects();
 
   // --- Mars (shader) ---
   const planetRadius = 10;
@@ -42,7 +41,7 @@ const loadHome: PageLoader = async ({ three: T,camera,renderer,scene, textureLoa
       uDayTexture:      new T.Uniform(marsDay),
       uNightTexture:    new T.Uniform(marsNight),
       uSpecularTexture: new T.Uniform(marsSpec),
-      uSunDirection:    new T.Uniform(new T.Vector3(0, 0, 1)),
+      uSunDirection:    new T.Uniform(new T.Vector3(-0.4, 0, 0.1)),
     },
     vertexShader: marsVertexShader,
     fragmentShader: marsFragmentShader,
@@ -122,17 +121,21 @@ const loadHome: PageLoader = async ({ three: T,camera,renderer,scene, textureLoa
     ry += (ty - ry) * ease;
     satellite.rotation.set(rx, ry, 0);
 
-      camera.lookAt(planet.position);
-  renderer.render(scene, camera);
+    
+   
   };
 
   const dispose = () => {
     cancelled = true;     // stop async additions
     disposeUI?.();        // <-- abort all page event listeners & observers
+    uiText.dispose();
     // (3D objects are disposed by the manager’s disposeObject on the returned group)
   };
 
   return { group, dispose, updater };
 };
+
+
+
 
 export default loadHome;

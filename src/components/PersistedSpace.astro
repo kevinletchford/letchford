@@ -9,6 +9,7 @@
   // run once per session, even if this component appears on multiple pages
   if (!window.__spaceBooted) {
     window.__spaceBooted = true;
+    // Use your Vite alias so this works in prod too
     import("/src/scripts/space/boot.ts").then(m => m.boot());
   }
 </script>

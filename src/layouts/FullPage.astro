@@ -2,7 +2,6 @@
 import "../styles/global.css";
 import Header from "../components/Header.tsx"
 import '@fontsource-variable/space-grotesk';
-import AudioPlayer from "@components/AudioPlayer";  
 import { ClientRouter } from "astro:transitions";
 import PersistedSpace from "@components/PersistedSpace.astro";
 interface Props {
@@ -34,7 +33,7 @@ const { title = "Kevin Letchford" } = Astro.props;
 	</head>
 	<body class="bg-[linear-gradient(to_bottom,rgba(10,10,50,0.5),rgba(0,0,0,1)),url(/stars/stars.jpg)] bg-fixed bg-center text-white/90 overscroll-none" >
 		<Header client:load transition:persist />
-      <div class="relative">
+      <div class="relative h-full w-full">
        <PersistedSpace /> 
         <slot />
     </div>
