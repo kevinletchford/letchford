@@ -9,18 +9,23 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/react": "^4.4.0",
     "@fontsource-variable/space-grotesk": "^5.2.8",
     "@tailwindcss/vite": "^4.1.11",
     "astro": "^5.12.6",
     "gsap": "^3.13.0",
     "install": "^0.13.0",
     "npm": "^11.5.2",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
     "tailwindcss": "^4.1.11",
     "three": "^0.179.1",
     "vite-plugin-glsl": "^1.5.1"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.16",
+    "@types/react": "^19.1.14",
+    "@types/react-dom": "^19.1.9",
     "@types/three": "^0.179.0"
   }
 }

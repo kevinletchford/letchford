@@ -8,6 +8,8 @@
   "exclude": ["dist"],           
   "compilerOptions": {
     "baseUrl": ".",
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
     "paths": {
       "@layouts/*": ["src/layouts/*"],
       "@scripts/*": ["src/scripts/*"],
@@ -16,11 +18,10 @@
       "@src/*": ["src/*"]
     },
     "types": [
-      "vite-plugin-glsl/ext"
+      "vite-plugin-glsl/ext","@types/react", "@types/react-dom"
     ]
   },
     "files": [
     "node_modules/gsap/types/index.d.ts"
   ]
 }
-

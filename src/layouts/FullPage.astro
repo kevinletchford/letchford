@@ -1,7 +1,9 @@
 ---
 import "../styles/global.css";
-import Header from "../components/Header.astro"
+import Header from "../components/Header.tsx"
 import '@fontsource-variable/space-grotesk';
+import AudioPlayer from "@components/AudioPlayer";  
+import { ClientRouter } from "astro:transitions";
 interface Props {
   title?: string;
 }
@@ -27,10 +29,16 @@ const { title = "Kevin Letchford" } = Astro.props;
             }
 
         </style>
+  <ClientRouter />
 	</head>
 	<body class="bg-[linear-gradient(to_bottom,rgba(10,10,50,0.5),rgba(0,0,0,1)),url(/stars/stars.jpg)] bg-fixed bg-center text-white/90 overscroll-none" >
-		<Header />
+    <AudioPlayer client:load transition:persist="player"  src="/audio/space.m4a" title="Lo-fi Mix"  />
+		<Header client:load transition:persist />
 		<slot />
+    <div class="z-50" >
+
+    </div>
+    
 	</body>
 </html>
 

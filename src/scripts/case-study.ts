@@ -61,7 +61,7 @@ const scrollObserver = (sectionSelectors:string, updateNav:boolean = true) => {
 
   let lastHash = '';
   const updateHash = (id: string) => {
-    if (!id || lastHash === id) return;
+    if (!id || lastHash === id) return; 
     history.replaceState(null, '', `#${id}`);
     lastHash = id;
   };
@@ -312,6 +312,13 @@ class GalleryController {
   private init(): void {
     // Observe each item inside the scroller
     this.items.forEach((el) => this.observer.observe(el));
+
+    // add click events to all the slides to slide to it
+    this.items.forEach((item, idx) => {
+      item.addEventListener('click', () => {
+        this.scrollToIndex(idx);
+      });
+    })
 
     // Wire buttons
     this.prevBtn?.addEventListener('click', this.handlePrev);

@@ -155,9 +155,10 @@ section h2{
     width: var(--shared-media-gallery-width);
     filter:grayscale(1);
     transition: filter cubic-bezier(0.83, 0, 0.17, 1) 400ms;
+    cursor: pointer;
     img{
       opacity: 0.9;
-
+      cursor: pointer;
       transition:opacity cubic-bezier(0.83, 0, 0.17, 1) 400ms, scale cubic-bezier(0.83, 0, 0.17, 1) 400ms;
       scale:0.9;
     }
@@ -176,9 +177,11 @@ section h2{
 
   .gallery__item.is-visible {
     filter:grayscale(0);
+          cursor: auto;
     img{
       opacity: 1;
       scale:1;
+      cursor: auto;
     }
     p{
       translate: 0 0;

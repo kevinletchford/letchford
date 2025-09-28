@@ -1,0 +1,15 @@
+---
+// src/layouts/BaseLayout.astro
+import CommonHead from "../components/CommonHead.astro";
+import AudioPlayer from "../components/AudioPlayer.tsx";
+const { title, description } = Astro.props;
+---
+<html lang="en">
+  <head>
+    <CommonHead {title} {description} />
+  </head>
+  <body>
+    <slot />
+    <AudioPlayer client:load src="/audio/space.mp4a" title="Space" />
+  </body>
+</html>
