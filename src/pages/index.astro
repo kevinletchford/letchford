@@ -3,33 +3,30 @@ import Layout from "@layouts/FullPage.astro";
 ---
 
 <Layout title="Kevin Letchford - Design Engineer">
-    <div class="relative">
-    <nav class="bottom-6 right-6 gap-2 absolute z-30 items-center grid grid-cols-3">
-            <button class="text-xs rounded-lg border border-white/20 bg-black/20 text-white/70 size-6 col-start-2 col-end-3 items-center justify-center text-center">W</button>
-            <button class="text-xs rounded-lg border border-white/20 bg-black/20 text-white/70 size-6 row-start-2 items-center justify-center text-center">A</button>
-            <button class="text-xs rounded-lg border border-white/20 bg-black/20 text-white/70 size-6 row-start-2 items-center justify-center text-center">S</button>
-            <button class="text-xs rounded-lg border border-white/20 bg-black/20 text-white/70 size-6 row-start-2 items-center justify-center text-center">D</button>
-    </nav>
-    <div class="section-nav bottom-2 absolute z-30 -translate-1/2 left-1/2 flex gap-4">
-        <button class="previous-section size-7 rounded-full flex items-center justify-center border-white/20 border backdrop-blur-3xl text-white/70  cursor-pointer" aria-label="Previous slide">
-            <svg viewBox="0 0 640 640" fill="currentColor" data-slot="icon" aria-hidden="true" class=" size-4 text-white/70">
-                <path d="M308.7 212.7C314.9 206.5 325.1 206.5 331.3 212.7L491.3 372.7C497.5 378.9 497.5 389.1 491.3 395.3C485.1 401.5 474.9 401.5 468.7 395.3L320 246.6L171.3 395.3C165.1 401.5 154.9 401.5 148.7 395.3C142.5 389.1 142.5 378.9 148.7 372.7L308.7 212.7z"/>
-            </svg>
-        </button>
-     <nav class="gap-4  items-center  flex">
-        <a href="#header" data-nav-item="header" class="dot dot_active min-w-3 min-h-3 rounded-full bg-white/30 block "><span class="hidden">Header</span></a>
-        <a href="#skills" data-nav-item="skills" class="dot min-w-3 min-h-3 rounded-full bg-white/30 block "><span class="hidden">Skills</span></a>
-        <a href="#experience" data-nav-item="experience" class="dot min-w-3 min-h-3 rounded-full bg-white/30 block "><span class="hidden">Experience</span></a>
-        <a href="#education" data-nav-item="education" class="dot min-w-3 min-h-3 rounded-full bg-white/30 block "><span class="hidden">Education</span></a>
-     </nav>
-        <button class="next-section size-7 rounded-full flex items-center justify-center border-white/20 border backdrop-blur-3xl text-white/70 cursor-pointer" aria-label="Next slide">
-            <svg viewBox="0 0 640 640" fill="currentColor" data-slot="icon" aria-hidden="true" class="size-4 text-text/70">
-                <path d="M308.7 427.3C314.9 433.5 325.1 433.5 331.3 427.3L491.3 267.3C497.5 261.1 497.5 250.9 491.3 244.7C485.1 238.5 474.9 238.5 468.7 244.7L320 393.4L171.3 244.7C165.1 238.5 154.9 238.5 148.7 244.7C142.5 250.9 142.5 261.1 148.7 267.3L308.7 427.3z"/>
-            </svg>
-        </button>
-    </div>
-
-      <canvas id="webgl-canvas"></canvas>
+        <nav class="bottom-6 right-6 gap-2 absolute z-30 items-center grid grid-cols-3">
+                <button class="text-xs rounded-lg border border-white/20 bg-black/20 text-white/70 size-6 col-start-2 col-end-3 items-center justify-center text-center">W</button>
+                <button class="text-xs rounded-lg border border-white/20 bg-black/20 text-white/70 size-6 row-start-2 items-center justify-center text-center">A</button>
+                <button class="text-xs rounded-lg border border-white/20 bg-black/20 text-white/70 size-6 row-start-2 items-center justify-center text-center">S</button>
+                <button class="text-xs rounded-lg border border-white/20 bg-black/20 text-white/70 size-6 row-start-2 items-center justify-center text-center">D</button>
+        </nav>
+        <div class="section-nav bottom-2 absolute z-30 -translate-1/2 left-1/2 flex gap-4">
+            <button class="previous-section size-7 rounded-full flex items-center justify-center border-white/20 border backdrop-blur-3xl text-white/70  cursor-pointer" aria-label="Previous slide">
+                <svg viewBox="0 0 640 640" fill="currentColor" data-slot="icon" aria-hidden="true" class=" size-4 text-white/70">
+                    <path d="M308.7 212.7C314.9 206.5 325.1 206.5 331.3 212.7L491.3 372.7C497.5 378.9 497.5 389.1 491.3 395.3C485.1 401.5 474.9 401.5 468.7 395.3L320 246.6L171.3 395.3C165.1 401.5 154.9 401.5 148.7 395.3C142.5 389.1 142.5 378.9 148.7 372.7L308.7 212.7z"/>
+                </svg>
+            </button>
+        <nav class="gap-4  items-center  flex">
+            <a href="#header" data-nav-item="header" class="dot dot_active min-w-3 min-h-3 rounded-full bg-white/30 block "><span class="hidden">Header</span></a>
+            <a href="#skills" data-nav-item="skills" class="dot min-w-3 min-h-3 rounded-full bg-white/30 block "><span class="hidden">Skills</span></a>
+            <a href="#experience" data-nav-item="experience" class="dot min-w-3 min-h-3 rounded-full bg-white/30 block "><span class="hidden">Experience</span></a>
+            <a href="#education" data-nav-item="education" class="dot min-w-3 min-h-3 rounded-full bg-white/30 block "><span class="hidden">Education</span></a>
+        </nav>
+            <button class="next-section size-7 rounded-full flex items-center justify-center border-white/20 border backdrop-blur-3xl text-white/70 cursor-pointer" aria-label="Next slide">
+                <svg viewBox="0 0 640 640" fill="currentColor" data-slot="icon" aria-hidden="true" class="size-4 text-text/70">
+                    <path d="M308.7 427.3C314.9 433.5 325.1 433.5 331.3 427.3L491.3 267.3C497.5 261.1 497.5 250.9 491.3 244.7C485.1 238.5 474.9 238.5 468.7 244.7L320 393.4L171.3 244.7C165.1 238.5 154.9 238.5 148.7 244.7C142.5 250.9 142.5 261.1 148.7 267.3L308.7 427.3z"/>
+                </svg>
+            </button>
+        </div>
         <div class="snap-y snap-mandatory h-[100svh] overflow-y-auto overscroll-contain absolute inset-0 bg-gradient-to-r from-cyan-500/40 to-red-900/10 scroll-smooth">
             <article class="max-w-5xl m-auto prose prose-invert prose-h2:mt-0 prose-h2:md:text-5xl prose-headings:font-space grid grid-cols-1 gap-8 px-4">
                 <section class="min-h-[100svh] snap-start flex flex-col justify-center drop-shadow-xl" id="header">   
@@ -170,9 +167,11 @@ import Layout from "@layouts/FullPage.astro";
                 </section>
             </article>
         </div>
-    </div>
+   
 </Layout>
 
 
- <script type="module" src="/src/scripts/space.ts"></script>
+ <!-- <script type="module" src="/src/scripts/space.ts"></script> -->
  <script type="module" src="/src/scripts/text-animation.ts"></script>
+
+

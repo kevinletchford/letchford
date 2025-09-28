@@ -1,0 +1,14 @@
+---
+// src/components/PersistedSpace.astro
+---
+<div id="space-root" transition:persist="space" class="fixed inset-0">
+  <canvas id="webgl-canvas"></canvas>
+</div>
+
+<script type="module">
+  // run once per session, even if this component appears on multiple pages
+  if (!window.__spaceBooted) {
+    window.__spaceBooted = true;
+    import("/src/scripts/space/boot.ts").then(m => m.boot());
+  }
+</script>

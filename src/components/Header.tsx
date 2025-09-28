@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import AudioPlayer from "./AudioPlayer";
 
 function cx(...parts: Array<string | false | null | undefined>) {
   return parts.filter(Boolean).join(" ");
@@ -85,7 +86,8 @@ export default function Header() {
         </nav>
       </div>
 
-      <div className="flex justify-end items-center">
+      <div className="flex justify-end items-center gap-4">
+            <AudioPlayer src="/audio/space.m4a" title="space"  />
         <a className="flex items-center justify-between border-white/20 border rounded-full gap-6 px-6 backdrop-blur-3xl py-2 text-white/70" href="/contact/">
           Contact
         </a>
