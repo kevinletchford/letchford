@@ -131,7 +131,7 @@ export default function Header() {
               onClick={toggleSubmenu}
               aria-expanded={submenuOpen}
               aria-controls="menu-case-studies"
-              className="nav-link inline-flex cursor-pointer items-center gap-x-1 py-2 text-white/70"
+              className="nav-link inline-flex cursor-pointer items-center gap-x-1 py-2 text-white/70 "
             >
               <span>Case Studies</span>
               <svg
@@ -208,7 +208,7 @@ export default function Header() {
         role="region"
         aria-label="Case Studies"
         className={cx(
-          "menu-section col-start-2 col-end-5 transition-all duration-500 ease-in-out md:mx-auto md:block",
+          "menu-section col-start-2 col-end-5 transition-all duration-500 ease-in-out md:mx-auto md:block left-4 right-4",
           submenuOpen ? "" : "menu-section_closed",
           // ensure hidden on small screens (submenu is only for desktop)
           "hidden md:block"
@@ -218,7 +218,7 @@ export default function Header() {
           id="desktop-menu-solutions"
           className="backdrop:bg-transparent duration-200 ease-in-out pt-4"
         >
-          <div className="-outline-offset-1 flex-auto overflow-hidden rounded-3xl bg-gradient-to-b from-blue-900/10 to-cyan-500/10 text-sm/6 outline outline-1 outline-white/10 drop-shadow-2xl backdrop-blur-3xl">
+          <div className="-outline-offset-1 flex-auto overflow-hidden rounded-3xl bg-gradient-to-b from-blue-900/10 to-cyan-500/10 text-sm/6 outline outline-1 outline-white/10 drop-shadow-2xl backdrop-blur-3xl max-w-5xl m-auto">
             <div className="grid grid-cols-1 gap-x-2 gap-y-1 p-4 lg:grid-cols-3 bg-gradient-to-b">
               {/* --- item 1 --- */}
               <div className="group relative flex gap-x-6 rounded-lg p-4 hover:bg-white/5">
