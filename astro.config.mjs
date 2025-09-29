@@ -5,6 +5,8 @@ import glsl from 'vite-plugin-glsl'
 
 import react from "@astrojs/react";
 
+import cloudflare from "@astrojs/cloudflare";
+
 // https://astro.build/config
 export default defineConfig({
   vite: {
@@ -13,4 +15,5 @@ export default defineConfig({
   },
 
   integrations: [react()],
+  adapter: cloudflare(),
 });

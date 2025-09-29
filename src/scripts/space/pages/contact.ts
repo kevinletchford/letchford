@@ -13,7 +13,74 @@ type BlackHole = {
   update: (dt: number, t: number) => void;
 };
 
-/** Build the black hole object (no scene adds; caller attaches to a parent/group). */
+// ---- glowing round sprite (generated in-memory) ----
+function makeCircleSprite(size = 64) {
+  const canvas = document.createElement("canvas");
+  canvas.width = canvas.height = size;
+  const ctx = canvas.getContext("2d")!;
+  // soft radial glow
+  const g = ctx.createRadialGradient(size/2, size/2, 0, size/2, size/2, size/2);
+  g.addColorStop(0.0, "rgba(255,255,255,1.0)");
+  g.addColorStop(0.25,"rgba(255,231,176,0.9)");
+  g.addColorStop(0.9, "rgba(255,231,176,0.35)");
+  g.addColorStop(1.0, "rgba(255,231,176,0.0)");
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, size, size);
+
+  const tex = new THREE.Texture(canvas);
+  tex.needsUpdate = true;
+  tex.flipY = false;
+  tex.magFilter = THREE.LinearFilter;
+  tex.minFilter = THREE.LinearMipmapLinearFilter;
+  tex.generateMipmaps = true;
+  return tex;
+}
+
+// Vertex shader — no re-declarations of built-ins
+const PARTICLE_VS = `
+  attribute float aSize;
+  attribute float aPhase;
+  varying float vPhase;
+
+  void main() {
+    vPhase = aPhase;
+    vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+    gl_PointSize = aSize * (300.0 / -mvPosition.z); // tweak 300.0 to taste
+    gl_Position = projectionMatrix * mvPosition;
+  }
+`;
+
+// Fragment shader — same as before (kept for clarity)
+const PARTICLE_FS = `
+  precision mediump float;
+
+  uniform sampler2D uSprite;
+  uniform vec3 uColor;
+  uniform float uTime;
+
+  varying float vPhase;
+
+  void main() {
+    vec2 uv = gl_PointCoord;
+    vec4 tex = texture2D(uSprite, uv);
+
+    // circular cutoff in case sprite edge bleeds
+    float d = distance(uv, vec2(0.5));
+    if (d > 0.5) discard;
+
+    // subtle per-particle flicker
+    float flicker = 0.7 + 0.3 * sin(uTime * 6.0 + vPhase);
+
+    float alpha = tex.a * flicker;
+    if (alpha < 0.01) discard;
+
+    vec3 col = uColor * tex.rgb;
+    gl_FragColor = vec4(col, alpha);
+  }
+`;
+
+
+/** Build the black hole object (caller attaches the returned group). */
 function createBlackHole(opts: {
   three: typeof THREE;
   camera: THREE.PerspectiveCamera;
@@ -28,7 +95,7 @@ function createBlackHole(opts: {
   const S = opts.scale ?? 6.0;
   root.scale.setScalar(S);
 
-  // 1) Event horizon (simple black sphere)
+  // 1) Event horizon
   const horizon = new T.Mesh(
     new T.SphereGeometry(1.0, 128, 128),
     new T.MeshBasicMaterial({ color: 0x000000 })
@@ -52,28 +119,25 @@ function createBlackHole(opts: {
   ring.renderOrder = 2;
   root.add(ring);
 
-  // 3) Accretion disk
-  const innerR = 1.25,
-    outerR = 3.5,
-    seg = 256;
+  // 3) Accretion disk (noise prepended so bh_fbm(vec2) exists)
+  const innerR = 1.1, outerR = 3, seg = 256;
   const diskGeo = new T.RingGeometry(innerR, outerR, seg, 1);
   diskGeo.rotateX(-Math.PI / 2);
 
-  // Inject noise into fragment shader
-  const diskFrag = diskFragRaw.replace("//__NOISE__", noiseGLSL);
+  const diskFrag = `${noiseGLSL}\n${diskFragRaw}`;
 
   const diskMat = new T.ShaderMaterial({
     uniforms: {
-      uTime: { value: 0 },
+      uTime:       { value: 0 },
       uColorInner: { value: new T.Color(0xffc36b) },
-      uColorOuter: { value: new T.Color(0x9944ff) },
-      uInnerR: { value: innerR },
-      uOuterR: { value: outerR },
-      uSpin: { value: 0.7 },
-      uBeaming: { value: 0.9 },
-      uCamPos: { value: new T.Vector3() },
+      uColorOuter: { value: new T.Color(0xffc36b) },
+      uInnerR:     { value: innerR },
+      uOuterR:     { value: outerR },
+      uSpin:       { value: 0.7 },
+      uBeaming:    { value: 0.9 },
+      uCamPos:     { value: new T.Vector3() },
     },
-    vertexShader: diskVert,
+    vertexShader:   diskVert,
     fragmentShader: diskFrag,
     transparent: true,
     depthWrite: false,
@@ -84,30 +148,46 @@ function createBlackHole(opts: {
   disk.renderOrder = 0;
   root.add(disk);
 
-  // 4) Infall particles
+  // 4) Infall particles (round, glowing, flickering)
   const pCount = 1200;
   const pGeo = new T.BufferGeometry();
-  const pPos = new Float32Array(pCount * 3);
+  const pPos   = new Float32Array(pCount * 3);
   const pSpeed = new Float32Array(pCount);
+  const pSize  = new Float32Array(pCount);
+  const pPhase = new Float32Array(pCount);
 
   for (let i = 0; i < pCount; i++) {
     const r = T.MathUtils.lerp(outerR * 0.9, outerR * 1.2, Math.random());
     const a = Math.random() * Math.PI * 2;
-    pPos[i * 3 + 0] = Math.cos(a) * r;
-    pPos[i * 3 + 1] = (Math.random() - 0.5) * 0.5;
-    pPos[i * 3 + 2] = Math.sin(a) * r;
-    pSpeed[i] = T.MathUtils.lerp(0.2, 0.7, Math.random());
+    pPos[i*3+0] = Math.cos(a) * r;
+    pPos[i*3+1] = (Math.random() - 0.5) * 0.5;
+    pPos[i*3+2] = Math.sin(a) * r;
+
+    pSpeed[i] = T.MathUtils.lerp(0.2, 0.3, Math.random());
+
+    // per-particle screen size and flicker phase
+    pSize[i]  = T.MathUtils.lerp(6.0, 14.0, Math.random());  // pixels at ~300 factor
+    pPhase[i] = Math.random() * Math.PI * 2.0;
   }
+
   pGeo.setAttribute("position", new T.BufferAttribute(pPos, 3));
-  const pMat = new T.PointsMaterial({
-    color: 0xffaa88,
-    size: 0.45,
-    sizeAttenuation: true,
+  pGeo.setAttribute("aSize",    new T.BufferAttribute(pSize, 1));
+  pGeo.setAttribute("aPhase",   new T.BufferAttribute(pPhase, 1));
+
+  const spriteTex = makeCircleSprite(64);
+  const pMat = new T.ShaderMaterial({
+    uniforms: {
+      uSprite: { value: spriteTex },
+      uColor:  { value: new T.Color(0xffaa88) },
+      uTime:   { value: 0 },
+    },
+    vertexShader:   PARTICLE_VS,
+    fragmentShader: PARTICLE_FS,
     transparent: true,
-    opacity: 0.9,
     depthWrite: false,
     blending: T.AdditiveBlending,
   });
+
   const particles = new T.Points(pGeo, pMat);
   particles.renderOrder = 3;
   root.add(particles);
@@ -122,6 +202,9 @@ function createBlackHole(opts: {
     (diskMat.uniforms.uTime as any).value = t;
     (diskMat.uniforms.uCamPos as any).value.copy(camera.getWorldPosition(tmp));
 
+    // particle flicker time
+    (pMat.uniforms.uTime as any).value = t;
+
     // spiral particles inward
     const pos = pGeo.getAttribute("position") as THREE.BufferAttribute;
     for (let i = 0; i < pCount; i++) {
@@ -134,7 +217,7 @@ function createBlackHole(opts: {
       const ang = Math.atan2(z, x) + w * dt;
 
       const rNew = r - dt * pSpeed[i] * 0.15; // inward drift
-      const yNew = y * (1.0 - dt * 0.35); // thin the disk
+      const yNew = y * (1.0 - dt * 0.35);     // thin the disk
 
       const crossed = rNew < innerR * 0.95;
       const rClamp = crossed
@@ -152,11 +235,7 @@ function createBlackHole(opts: {
   return { root, update };
 }
 
-const loadContact: PageLoader = async ({
-  three: T,
-  camera,
-  renderer,
-}: Ctx): Promise<LoadResult> => {
+const loadContact: PageLoader = async ({ three: T, camera }: Ctx): Promise<LoadResult> => {
   const group = new T.Group();
   let cancelled = false;
 
@@ -164,23 +243,22 @@ const loadContact: PageLoader = async ({
   const bh = createBlackHole({
     three: T,
     camera,
-    position: new T.Vector3(0, -30, -120),
+    position: new T.Vector3(0, -35, -120),
     scale: 40,
   });
   group.add(bh.root);
+
   const uiText = await mountTextEffects();
-  // Per-frame updater (manager will call this)
+
   const updater = (dt: number, t: number) => {
     if (cancelled) return;
     bh.update(dt, t);
     camera.position.set(-20, -30, 80);
-
   };
 
   const dispose = () => {
     cancelled = true;
-      uiText.dispose();
-    // No DOM listeners here; manager will deep-dispose geometries/materials on `group`
+    uiText.dispose();
   };
 
   return { group, dispose, updater };

@@ -6,35 +6,71 @@ function cx(...parts: Array<string | false | null | undefined>) {
 }
 
 export default function Header() {
-  const [open, setOpen] = useState(false);
-  const buttonRef = useRef<HTMLButtonElement | null>(null);
-  const menuRef = useRef<HTMLDivElement | null>(null);
+  // Mobile nav state (whole menu)
+  const [mobileOpen, setMobileOpen] = useState(false);
+  // Desktop submenu state (Case Studies)
+  const [submenuOpen, setSubmenuOpen] = useState(false);
 
-  // Close on outside click
+  const burgerRef = useRef<HTMLButtonElement | null>(null);
+  const mobilePanelRef = useRef<HTMLDivElement | null>(null);
+
+  const caseStudiesButtonRef = useRef<HTMLButtonElement | null>(null);
+  const caseStudiesMenuRef = useRef<HTMLDivElement | null>(null);
+
+  // --- Shared helpers
+  const closeAll = () => {
+    setMobileOpen(false);
+    setSubmenuOpen(false);
+  };
+
+  // Close on outside click (mobile panel + desktop submenu)
   useEffect(() => {
     const onClick = (e: MouseEvent) => {
-      if (!open) return;
       const t = e.target as Node;
-      if (menuRef.current?.contains(t)) return;
-      if (buttonRef.current?.contains(t)) return;
-      setOpen(false);
+
+      // If neither menu is open, ignore
+      if (!mobileOpen && !submenuOpen) return;
+
+      // Desktop submenu click outside
+      if (submenuOpen) {
+        if (
+          caseStudiesMenuRef.current?.contains(t) ||
+          caseStudiesButtonRef.current?.contains(t)
+        ) {
+          // inside submenu; do nothing
+        } else {
+          setSubmenuOpen(false);
+        }
+      }
+
+      // Mobile drawer click outside
+      if (mobileOpen) {
+        if (
+          mobilePanelRef.current?.contains(t) ||
+          burgerRef.current?.contains(t)
+        ) {
+          // inside drawer; do nothing
+        } else {
+          setMobileOpen(false);
+        }
+      }
     };
     document.addEventListener("click", onClick);
     return () => document.removeEventListener("click", onClick);
-  }, [open]);
+  }, [mobileOpen, submenuOpen]);
 
   // Close on Escape
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
+      if (e.key === "Escape") closeAll();
     };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, []);
 
-  // If you’re using <ClientRouter />, close menus before page swap
+  // If you’re using <ClientRouter />, close menus before page swap (Astro)
   useEffect(() => {
-    const onBeforeSwap = () => setOpen(false);
+    const onBeforeSwap = () => closeAll();
     // @ts-ignore Astro will dispatch this event at runtime
     document.addEventListener("astro:before-swap", onBeforeSwap);
     return () => {
@@ -43,71 +79,148 @@ export default function Header() {
     };
   }, []);
 
-  // When opening, move focus into the submenu for accessibility
+  // Focus management when opening menus
   useEffect(() => {
-    if (!open) return;
-    const firstLink = menuRef.current?.querySelector<HTMLElement>("a,button,[tabindex]:not([tabindex='-1'])");
-    firstLink?.focus();
-  }, [open]);
+    if (submenuOpen) {
+      const firstLink = caseStudiesMenuRef.current?.querySelector<HTMLElement>(
+        "a,button,[tabindex]:not([tabindex='-1'])"
+      );
+      firstLink?.focus();
+    }
+  }, [submenuOpen]);
 
-  const toggle = () => setOpen(v => !v);
+  useEffect(() => {
+    if (mobileOpen) {
+      // Lock scroll
+      const prev = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      // Move focus into the panel
+      const firstLink = mobilePanelRef.current?.querySelector<HTMLElement>(
+        "a,button,[tabindex]:not([tabindex='-1'])"
+      );
+      firstLink?.focus();
+      return () => {
+        document.body.style.overflow = prev;
+      };
+    }
+  }, [mobileOpen]);
+
+  const toggleSubmenu = () => setSubmenuOpen((v) => !v);
+  const toggleMobile = () => setMobileOpen((v) => !v);
 
   return (
-    <div className="grid grid-cols-5 grid-row-2 gap-2 items-center justify-between p-4 w-full fixed top-0 z-20 bg-[linear-gradient(to_top,rgba(0,0,0,0),rgba(0,0,0,0.4))]">
-      <a className="flex flex-col" href="/">
-        <span className="bold">Kevin Letchford</span>
-        <span className="text-white/60">Design Engineer</span>
-      </a>
-
-      <div className="col-span-3 flex items-center justify-center opacity-100">
-        <nav className="flex items-center justify-between border-white/20 border rounded-full gap-6 px-6 backdrop-blur-3xl">
-          <a className="py-2 text-white/70" href="/">About</a>
-
-          <button
-            ref={buttonRef}
-            type="button"
-            data-nav="case-studies"
-            onClick={toggle}
-            aria-expanded={open}
-            aria-controls="menu-case-studies"
-            className="nav-link inline-flex items-center gap-x-1 py-2 text-white/70 cursor-pointer"
-          >
-            <span>Case Studies</span>
-            <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" className="size-5">
-              <path
-                d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
-                clipRule="evenodd"
-                fillRule="evenodd"
-              />
-            </svg>
-          </button>
-
-          <a className="py-2 text-white/70" href="#">Projects</a>
-        </nav>
-      </div>
-
-      <div className="flex justify-end items-center gap-4">
-
-        <a className="flex items-center justify-between border-white/20 border rounded-full gap-6 px-6 backdrop-blur-3xl py-2 text-white/70" href="/contact/">
-          Contact
+    <header className="fixed top-0 z-50 w-full bg-[linear-gradient(to_top,rgba(0,0,0,0),rgba(0,0,0,0.4))] p-4">
+      <div className="grid grid-cols-2 items-center gap-2 md:grid-cols-5">
+        {/* Brand */}
+        <a className="flex flex-col" href="/">
+          <span className="bold">Kevin Letchford</span>
+          <span className="text-white/60">Design Engineer</span>
         </a>
-                    <AudioPlayer src="/audio/space.m4a" title="space"  />
+
+        {/* Desktop center nav (hidden on mobile) */}
+        <div className="col-span-3 hidden items-center justify-center md:flex">
+          <nav className="flex items-center justify-between gap-6 rounded-full border border-white/20 px-6 backdrop-blur-3xl">
+            <a className="py-2 text-white/70" href="/">
+              About
+            </a>
+
+            <button
+              ref={caseStudiesButtonRef}
+              type="button"
+              data-nav="case-studies"
+              onClick={toggleSubmenu}
+              aria-expanded={submenuOpen}
+              aria-controls="menu-case-studies"
+              className="nav-link inline-flex cursor-pointer items-center gap-x-1 py-2 text-white/70"
+            >
+              <span>Case Studies</span>
+              <svg
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                aria-hidden="true"
+                className={cx("size-5 transition-transform", submenuOpen && "rotate-180")}
+              >
+                <path
+                  d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
+                  clipRule="evenodd"
+                  fillRule="evenodd"
+                />
+              </svg>
+            </button>
+
+            <a className="py-2 text-white/70" href="#">
+              Projects
+            </a>
+          </nav>
+        </div>
+
+        {/* Right controls (desktop) */}
+        <div className="hidden items-center justify-end gap-4 md:flex">
+          <a
+            className="flex items-center justify-between gap-6 rounded-full border border-white/20 px-6 py-2 text-white/70 backdrop-blur-3xl"
+            href="/contact/"
+          >
+            Contact
+          </a>
+          <AudioPlayer src="/audio/space.m4a" title="space" />
+        </div>
+
+        {/* Burger (mobile only) */}
+        <div className="flex items-center justify-end md:hidden">
+          <button
+            ref={burgerRef}
+            type="button"
+            onClick={toggleMobile}
+            aria-expanded={mobileOpen}
+            aria-controls="mobile-menu"
+            aria-label={mobileOpen ? "Close menu" : "Open menu"}
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/20 backdrop-blur-3xl"
+          >
+            {/* Burger / close icon */}
+            <span className="relative block h-4 w-4">
+              <span
+                className={cx(
+                  "absolute left-0 top-[1px] block h-[1px] w-4 bg-white transition-transform",
+                  mobileOpen && "translate-y-[10px] rotate-45"
+                )}
+              />
+              <span
+                className={cx(
+                  "absolute left-0 top-[7px] block h-[1px] w-4 bg-white transition-opacity",
+                  mobileOpen && "opacity-0"
+                )}
+              />
+              <span
+                className={cx(
+                  "absolute left-0 top-[14px] block h-[1px] w-4 bg-white transition-transform",
+                  mobileOpen && "-translate-y-[6px] -rotate-45"
+                )}
+              />
+            </span>
+          </button>
+        </div>
       </div>
 
-      {/* Submenu */}
+      {/* Desktop Submenu (Case Studies) */}
       <div
         id="menu-case-studies"
-        ref={menuRef}
+        ref={caseStudiesMenuRef}
         role="region"
         aria-label="Case Studies"
         className={cx(
-          "sub-menu col-start-2 col-end-5 transition-all duration-500 ease-in-out menu-section",
-          open ? "" : "menu-section_closed"
+          "menu-section col-start-2 col-end-5 transition-all duration-500 ease-in-out md:mx-auto md:block",
+          submenuOpen ? "" : "menu-section_closed",
+          // ensure hidden on small screens (submenu is only for desktop)
+          "hidden md:block"
         )}
       >
-        <div id="desktop-menu-solutions" className="top-full m-auto pt-4 transition transition-discrete [--anchor-gap:--spacing(5)] backdrop:bg-transparent duration-200 ease-in-out">
-          <div className="flex-auto overflow-hidden rounded-3xl drop-shadow-2xl text-sm/6 outline-1 -outline-offset-1 outline-white/10 backdrop-blur-3xl bg-gradient-to-b from-blue-900/10 to-cyan-500/10">
+        <div
+          id="desktop-menu-solutions"
+          className="backdrop:bg-transparent duration-200 ease-in-out pt-4"
+        >
+          <div className="-outline-offset-1 flex-auto overflow-hidden rounded-3xl bg-gradient-to-b from-blue-900/10 to-cyan-500/10 text-sm/6 outline outline-1 outline-white/10 drop-shadow-2xl backdrop-blur-3xl">
             <div className="grid grid-cols-1 gap-x-2 gap-y-1 p-4 lg:grid-cols-3 bg-gradient-to-b">
+              {/* --- item 1 --- */}
               <div className="group relative flex gap-x-6 rounded-lg p-4 hover:bg-white/5">
                 <div className="mt-1 flex size-11 flex-none items-center justify-center rounded-lg bg-white/20 group-hover:bg-white/40">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" fill="currentColor" strokeWidth="1.5" aria-hidden="true" className="size-6 text-white/40 group-hover:text-white">
@@ -123,6 +236,7 @@ export default function Header() {
                 </div>
               </div>
 
+              {/* --- item 2 --- */}
               <div className="group relative flex gap-x-6 rounded-lg p-4 hover:bg-white/5">
                 <div className="mt-1 flex size-11 flex-none items-center justify-center rounded-lg bg-white/20 group-hover:bg-white/40">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" fill="currentColor" strokeWidth="1.5" aria-hidden="true" className="size-6 text-white/40 group-hover:text-white">
@@ -138,6 +252,7 @@ export default function Header() {
                 </div>
               </div>
 
+              {/* --- item 3 --- */}
               <div className="group relative flex gap-x-6 rounded-lg p-4 hover:bg-white/5">
                 <div className="mt-1 flex size-11 flex-none items-center justify-center rounded-lg bg-white/20 group-hover:bg-white/40">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" fill="currentColor" strokeWidth="1.5" aria-hidden="true" className="size-6 text-white/40 group-hover:text-white">
@@ -156,6 +271,73 @@ export default function Header() {
           </div>
         </div>
       </div>
-    </div>
+
+      {/* MOBILE: full-screen drawer */}
+      <div
+        id="mobile-menu"
+        className={cx(
+          "md:hidden",
+          mobileOpen ? "pointer-events-auto" : "pointer-events-none"
+        )}
+      >
+        {/* Overlay */}
+        <div
+          className={cx(
+            "fixed inset-0 z-20 transition-opacity bg-black/50",
+            mobileOpen ? "opacity-100" : "opacity-0"
+          )}
+          aria-hidden="true"
+        />
+
+        {/* Panel */}
+        <div
+          ref={mobilePanelRef}
+          className={cx(
+            "fixed inset-y-0 right-0 z-30 w-[88%] max-w-sm bg-black/70 p-6 backdrop-blur-2xl transition-transform",
+            mobileOpen ? "translate-x-0" : "translate-x-full"
+          )}
+          role="dialog"
+          aria-modal="true"
+        >
+          <nav className="mt-2 flex flex-col gap-2">
+            <a href="/" className="rounded-xl px-3 py-2 text-lg text-white/90 hover:bg-white/10">
+              About
+            </a>
+
+            {/* Mobile accordion for Case Studies */}
+            <details open className="group rounded-xl">
+              <summary className="flex cursor-pointer list-none items-center justify-between rounded-xl px-3 py-2 text-lg text-white/90 hover:bg-white/10">
+                <span>Case Studies</span>
+                <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" className="size-5 transition-transform group-open:rotate-180">
+                  <path d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" />
+                </svg>
+              </summary>
+              <div className="ml-2 flex flex-col gap-1 pl-2">
+                <a href="/case-studies/kiosk/" className="rounded-lg px-3 py-2 text-white/80 hover:bg-white/10">Interactive Kiosk</a>
+                <a href="/case-studies/automation/" className="rounded-lg px-3 py-2 text-white/80 hover:bg-white/10">Article Automation</a>
+                <a href="/case-studies/product-tour/" className="rounded-lg px-3 py-2 text-white/80 hover:bg-white/10">Product Tour</a>
+              </div>
+            </details>
+
+            <a href="#" className="rounded-xl px-3 py-2 text-lg text-white/90 hover:bg-white/10">
+              Projects
+            </a>
+
+            <hr className="my-4 border-white/10" />
+
+            <a
+              href="/contact/"
+              className="rounded-full border border-white/20 px-4 py-2 text-center text-white/80"
+            >
+              Contact
+            </a>
+
+            <div className="mt-2">
+              <AudioPlayer src="/audio/space.m4a" title="space" />
+            </div>
+          </nav>
+        </div>
+      </div>
+    </header>
   );
 }

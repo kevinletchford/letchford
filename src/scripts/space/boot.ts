@@ -1,10 +1,13 @@
-// src/space/boot.ts
+// src/scripts/space/boot.ts  (or src/space/boot.ts, just keep paths consistent)
 import { SpaceManager } from "./manager";
 
 let lastPath = "";
+let booted = false;
+let pollId: number | undefined;
 
 function path() {
-  return location.pathname.replace(/\/+/g, "/");
+  // Include hash/search if they matter for your scene selection:
+  return (location.pathname + location.search + location.hash).replace(/\/+/g, "/");
 }
 
 function sync(tag = "") {
@@ -16,23 +19,35 @@ function sync(tag = "") {
 }
 
 export function boot() {
-  // Init renderer/loop once (safe to call multiple times)
+  if (booted) return;           // idempotent
+  booted = true;
+
   SpaceManager.init({ canvasId: "webgl-canvas" });
 
-  // Initial sync (now + next frame for safety)
+  // Initial sync (now + next frame)
   queueMicrotask(() => sync("microtask"));
   requestAnimationFrame(() => sync("raf"));
 
-  // Astro lifecycle — bind to *document*
-  document.addEventListener("astro:after-swap",  () => requestAnimationFrame(() => sync("after-swap")));
-  document.addEventListener("astro:page-load",   () => requestAnimationFrame(() => sync("page-load")));
+  // Astro lifecycle
+  document.addEventListener("astro:after-swap", () => requestAnimationFrame(() => sync("after-swap")));
+  document.addEventListener("astro:page-load",  () => requestAnimationFrame(() => sync("page-load")));
 
   // History / hash fallbacks
-  addEventListener("popstate",  () => requestAnimationFrame(() => sync("popstate")));
-  addEventListener("hashchange",() => requestAnimationFrame(() => sync("hashchange")));
+  addEventListener("popstate",   () => requestAnimationFrame(() => sync("popstate")));
+  addEventListener("hashchange", () => requestAnimationFrame(() => sync("hashchange")));
 
-  // Small guard: poll occasionally in case a custom nav bypasses events
-  setInterval(() => sync("poll"), 500);
+  // Safety poll
+  pollId = window.setInterval(() => sync("poll"), 500);
 
   console.log("[boot] attached");
+}
+
+// Auto-run when loaded via <script src={...}>.
+// Safe in browser only; won’t run during SSR.
+if (typeof window !== "undefined") {
+  (window as any).__spaceBooted ??= false;
+  if (!(window as any).__spaceBooted) {
+    (window as any).__spaceBooted = true;
+    boot();
+  }
 }
