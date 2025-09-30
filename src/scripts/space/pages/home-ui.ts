@@ -14,7 +14,7 @@ export function mountHomeUI() {
   const ac = new AbortController(); // everything added with this signal will be auto-removed
   const { signal } = ac;
 
-  const HEADER_OFFSET = 0; // set this to your fixed header height if needed
+  const HEADER_OFFSET = 50; // set this to your fixed header height if needed
 
 function scrollToEl(el: HTMLElement, behavior: ScrollBehavior = "smooth") {
   // Prefer ScrollSmoother if present
