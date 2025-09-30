@@ -3,13 +3,13 @@ import Layout from "@layouts/FullPage.astro";
 ---
 
 <Layout title="Kevin Letchford - Design Engineer">
-        <nav class="bottom-6 right-6 gap-2 absolute z-30 items-center grid grid-cols-3">
+        <nav class="bottom-6 right-6 gap-2 fixed z-30 items-center grid grid-cols-3 hidden">
                 <button class="text-xs rounded-lg border border-white/20 bg-black/20 text-white/70 size-6 col-start-2 col-end-3 items-center justify-center text-center">W</button>
                 <button class="text-xs rounded-lg border border-white/20 bg-black/20 text-white/70 size-6 row-start-2 items-center justify-center text-center">A</button>
                 <button class="text-xs rounded-lg border border-white/20 bg-black/20 text-white/70 size-6 row-start-2 items-center justify-center text-center">S</button>
                 <button class="text-xs rounded-lg border border-white/20 bg-black/20 text-white/70 size-6 row-start-2 items-center justify-center text-center">D</button>
         </nav>
-        <div class="section-nav bottom-2 absolute z-30 -translate-1/2 left-1/2 flex gap-4">
+        <div class="section-nav bottom-2 fixed z-30 -translate-1/2 left-1/2 flex gap-4">
             <button class="previous-section size-7 rounded-full flex items-center justify-center border-white/20 border backdrop-blur-3xl text-white/70  cursor-pointer" aria-label="Previous slide">
                 <svg viewBox="0 0 640 640" fill="currentColor" data-slot="icon" aria-hidden="true" class=" size-4 text-white/70">
                     <path d="M308.7 212.7C314.9 206.5 325.1 206.5 331.3 212.7L491.3 372.7C497.5 378.9 497.5 389.1 491.3 395.3C485.1 401.5 474.9 401.5 468.7 395.3L320 246.6L171.3 395.3C165.1 401.5 154.9 401.5 148.7 395.3C142.5 389.1 142.5 378.9 148.7 372.7L308.7 212.7z"/>
@@ -27,20 +27,20 @@ import Layout from "@layouts/FullPage.astro";
                 </svg>
             </button>
         </div>
-        <div class="snap-y snap-mandatory h-[100svh] overflow-y-auto overscroll-contain absolute inset-0 bg-gradient-to-r from-cyan-500/40 to-red-900/10 scroll-smooth">
-            <article class="max-w-5xl m-auto prose prose-invert prose-h2:mt-0 prose-h2:md:text-5xl prose-headings:font-space grid grid-cols-1 gap-8 px-4">
-                <section class="min-h-[100svh] snap-start flex flex-col justify-center drop-shadow-xl" id="header">   
-                    <h1 class="text-red-400 md:text-7xl mb-3 load-effect uppercase">Kevin Letchford</h1>
-                    <span class="mb-3 font-extralight text-xl md:text-4xl">Design Engineer / Creative Developer</span>
-                    <p class="text-xl text-pretty text-white/90 max-w-2xl">
+        <div id="content">
+            <article class="md:max-w-5xl m-auto prose prose-invert prose-h2:mt-0 prose-h2:md:text-5xl prose-headings:font-space grid grid-cols-1 gap-8 md:px-4">
+                <section class="min-h-[100svh] snap-target flex flex-col justify-center drop-shadow-xl bg-gradient-to-b md:bg-none py-2 px-5  from-blue-900/30 to-red-900/0 " id="header">   
+                    <h1 class="text-red-400 text-5xl md:text-7xl mb-3 load-effect uppercase">Kevin Letchford</h1>
+                    <span class="mb-3 font-extralight text-2xl md:text-4xl text-balance">Design Engineer / <span>Creative Developer</span></span>
+                    <p class="text-xl/8 text-pretty text-white/90 max-w-2xl ">
                         I build experiences that are both smooth and engaging, blending design with engineering. I focus on creating interactive interfaces, keeping things fast, and turning complex ideas into something people can actually enjoy using.
                     </p>
                 </section>
 
-                <section class="min-h-[100svh] snap-start flex flex-col justify-center" id="skills">
+                <section class="min-h-[100svh] snap-target flex flex-col justify-center py-2 px-5" id="skills">
                     <h2>Skills</h2>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-12 text-balance">
                         <div class="group relative flex gap-x-6 rounded-lg p-4 bg-black/20 backdrop-blur-2xl">
                             <div class="mt-1 flex size-14 flex-none items-center justify-center rounded-lg bg-gradient-to-t from-blue-500/40 to-red-900/20 border border-red-900/30 drop-shadow-2xl">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" fill="currentColor" stroke-width="1.5" data-slot="icon" aria-hidden="true" class="size-8 text-white/40 drop-shadow-lg">
@@ -48,7 +48,7 @@ import Layout from "@layouts/FullPage.astro";
                                 </svg>
                             </div>
                             <div class="">
-                                <h3 class=" font-bold not-prose m-0 p-0 text-sm md:text-xl">Design &amp; Interaction</h3>
+                                <h3 class="font-bold not-prose m-0 p-0 text-md md:text-xl">Design &amp; Interaction</h3>
                                 <ul class="mt-1 text-white/80 mb-0">
                                     <li>Three.js, GSAP, Framer Motion</li>
                                     <li>Figma, Illustrator, After Effects</li>
@@ -62,7 +62,7 @@ import Layout from "@layouts/FullPage.astro";
                                 </svg>
                             </div>
                             <div class="">
-                                <h3 class=" font-bold not-prose m-0 p-0 text-sm md:text-xl">Frontend Development</h3>
+                                <h3 class=" font-bold not-prose m-0 p-0 text-md md:text-xl">Frontend Development</h3>
                                 <ul class="mt-1 text-white/80 mb-0 ">
                                     <li>JavaScript, React, TypeScript, Vue</li>
                                     <li>CSS, Tailwind</li>
@@ -76,7 +76,7 @@ import Layout from "@layouts/FullPage.astro";
                                 </svg>
                             </div>
                             <div class="">
-                                <h3 class=" font-bold not-prose m-0 p-0 text-sm md:text-xl">Backend &amp; Systems</h3>
+                                <h3 class=" font-bold not-prose m-0 p-0 text-md md:text-xl">Backend &amp; Systems</h3>
                                 <ul class="mt-1 text-white/80 mb-0">
                                     <li>.Net C#, Node.js, API Development</li>
                                     <li>SQL Server, Umbraco CMS</li>
@@ -90,7 +90,7 @@ import Layout from "@layouts/FullPage.astro";
                                 </svg>
                             </div>
                             <div class="">
-                                <h3 class=" font-bold not-prose m-0 p-0 text-sm md:text-xl">Collaboration &amp; Delivery</h3>
+                                <h3 class=" font-bold not-prose m-0 p-0 text-md md:text-xl">Collaboration &amp; Delivery</h3>
                                 <ul class="mt-1 text-white/80 mb-0">
                                     <li>Git/GitHub</li>
                                     <li>Agile/Scrum, Jira</li>
@@ -100,12 +100,12 @@ import Layout from "@layouts/FullPage.astro";
                     </div>
                 </section>
 
-                <section class="min-h-[100svh] snap-start flex flex-col justify-center" id="experience">
+                <section class="min-h-[100svh] snap-target flex flex-col justify-center py-2 px-5" id="experience">
                     <h2>Experience</h2>
                     <div class="bg-black/20 backdrop-blur-2xl rounded-2xl py-2 px-5  mb-8">
                         <details class="details">
                             <summary class="not-prose">
-                                <h3 class="m-0 p-0 text-md md:text-2xl"><strong class="font-bold">Sitebulb:</strong> Design Engineer (2023–Present)</h3>
+                                <h3 class="m-0 p-0 text-md md:text-2xl"><strong class="font-bold">Sitebulb:</strong> Design Engineer <span class="block md:inline">(2023–Present)</span></h3>
                             </summary>
                             <ul>
                                 <li>Designed and coded interactive web experiences for marketing, including animations, prototypes, and fullstack implementations.</li>
@@ -147,7 +147,7 @@ import Layout from "@layouts/FullPage.astro";
         
                 </section>
 
-                <section class="min-h-[100svh] snap-start flex flex-col justify-center" id="education">
+                <section class="min-h-[100svh] snap-target flex flex-col justify-center py-2 px-5" id="education">
                     <h2>Education</h2>
                     <div class="bg-black/20 backdrop-blur-2xl rounded-2xl py-2 px-5  mb-12 ">
                         <h3 class="m-0 py-2 text-sm md:text-xl not-prose"><strong class="font-bold">Computer Animation and Visual Effects BSc (Hons):</strong> (2005–2008)</h3>

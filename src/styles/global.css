@@ -87,6 +87,15 @@ section h2{
   translate: 0 0;
 }
 
+.snap-target {
+    opacity: 0.3;
+    transition:opacity cubic-bezier(0.83, 0, 0.17, 1) 600ms;
+}
+
+.is-visible {
+    opacity: 1;
+}
+
 .details {
     padding: var(--xxs);
     interpolate-size: allow-keywords;
@@ -174,6 +183,8 @@ section h2{
       transition:opacity cubic-bezier(0.83, 0, 0.17, 1) 600ms;
     }
   }
+
+  
 
   .gallery__item.is-visible {
     filter:grayscale(0);

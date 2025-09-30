@@ -14,6 +14,19 @@ export function mountHomeUI() {
   const ac = new AbortController(); // everything added with this signal will be auto-removed
   const { signal } = ac;
 
+  const HEADER_OFFSET = 0; // set this to your fixed header height if needed
+
+function scrollToEl(el: HTMLElement, behavior: ScrollBehavior = "smooth") {
+  // Prefer ScrollSmoother if present
+  const smoother = (window as any).ScrollSmoother?.get?.();
+  if (smoother) {
+    // ScrollSmoother can take an element and an offset directly
+    smoother.scrollTo(el, true, HEADER_OFFSET);
+  } else {
+    // Native fallback
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
   // You’re in a client-routed page; DOM is already swapped in.
   // If you want to be extra safe, you can await a frame:
   // await new Promise(r => requestAnimationFrame(r));
@@ -161,13 +174,16 @@ export function mountHomeUI() {
 
   // dot clicks (delegated or individual)
   const dotLinks = qsa<HTMLAnchorElement>('a[data-nav-item]');
+  
+
   const goToSection = (id: string) => {
     const target = document.getElementById(id);
-    if (target) {
-      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      toggleActiveNavItem(id);
-    }
+    if (!target) return;
+    scrollToEl(target, "smooth");
+    toggleActiveNavItem(id);
   };
+
+
   dotLinks.forEach(a => {
     a.addEventListener('click', (e) => {
       e.preventDefault();

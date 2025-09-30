@@ -1,7 +1,7 @@
 ---
 import "../styles/global.css";
-import Header from "../components/Header.tsx"
-import '@fontsource-variable/space-grotesk';
+import Header from "../components/Header.tsx";
+import "@fontsource-variable/space-grotesk";
 import { ClientRouter } from "astro:transitions";
 import PersistedSpace from "@components/PersistedSpace.astro";
 import { slide } from "astro:transitions";
@@ -12,32 +12,47 @@ const { title = "Kevin Letchford" } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="en" >
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="generator" content={Astro.generator} />
-		<title>{title}</title>	
-        <style>
-            html, body, canvas {
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            width: 100vw;
-            height: 100vh;
-            background: black;
-            }
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <style>
+      html, body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        background: black;
+        /* IMPORTANT: no overflow:hidden here; allow window scroll */
+      }
+      canvas {
+        margin: 0;
+        padding: 0;
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+    <ClientRouter />
+  </head>
+  <body class="bg-[linear-gradient(to_bottom,rgba(10,10,50,0.5),rgba(0,0,0,1)),url(/stars/stars.jpg)] bg-fixed bg-center text-white/90 overscroll-none">
+    <Header client:load transition:persist />
 
-        </style>
-  <ClientRouter />
-	</head>
-	<body class="bg-[linear-gradient(to_bottom,rgba(10,10,50,0.5),rgba(0,0,0,1)),url(/stars/stars.jpg)] bg-fixed bg-center text-white/90 overscroll-none" >
-		<Header client:load transition:persist />
-      <div class="relative h-full w-full"  >
-           <PersistedSpace /> 
-        <slot />
+    <!-- WebGL overlay; non-interactive so it won't block scroll -->
+    <div id="space-root" class="fixed inset-0 pointer-events-none ">
+      <PersistedSpace />
     </div>
-	</body>
-</html>
 
+    <!-- ScrollSmoother structure -->
+    <div class="relative w-full">
+      <div id="wrapper" class="h-dvh overflow-hidden overflow-y-auto overscroll-contain absolute inset-0 bg-gradient-to-r from-cyan-700/70  to-red-900/10 scroll-smooth">
+  
+          <slot />
+ 
+      </div>
+    </div>
+  </body>
+</html>
