@@ -30,37 +30,13 @@ export default function SpaceCanvas({
     let onBeforeSwap: (() => void) | undefined;
 
     (async () => {
-      const [{ SpaceManager }, smoother] = await Promise.all([
-        import("../scripts/space/manager"),
-        import("../scripts/scroll/smoother"),
+      const [{ SpaceManager }] = await Promise.all([
+        import("../scripts/space/manager")
       ]);
       if (!mounted) return;
 
       // 1) Init renderer/loop
       SpaceManager.init({ canvasId: id });
-
-      // 2) Init ScrollSmoother (desktop only), slower scroll
-      smoother.initSmoother({
-        wrapper: "#wrapper",
-        content: "#content",
-        smooth: .01,       // raise to 3–4 for even slower
-        smoothTouch: 0.2,  // keep phones responsive
-        disableBelow: 768, // off on mobile
-        effects: true,
-      });
-
-
-        // 👇 add this
-        smoother.enableSectionSnapping({
-          sectionSelector: ".snap-target",
-          duration: 0.4,
-          ease: "power5.inOut",
-          directional: true,
-          thresholds: {
-            forward: 0.1,   // snap forward once 18% into next section
-            backward: 0.1,  // require ~28% when going back (less jumpy)
-          },
-        });
 
       // 3) Routing sync
       const path = () => {
@@ -84,19 +60,15 @@ export default function SpaceCanvas({
       queueMicrotask(() => sync("microtask"));
       requestAnimationFrame(() => sync("raf"));
 
-      onAfterSwap  = () => requestAnimationFrame(() => { sync("after-swap");  smoother.refreshSmoother?.(); });
-      onPageLoad   = () => requestAnimationFrame(() => { sync("page-load");   smoother.refreshSmoother?.(); });
-      onPopState   = () => requestAnimationFrame(() => { sync("popstate");    smoother.refreshSmoother?.(); });
-      onHashChange = () => requestAnimationFrame(() => { sync("hashchange");  smoother.refreshSmoother?.(); });
+      onAfterSwap  = () => requestAnimationFrame(() => { sync("after-swap"); });
+      onPageLoad   = () => requestAnimationFrame(() => { sync("page-load");  });
+      onPopState   = () => requestAnimationFrame(() => { sync("popstate");   });
+      onHashChange = () => requestAnimationFrame(() => { sync("hashchange"); });
 
       document.addEventListener("astro:after-swap", onAfterSwap);
       document.addEventListener("astro:page-load",  onPageLoad);
       window.addEventListener("popstate", onPopState);
       window.addEventListener("hashchange", onHashChange);
-
-      // If Astro emits before-swap while the island still exists, clean smoother first
-      onBeforeSwap = () => smoother.destroySmoother();
-      document.addEventListener("astro:before-swap", onBeforeSwap);
 
       intervalRef.current = window.setInterval(() => sync("poll"), pollMs);
     })();
@@ -110,9 +82,6 @@ export default function SpaceCanvas({
       if (onHashChange) window.removeEventListener("hashchange", onHashChange);
       if (onBeforeSwap) document.removeEventListener("astro:before-swap", onBeforeSwap);
       if (intervalRef.current !== null) window.clearInterval(intervalRef.current);
-
-      // destroy smoother on unmount as a safety
-      import("../scripts/scroll/smoother").then(m => m.destroySmoother());
     };
   }, [id, includeHash, includeSearch, pollMs]);
 

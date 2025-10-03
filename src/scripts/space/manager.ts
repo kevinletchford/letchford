@@ -32,6 +32,48 @@ export class Manager {
   private pitch = 0;
   private wrUpdater = (dt: number) => this.updateWorldRotation(dt); // <-- stable reference
 
+  private _ready = false;
+  private _readyPromise: Promise<void>;
+  private _resolveReady!: () => void;
+
+  constructor() {
+    // Ready promise that resolves once init completes
+    this._readyPromise = new Promise<void>((res) => (this._resolveReady = res));
+  }
+
+  /** Resolves after init() sets up renderer/scene/camera. */
+  whenReady(): Promise<void> {
+    return this._readyPromise;
+  }
+
+  /** True after init() */
+  get ready(): boolean {
+    return this._ready;
+  }
+
+  getCamera(): THREE.PerspectiveCamera {
+    if (!this.camera) throw new Error("SpaceManager not initialized: camera unavailable");
+    return this.camera;
+  }
+
+  getScene(): THREE.Scene {
+    if (!this.scene) throw new Error("SpaceManager not initialized: scene unavailable");
+    return this.scene;
+  }
+  
+  getRenderer(): THREE.WebGLRenderer {
+    if (!this.renderer) throw new Error("SpaceManager not initialized: renderer unavailable");
+    return this.renderer;
+  }
+
+  getWorld(): THREE.Group { return this.world; }
+  getPageLayer(): THREE.Group { return this.pageLayer; }
+
+  onTick(fn: (dt: number, t: number) => void): () => void {
+    this.addUpdater(fn);
+    return () => this.removeUpdater(fn);
+  }
+
   init({ canvasId }: { canvasId: string }) {
     if (this.renderer) return;
     const canvas = document.getElementById(canvasId) as HTMLCanvasElement | null;
@@ -45,8 +87,6 @@ export class Manager {
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera(50, innerWidth / innerHeight, 0.1, 2000);
     this.camera.position.set(-20, -30, 80);
-
-
 
     // Stars background
     const starsTex = this.textureLoader.load("/stars/stars.jpg");
@@ -79,6 +119,9 @@ export class Manager {
       requestAnimationFrame(tick);
     };
     tick();
+
+    this._ready = true;
+    this._resolveReady?.();
   }
 
   private onResize = () => {
@@ -190,6 +233,15 @@ export const SpaceManager = {
   init: (o: { canvasId: string }) => Manager.I().init(o),
   loadForPath: (p: string) => Manager.I().loadForPath(p),
   zoomTo: (pos: THREE.Vector3Like, d?: number, delay?: number) => Manager.I().zoomTo(pos, d, delay),
+
+  getCamera: () => Manager.I().getCamera(),
+  getScene: () => Manager.I().getScene(),
+  getRenderer: () => Manager.I().getRenderer(),
+  getWorld: () => Manager.I().getWorld(),
+  getPageLayer: () => Manager.I().getPageLayer(),
+
+  whenReady: () => Manager.I().whenReady(),
+  onTick: (fn: (dt: number, t: number) => void) => Manager.I().onTick(fn),
 };
 
 /** Kill GSAP tweens on an object tree to avoid lingering animations. */

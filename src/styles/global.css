@@ -75,17 +75,17 @@ body{
   opacity: 0;
   scale:0.9;
 }
-
+/* 
 section h2{
       transition:opacity cubic-bezier(0.83, 0, 0.17, 1) 600ms, translate cubic-bezier(0.83, 0, 0.17, 1) 600ms;
       translate: 0 30%;
       opacity: 0;
   }
 
-.is-visible h2{
+.is-active h2{
   opacity: 1;
   translate: 0 0;
-}
+} */
 
 
 
