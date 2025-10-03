@@ -120,8 +120,6 @@ const loadHome: PageLoader = async ({ three: T,camera,renderer,scene, textureLoa
     rx += (tx - rx) * ease;
     ry += (ty - ry) * ease;
     satellite.rotation.set(rx, ry, 0);
-
-    
    
   };
 
