@@ -166,7 +166,8 @@ export default function Header() {
         </div>
 
         {/* Burger (mobile only) */}
-        <div className="flex items-center justify-end md:hidden">
+        <div className="flex items-center gap-3 justify-end md:hidden">
+          <AudioPlayer src="/audio/space.m4a" title="space" />
           <button
             ref={burgerRef}
             type="button"
@@ -331,10 +332,6 @@ export default function Header() {
             >
               Contact
             </a>
-
-            <div className="mt-2">
-              <AudioPlayer src="/audio/space.m4a" title="space" />
-            </div>
           </nav>
         </div>
       </div>
