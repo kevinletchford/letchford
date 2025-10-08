@@ -5,7 +5,7 @@ import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
 import marsVertexShader from "@src/shaders/mars/vertex.glsl";
 import marsFragmentShader from "@src/shaders/mars/fragment.glsl";
 import type { Ctx, LoadResult, PageLoader } from "../types";
-import { mountHomeUI } from "./home-ui"; // uses AbortController internally and returns { dispose }
+// import { mountHomeUI } from "./home-ui"; // uses AbortController internally and returns { dispose }
 import { mountTextEffects } from "../ui/text-animator";
 
 const MTL = (lm: THREE.LoadingManager) => new MTLLoader(lm);
@@ -42,7 +42,7 @@ const loadHome: PageLoader = async ({ three: T, renderer, textureLoader, loading
   let cancelled = false;
 
   // --- Mount homepage DOM listeners (AbortController inside) ---
-  const { dispose: disposeUI } = mountHomeUI();
+  // const { dispose: disposeUI } = mountHomeUI();
   const uiText = await mountTextEffects();
 
   // --- Textures (async, cancellable) ---
@@ -53,7 +53,7 @@ const loadHome: PageLoader = async ({ three: T, renderer, textureLoader, loading
     textureLoader.loadAsync("/mars/mars-night.jpg"),
     textureLoader.loadAsync("/mars/mars-specular.jpg"),
   ]);
-  if (cancelled) return { group, dispose: () => disposeUI?.() };
+  // if (cancelled) return { group, dispose: () => disposeUI?.() };
 
   marsDay.colorSpace = T.SRGBColorSpace;
   marsNight.colorSpace = T.SRGBColorSpace;
@@ -81,14 +81,14 @@ const loadHome: PageLoader = async ({ three: T, renderer, textureLoader, loading
   const satMtl = await MTL(loadingManager)
     .setResourcePath("/satellite/")
     .loadAsync("/satellite/Satellite.mtl");
-  if (cancelled) return { group, dispose: () => disposeUI?.() };
+  // if (cancelled) return { group, dispose: () => disposeUI?.() };
   satMtl.preload();
 
   const satellite = await OBJ(loadingManager)
     .setMaterials(satMtl)
     .setResourcePath("/satellite/")
     .loadAsync("/satellite/Satellite.obj");
-  if (cancelled) return { group, dispose: () => disposeUI?.() };
+  // if (cancelled) return { group, dispose: () => disposeUI?.() };
 
   satellite.traverse((c) => (c instanceof T.Mesh) && upgradeToStandard(T, c));
 
@@ -124,14 +124,14 @@ const loadHome: PageLoader = async ({ three: T, renderer, textureLoader, loading
   const astMtl = await MTL(loadingManager)
     .setResourcePath("/astronaut/")
     .loadAsync("/astronaut/Astronaut.mtl");
-  if (cancelled) return { group, dispose: () => disposeUI?.() };
+  // if (cancelled) return { group, dispose: () => disposeUI?.() };
   astMtl.preload();
 
   const astronaut = await OBJ(loadingManager)
     .setMaterials(astMtl)
     .setResourcePath("/astronaut/")
     .loadAsync("/astronaut/Astronaut.obj");
-  if (cancelled) return { group, dispose: () => disposeUI?.() };
+  // if (cancelled) return { group, dispose: () => disposeUI?.() };
 
   astronaut.traverse((c) => (c instanceof T.Mesh) && upgradeToStandard(T, c));
   astronaut.rotation.set(1.25, -1, 0);
@@ -193,7 +193,7 @@ const loadHome: PageLoader = async ({ three: T, renderer, textureLoader, loading
 
   const dispose = () => {
     cancelled = true; // stop async additions
-    disposeUI?.();
+    // disposeUI?.();
     uiText.dispose();
 
     // Explicitly dispose GPU resources created here

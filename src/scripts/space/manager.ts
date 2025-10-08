@@ -1,6 +1,5 @@
 // src/space/manager.ts
 import * as THREE from "three";
-import { gsap } from "gsap";
 import { lazyLoaders } from "./pages";
 import type { PageLoader } from "./types";
 

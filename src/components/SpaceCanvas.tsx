@@ -30,13 +30,11 @@ export default function SpaceCanvas({
     let onBeforeSwap: (() => void) | undefined;
 
     (async () => {
-      const [{ SpaceManager }] = await Promise.all([
-        import("../scripts/space/manager")
-      ]);
+
       if (!mounted) return;
 
       // 1) Init renderer/loop
-      SpaceManager.init({ canvasId: id });
+      window.SpaceManager.init({ canvasId: id });
 
       // 3) Routing sync
       const path = () => {
@@ -50,7 +48,7 @@ export default function SpaceCanvas({
         const p = path();
         if (p === lastPathRef.current) return;
         try {
-          SpaceManager.loadForPath(p);
+          window.SpaceManager.loadForPath(p);
           lastPathRef.current = p;
         } catch (e) {
           console.error("[SpaceCanvas] loadForPath failed", e);

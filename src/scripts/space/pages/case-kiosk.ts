@@ -49,7 +49,7 @@ const loadKiosk: PageLoader = async ({
 
   group.add(laptop);
 
-  const ui = await mountCaseStudyUI();
+  //const ui = await mountCaseStudyUI();
   const uiText = await mountTextEffects();
 
   // Per-frame updates (manager will call this)
@@ -61,7 +61,7 @@ const loadKiosk: PageLoader = async ({
 
   const dispose = () => {
     cancelled = true;
-    ui.dispose();
+    //ui.dispose();
      uiText.dispose();
     // No DOM listeners here. Manager will deep-dispose materials/geo via disposeObject(group).
   };

@@ -3,6 +3,7 @@ import "../styles/global.css";
 import Header from "../components/Header.tsx";
 import "@fontsource-variable/space-grotesk";
 import { ClientRouter } from "astro:transitions";
+
 import PersistedSpace from "@components/PersistedSpace.astro";
 import { slide } from "astro:transitions";
 interface Props {
@@ -36,23 +37,32 @@ const { title = "Kevin Letchford" } = Astro.props;
         height: 100%;
       }
     </style>
-    <ClientRouter />
+        <ClientRouter />
+
   </head>
-  <body class="bg-[linear-gradient(to_bottom,rgba(10,10,50,0.5),rgba(0,0,0,1)),url(/stars/stars.jpg)] bg-fixed bg-center text-white/90 overscroll-none">
+  <body class=" text-white/90 ">
     <Header client:load transition:persist />
 
     <!-- WebGL overlay; non-interactive so it won't block scroll -->
     <div id="space-root" class="fixed inset-0 pointer-events-none ">
       <PersistedSpace />
-    </div>
+    </div>  
+    <slot />
+    <script>
+      import gsap from "gsap";
+      import { ScrollTrigger } from "gsap/ScrollTrigger";
+      import { Observer, ScrollToPlugin } from "gsap/all";
+      import { SpaceManager } from "../scripts/space/manager";
 
-    <!-- ScrollSmoother structure -->
-    <div class="relative w-full">
-      <div id="wrapper" class="h-dvh overflow-hidden overflow-y-auto overscroll-contain absolute inset-0 bg-gradient-to-r from-cyan-700/70  to-red-900/10">
-  
-          <slot />
- 
-      </div>
-    </div>
+      window.gsap = gsap;
+      window.ScrollTrigger = ScrollTrigger;
+      window.Observer = Observer;
+      window.ScrollToPlugin = ScrollToPlugin;
+      window.SpaceManager = SpaceManager;
+      window.ctx = null;
+
+      gsap.registerPlugin(ScrollTrigger, ScrollToPlugin, Observer);
+      gsap.config({ nullTargetWarn: false });
+    </script>
   </body>
 </html>

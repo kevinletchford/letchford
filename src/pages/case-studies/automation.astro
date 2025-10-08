@@ -372,3 +372,75 @@ import Layout from "@layouts/FullPage.astro";
     </div>
   </div>
 </Layout>
+
+<script data-astro-rerun>
+
+ document.addEventListener(
+    "astro:page-load",
+    () => {
+      console.log(ctx);
+    if (window.ctx != null) {
+      window.ctx.revert();
+      window.ctx = null;
+    }
+    console.log("ctx is " + ctx);
+    window.ctx = gsap.context(() => {});
+    window.ctx.revert();
+
+    window.ctx?.add(() => {
+    const sections = gsap.utils.toArray("section.horizontal");
+
+    sections.forEach((sec, i) => {
+      const pinWrap  = sec.querySelector(".pin-wrap");
+      const animWrap = pinWrap?.querySelector(".animation-wrap");
+      if (!pinWrap || !animWrap) return;
+
+      pinWrap.style.overflowX = "hidden";
+
+      const distance = () => Math.max(0, animWrap.scrollWidth - window.innerWidth);
+
+      gsap.fromTo(
+        animWrap,
+        { x: () => (animWrap.classList.contains("to-right") ? 0 : -distance()) },
+        {
+          x: () => (animWrap.classList.contains("to-right") ? -distance() : 0),
+          ease: "none",
+          scrollTrigger: {
+            onToggle: (self) => console.log("toggled, isActive:", self.isActive),
+            onUpdate: (self) => {
+            console.log(
+              "progress:",
+              self.progress.toFixed(3),
+              "direction:",
+              self.direction,
+              "velocity",
+              self.getVelocity()
+            );
+          },
+            id: `horiz-${i}`,
+            trigger: sec,
+            start: "top top",
+            end: () => "+=" + distance(),
+            pin: pinWrap,
+            scrub: true,
+            invalidateOnRefresh: true,
+            // markers: true,
+          },
+        }
+      );
+    });
+ScrollTrigger.refresh();
+    console.log(ctx)
+  });},  { once: false });
+
+  document.addEventListener("astro:before-swap", () => {
+        console.log(ScrollTrigger.getAll());
+    if (ctx != null) {
+      ctx.revert();
+      ctx = null;
+    }
+    ScrollTrigger.killAll();
+    console.log(ScrollTrigger.getAll());
+  });
+
+</script>

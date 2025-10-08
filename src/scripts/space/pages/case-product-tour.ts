@@ -29,7 +29,7 @@ const loadProductTour: PageLoader = async ({
     side: T.DoubleSide,
     depthWrite: false,
     blending: T.AdditiveBlending,
-  });
+  }); 
 
   // Load the GLTF (rocket/tablet)
   const gltf = await GLTF(loadingManager).loadAsync("/rocket/Rocket.glb");
@@ -51,7 +51,7 @@ const loadProductTour: PageLoader = async ({
 
   group.add(tablet);
 
-    const ui = await mountCaseStudyUI();
+    // const ui = await mountCaseStudyUI();
   const uiText = await mountTextEffects();
   // Per-frame updater (manager will call this)
   const updater = (dt: number, t: number) => {
@@ -63,7 +63,7 @@ const loadProductTour: PageLoader = async ({
 
   const dispose = () => {
     cancelled = true;
-    ui.dispose();
+    // ui.dispose();
     uiText.dispose();
     // No DOM listeners here. Materials/geometries/textures will be
     // disposed by the manager's disposeObject(group) on route change.

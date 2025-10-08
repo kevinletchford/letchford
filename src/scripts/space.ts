@@ -4,7 +4,6 @@ import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader.js';
 import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
 import marsVertexShader from '@src/shaders/mars/vertex.glsl'
 import marsFragmentShader from '@src/shaders/mars/fragment.glsl'
-import { gsap } from "gsap";
 
 const canvas = document.getElementById('webgl-canvas') as HTMLCanvasElement;
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });

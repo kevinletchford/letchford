@@ -122,7 +122,6 @@ export function mountHomeUI() {
       qOy(map(0, bounds.height, 0.5, -0.5, y));
     };
 
-    // ================ GSAP context ================
     ctx = gsap.context(() => {
       // Camera follows the proxy every frame (smoothly)
       gsap.ticker.add(updateCamera);
@@ -221,6 +220,7 @@ export function mountHomeUI() {
         (moveTarget as any).removeEventListener?.("mousemove", onMove as any);
         removeEventListener("resize", updateBounds);
         gsap.ticker.remove(updateCamera);
+        
         prevBtn?.removeEventListener("click", onPrev);
         nextBtn?.removeEventListener("click", onNext);
         dotHandlers.forEach((handler, el) => el.removeEventListener("click", handler));
