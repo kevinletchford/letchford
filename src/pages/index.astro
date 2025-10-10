@@ -209,6 +209,11 @@ document.addEventListener("astro:page-load", () => {
 
   window.ctx = gsap.context(() => {});
   window.ctx?.add(() => {
+
+            window.Smoother = ScrollSmoother.create({
+        wrapper: '#wrapper',
+        content: '#content'
+        });
     const sectionDefs = [
       { key: "header",     sel: "#header",     pos: { x: -20, y: -30, z: 80 } },
       { key: "skills",     sel: "#skills",     pos: { x: -20, y: -30, z: 70 } },
@@ -258,10 +263,10 @@ document.addEventListener("astro:page-load", () => {
         idx = clamp(idx, 0, sectionDefs.length - 1);
         const target = document.querySelector(sectionDefs[idx].sel);
         if (!target) return;
-        gsap.to(scroller || window, {
+        gsap.to(window.Smoother || window, {
           duration: 0.8,
           ease: "power2.out",
-          scrollTo: { y: target, autoKill: true },
+           scrollTop: window.Smoother.offset(target, "top top"),
           onComplete: () => {
             currentIndex = idx;
             setActiveDot(idx);

@@ -51,18 +51,36 @@ const { title = "Kevin Letchford" } = Astro.props;
     <script>
       import gsap from "gsap";
       import { ScrollTrigger } from "gsap/ScrollTrigger";
-      import { Observer, ScrollToPlugin } from "gsap/all";
-      import { SpaceManager } from "../scripts/space/manager";
+      import { Observer, ScrollToPlugin, ScrollSmoother } from "gsap/all";
+      import { SpaceManagerAPI } from "../scripts/space/manager";
+        gsap.registerPlugin(ScrollTrigger, ScrollToPlugin, Observer, ScrollSmoother);
+      if (!window.__spaceBooted) {
+        window.__spaceBooted = true;
 
-      window.gsap = gsap;
-      window.ScrollTrigger = ScrollTrigger;
-      window.Observer = Observer;
-      window.ScrollToPlugin = ScrollToPlugin;
-      window.SpaceManager = SpaceManager;
-      window.ctx = null;
+        window.gsap = gsap;
+        window.ScrollTrigger = ScrollTrigger;
+        window.Observer = Observer;
+        window.ScrollToPlugin = ScrollToPlugin;
+        window.ScrollSmoother = ScrollSmoother;
 
-      gsap.registerPlugin(ScrollTrigger, ScrollToPlugin, Observer);
-      gsap.config({ nullTargetWarn: false });
+        window.Smoother = ScrollSmoother.create({
+        wrapper: '#wrapper',
+        content: '#content'
+        });
+
+
+        gsap.config({ nullTargetWarn: false });
+
+        // ✅ expose your API for inline rerun scripts
+        window.SpaceManager = SpaceManagerAPI;
+
+        // an event & promise for late consumers
+        window.SpaceReady = Promise.resolve(SpaceManagerAPI);
+        window.dispatchEvent(new Event("space:ready"));
+      }
     </script>
+
+
+    
   </body>
 </html>

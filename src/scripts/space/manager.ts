@@ -1,11 +1,28 @@
 // src/space/manager.ts
 import * as THREE from "three";
+import gsap from "gsap"; // ✅ you use gsap below, import it explicitly
 import { lazyLoaders } from "./pages";
 import type { PageLoader } from "./types";
 
+// (A) Persist the singleton across re-runs/HMR on the window object
+declare global {
+  interface Window {
+    __SpaceManagerInstance?: Manager;      // the singleton instance
+    SpaceManager: typeof SpaceManagerAPI; // public facade (optional if you export it elsewhere)
+  }
+}
+
 export class Manager {
   private static _i: Manager | null = null;
-  static I() { return (this._i ??= new Manager()); }
+  static I() {
+    if (typeof window !== "undefined" && window.__SpaceManagerInstance) {
+      this._i = window.__SpaceManagerInstance;
+      return this._i;
+    }
+    this._i ??= new Manager();
+    if (typeof window !== "undefined") window.__SpaceManagerInstance = this._i;
+    return this._i;
+  }
 
   renderer!: THREE.WebGLRenderer;
   scene!: THREE.Scene;
@@ -21,50 +38,37 @@ export class Manager {
   currentKey: string | null = null;
   currentDispose: (() => void) | null = null;
 
-  // Keep a single reference to the current page's updater so we can remove it
   private pageUpdater: ((dt: number, t: number) => void) | null = null;
   private updaters: Array<(dt: number, t: number) => void> = [];
 
-  // Stable WASD/world-rotation updater so we don't add duplicates
   private keys: Record<string, boolean> = {};
   private yaw = 0;
   private pitch = 0;
-  private wrUpdater = (dt: number) => this.updateWorldRotation(dt); // <-- stable reference
+  private wrUpdater = (dt: number) => this.updateWorldRotation(dt);
 
   private _ready = false;
   private _readyPromise: Promise<void>;
   private _resolveReady!: () => void;
 
   constructor() {
-    // Ready promise that resolves once init completes
     this._readyPromise = new Promise<void>((res) => (this._resolveReady = res));
   }
 
-  /** Resolves after init() sets up renderer/scene/camera. */
-  whenReady(): Promise<void> {
-    return this._readyPromise;
-  }
-
-  /** True after init() */
-  get ready(): boolean {
-    return this._ready;
-  }
+  whenReady(): Promise<void> { return this._readyPromise; }
+  get ready(): boolean { return this._ready; }
 
   getCamera(): THREE.PerspectiveCamera {
     if (!this.camera) throw new Error("SpaceManager not initialized: camera unavailable");
     return this.camera;
   }
-
   getScene(): THREE.Scene {
     if (!this.scene) throw new Error("SpaceManager not initialized: scene unavailable");
     return this.scene;
   }
-  
   getRenderer(): THREE.WebGLRenderer {
     if (!this.renderer) throw new Error("SpaceManager not initialized: renderer unavailable");
     return this.renderer;
   }
-
   getWorld(): THREE.Group { return this.world; }
   getPageLayer(): THREE.Group { return this.pageLayer; }
 
@@ -74,7 +78,9 @@ export class Manager {
   }
 
   init({ canvasId }: { canvasId: string }) {
+    // ✅ idempotent: don’t re-create renderer/listeners on reruns
     if (this.renderer) return;
+
     const canvas = document.getElementById(canvasId) as HTMLCanvasElement | null;
     if (!canvas) throw new Error("Canvas not found");
 
@@ -87,14 +93,12 @@ export class Manager {
     this.camera = new THREE.PerspectiveCamera(50, innerWidth / innerHeight, 0.1, 2000);
     this.camera.position.set(-20, -30, 80);
 
-    // Stars background
     const starsTex = this.textureLoader.load("/stars/stars.jpg");
     starsTex.colorSpace = THREE.SRGBColorSpace;
     starsTex.mapping = THREE.EquirectangularReflectionMapping;
     starsTex.anisotropy = this.renderer.capabilities.getMaxAnisotropy();
     this.scene.background = starsTex;
 
-    // Lights
     this.scene.add(new THREE.AmbientLight(0xffffff, 0.4));
     const dir = new THREE.DirectionalLight(0xffffff, 1);
     dir.position.set(50, 50, 50);
@@ -107,7 +111,7 @@ export class Manager {
     addEventListener("keydown", (e) => (this.keys[e.key.toLowerCase()] = true));
     addEventListener("keyup",   (e) => (this.keys[e.key.toLowerCase()] = false));
 
-    // Add stable world-rotation updater once
+    // add the stable world-rotation updater once
     this.addUpdater(this.wrUpdater as any);
 
     const tick = () => {
@@ -141,7 +145,6 @@ export class Manager {
   private addUpdater(fn: (dt: number, t: number) => void) {
     if (!this.updaters.includes(fn)) this.updaters.push(fn);
   }
-
   private removeUpdater(fn: (dt: number, t: number) => void) {
     this.updaters = this.updaters.filter(u => u !== fn);
   }
@@ -161,14 +164,8 @@ export class Manager {
     const key = this.routeToKey(path);
     if (key === this.currentKey) return;
 
-        console.log("[manager] unload", this.currentKey);
-      console.log("[manager] load", key);
-      console.log("[manager] updaters", this.updaters.length);
-
-    // Unload current page *first*
     this.unloadCurrent();
 
-    // Load new page
     const factory = lazyLoaders[key];
     if (factory) {
       const mod = await factory();
@@ -185,7 +182,6 @@ export class Manager {
 
       this.pageLayer.add(group);
 
-      // Track this page's updater so we can remove exactly it later
       if (updater) {
         this.pageUpdater = updater;
         this.addUpdater(updater);
@@ -193,12 +189,9 @@ export class Manager {
         this.pageUpdater = null;
       }
 
-      // Compose a disposer we can call centrally on route change
       this.currentDispose = () => {
         try { dispose?.(); } catch {}
-        // Kill tweens that might target page objects (optional but useful)
         killTweensDeep(group);
-        // Deep dispose geometries/materials/textures and remove from graph
         disposeObject(group);
       };
     }
@@ -208,17 +201,14 @@ export class Manager {
   }
 
   unloadCurrent() {
-    // Remove the page updater from the frame loop
     if (this.pageUpdater) {
       this.removeUpdater(this.pageUpdater);
       this.pageUpdater = null;
     }
-    // Call the page's dispose (AbortControllers, observers, timers, etc.)
     if (this.currentDispose) {
       try { this.currentDispose(); } catch {}
       this.currentDispose = null;
     }
-    // Ensure the page layer is empty
     this.pageLayer.children.slice().forEach(disposeObject);
     this.pageLayer.clear();
   }
@@ -228,17 +218,16 @@ export class Manager {
   }
 }
 
-export const SpaceManager = {
+// (B) A small facade that’s easy to expose globally
+export const SpaceManagerAPI = {
   init: (o: { canvasId: string }) => Manager.I().init(o),
   loadForPath: (p: string) => Manager.I().loadForPath(p),
   zoomTo: (pos: THREE.Vector3Like, d?: number, delay?: number) => Manager.I().zoomTo(pos, d, delay),
-
   getCamera: () => Manager.I().getCamera(),
   getScene: () => Manager.I().getScene(),
   getRenderer: () => Manager.I().getRenderer(),
   getWorld: () => Manager.I().getWorld(),
   getPageLayer: () => Manager.I().getPageLayer(),
-
   whenReady: () => Manager.I().whenReady(),
   onTick: (fn: (dt: number, t: number) => void) => Manager.I().onTick(fn),
 };
@@ -247,12 +236,12 @@ export const SpaceManager = {
 function killTweensDeep(root: THREE.Object3D) {
   root.traverse(o => {
     try { gsap.killTweensOf(o); } catch {}
-    // if you tweened uniforms/positions directly, kill those too:
-    if ((o as any).material) {
-      const mats = Array.isArray((o as any).material) ? (o as any).material : [(o as any).material];
-      mats.forEach(m => {
+    const any = o as any;
+    if (any.material) {
+      const mats = Array.isArray(any.material) ? any.material : [any.material];
+      mats.forEach((m: any) => {
         try { gsap.killTweensOf(m); } catch {}
-        if (m && m.uniforms) {
+        if (m?.uniforms) {
           Object.values(m.uniforms).forEach((u: any) => { try { gsap.killTweensOf(u); } catch {} });
         }
       });
@@ -263,14 +252,10 @@ function killTweensDeep(root: THREE.Object3D) {
 /** Deep-dispose helper: geometries, materials, textures, then remove from parent. */
 export function disposeObject(obj: THREE.Object3D) {
   obj.traverse((o: any) => {
-    if (o.geometry) {
-      o.geometry.dispose?.();
-      o.geometry = undefined;
-    }
+    if (o.geometry) { o.geometry.dispose?.(); o.geometry = undefined; }
     if (o.material) {
       const mats = Array.isArray(o.material) ? o.material : [o.material];
-      mats.forEach((m) => {
-        // dispose common texture slots
+      mats.forEach((m: any) => {
         ["map","lightMap","aoMap","emissiveMap","metalnessMap","roughnessMap",
          "normalMap","bumpMap","displacementMap","alphaMap","envMap"]
           .forEach((k) => m?.[k]?.dispose?.());

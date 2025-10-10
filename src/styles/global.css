@@ -275,3 +275,13 @@ section.horizontal .animation-wrap {
     align-items: center;
 }
 
+
+html, body { overscroll-behavior: none; }
+
+/* if you have a custom scroller */
+#wrapper { overscroll-behavior: contain; }
+
+/* the pinned horizontal section(s) */
+section.horizontal, section.horizontal .pin-wrap { 
+  touch-action: pan-x;       /* only horizontal gestures here */
+}

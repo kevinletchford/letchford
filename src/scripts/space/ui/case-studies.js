@@ -1,8 +1,5 @@
 document.addEventListener("astro:page-load", () => {
   // Register once (safe if called multiple times)
-  if (window.gsap && window.ScrollTrigger && window.ScrollToPlugin) {
-    gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
-  }
 
   // Clean any prior run
   window.ctx?.revert();
@@ -11,8 +8,11 @@ document.addEventListener("astro:page-load", () => {
   // Detect scroller and set defaults (explicitly fall back to window)
   const scroller = document.querySelector("#wrapper") || null;
   ScrollTrigger.defaults({ scroller: scroller || window });
-
   window.ctx = gsap.context(() => {
+            window.Smoother = ScrollSmoother.create({
+        wrapper: '#wrapper',
+        content: '#content'
+        });
     // ---- Camera ticker (unchanged, but store on window for cleanup) ----
     window.SpaceManager.whenReady().then(() => {
       const camera = window.SpaceManager.getCamera();
@@ -83,12 +83,13 @@ document.addEventListener("astro:page-load", () => {
       idx = clamp(idx, 0, sections.length - 1);
       const target = sections[idx];
       if (!target) return;
-      gsap.to(scroller || window, {
-        duration: 0.8,
-        ease: "power2.out",
-        scrollTo: { y: target, autoKill: true },
-        onComplete: () => setActiveIndex(idx),
-      });
+
+        gsap.to(window.Smoother, {
+            scrollTop: window.Smoother.offset(target, "top top"),
+             duration: 0.8,
+            ease: "power2.out",
+            onComplete: () => setActiveIndex(idx),
+        });
     };
 
     // Buttons
@@ -147,13 +148,13 @@ document.addEventListener("astro:page-load", () => {
         return Math.max(0, animWrap.scrollWidth - vw);
       };
 
-      gsap.fromTo(
+        gsap.fromTo(
         animWrap,
         { x: () => (animWrap.classList.contains("to-right") ? 0 : -distance()) },
         {
-          x: () => (animWrap.classList.contains("to-right") ? -distance() : 0),
-          ease: "none",
-          scrollTrigger: {
+            x: () => (animWrap.classList.contains("to-right") ? -distance() : 0),
+            ease: "none",
+            scrollTrigger: {
             id: `horiz-${i}`,
             trigger: sec,
             start: "top top",
@@ -163,11 +164,24 @@ document.addEventListener("astro:page-load", () => {
             invalidateOnRefresh: true,
             pinType: scroller ? "transform" : "fixed",
             anticipatePin: 1,
-            refreshPriority: 1, // measure this early so section triggers compute correctly
+            refreshPriority: 1,
+            snap: {
+                snapTo: (val) => val,     // or a function/array of progress positions
+                duration: { min: 0.2, max: 0.6 },
+                ease: "power1.inOut",
+                inertia: false,           // <-- valid HERE
+                directional: true,
+                delay: 0.02
+            },
             // markers: true,
-          },
+            onRefresh: () => {
+                // ensure touch-axis lock even if added dynamically
+                sec.style.touchAction = "pan-x";
+                pinWrap.style.touchAction = "pan-x";
+            }
+            }
         }
-      );
+        );
     });
 
     // ---- Initialize UI state after everything is measured ----
@@ -186,6 +200,7 @@ document.addEventListener("astro:page-load", () => {
 document.addEventListener("astro:before-swap", () => {
   try {
     if (window.ctx) { window.ctx.revert(); window.ctx = null; }
+    console.log(window.ScrollSmoother);
     window.ScrollTrigger?.killAll();
   } catch (e) {
     console.error(e);
