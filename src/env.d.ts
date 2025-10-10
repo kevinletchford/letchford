@@ -11,4 +11,5 @@ declare global {
         ScrollToPlugin: typeof import("gsap/ScrollToPlugin").ScrollToPlugin;
          ScrollToPluginx: typeof import("gsap/ScrollToPlugin").ScrollToPlugin;
          ctx: typeof import("gsap").context;
+         GSDevTools: typeof import("gsap/GSDevTools").GSDevTools;
     }};

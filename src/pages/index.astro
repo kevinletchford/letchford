@@ -173,140 +173,149 @@ import Layout from "@layouts/FullPage.astro";
 </Layout>
 
 <script data-astro-rerun>
+if(typeof uiCleanup == 'undefined') {
+    uiCleanup = null;
+}
 
-document.addEventListener(
-    "astro:page-load",
-    () => {
-      let disposed = false;
-      let uiCleanupb= null; // <-- store cleanup here (not on ctx)
+document.addEventListener("astro:page-load", () => {
+  uiCleanup?.();
+  uiCleanup = null;
 
-    if (ctx != null) {
-      ctx.revert();
-      ctx = null;
-    }
+  let disposed = false;
+  let tickerFn = null;
+  let resetScrollerDefault = false;
+  const controller = new AbortController();
+  const { signal } = controller;
 
-    ctx = gsap.context(() => {});
+  uiCleanup = () => {
+    disposed = true;
+    controller.abort();
+    if (tickerFn) { gsap.ticker.remove(tickerFn); tickerFn = null; }
+    if (resetScrollerDefault) ScrollTrigger.defaults({ scroller: undefined });
+  };
 
-    
-     ctx?.add(() => {
-  // map of sections to camera targets (keys match data-nav-item)
-  const sectionDefs = [
-    { key: "header",     sel: "#header",     pos: { x: -20, y: -30, z: 80 } },
-    { key: "skills",     sel: "#skills",     pos: { x: -20, y: -30, z: 70 } },
-    { key: "experience", sel: "#experience", pos: { x: -10, y: -40, z: 70 } },
-    { key: "education",  sel: "#education",  pos: { x: -20, y: -30, z: 100 } },
-  ];
+  const handleBeforeSwap = () => {
+    uiCleanup?.();
+    uiCleanup = null;
+    if (window.ctx) { window.ctx.revert(); window.ctx = null; }
+    ScrollTrigger.killAll();
+  };
+  document.addEventListener("astro:before-swap", handleBeforeSwap, { once: true });
 
-  const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
- console.log("before space");
+  if (window.ctx) {
+    window.ctx.revert();
+    window.ctx = null;
+  }
 
-  SpaceManager.whenReady().then(() => {
-    if (disposed)  return console.log("not ready");
-        console.log("ready");
-    const camera = SpaceManager.getCamera();
-    const scroller = document.querySelector("#wrapper") || undefined;
-    if (scroller) ScrollTrigger.defaults({ scroller });
+  window.ctx = gsap.context(() => {});
+  window.ctx?.add(() => {
+    const sectionDefs = [
+      { key: "header",     sel: "#header",     pos: { x: -20, y: -30, z: 80 } },
+      { key: "skills",     sel: "#skills",     pos: { x: -20, y: -30, z: 70 } },
+      { key: "experience", sel: "#experience", pos: { x: -10, y: -40, z: 70 } },
+      { key: "education",  sel: "#education",  pos: { x: -20, y: -30, z: 100 } }
+    ];
+    const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
 
-    // ---- UI elements ----
-    const prevBtn = document.querySelector(".previous-section");
-    const nextBtn = document.querySelector(".next-section");
-    const navMap = new Map();
-    sectionDefs.forEach(({ key }) => {
-      const el = document.querySelector(`[data-nav-item="${key}"]`);
-      if (el) navMap.set(key, el);
-    });
+    SpaceManager.whenReady().then(() => {
+      if (disposed) return;
 
-    let currentIndex = 0;
-    const setActiveDot = (idx) => {
-      sectionDefs.forEach(({ key }, i) => {
-        const dot = navMap.get(key);
-        if (!dot) return;
-        dot.classList.toggle("dot_active", i === idx);
+      const camera = SpaceManager.getCamera();
+      const scroller = document.querySelector("#wrapper") || undefined;
+      if (scroller) { ScrollTrigger.defaults({ scroller }); resetScrollerDefault = true; }
+
+      const prevBtn = document.querySelector(".previous-section");
+      const nextBtn = document.querySelector(".next-section");
+      const navMap = new Map();
+      sectionDefs.forEach(({ key }) => {
+        const el = document.querySelector(`[data-nav-item="${key}"]`);
+        if (el) navMap.set(key, el);
       });
-    };
-    const updateButtons = (idx) => {
-      const atStart = idx <= 0;
-      const atEnd = idx >= sectionDefs.length - 1;
-      if (prevBtn) {
-        prevBtn.toggleAttribute("disabled", atStart);
-        prevBtn.setAttribute("aria-disabled", String(atStart));
-        prevBtn.classList.toggle("is-disabled", atStart);
-      }
-      if (nextBtn) {
-        nextBtn.toggleAttribute("disabled", atEnd);
-        nextBtn.setAttribute("aria-disabled", String(atEnd));
-        nextBtn.classList.toggle("is-disabled", atEnd);
-      }
-    };
-    const scrollToIndex = (idx) => {
-      idx = clamp(idx, 0, sectionDefs.length - 1);
-      const target = document.querySelector(sectionDefs[idx].sel);
-      if (!target) return;
-      gsap.to(scroller || window, {
-        duration: 0.8,
-        ease: "power2.out",
-        scrollTo: { y: target, autoKill: true },
-        onComplete: () => {
-          currentIndex = idx;
-          setActiveDot(idx);
-          updateButtons(idx);
-        },
-      });
-    };
-    const getNearestIndex = () => {
-      const top = scroller
-        ? scroller.scrollTop
-        : (window.pageYOffset || document.documentElement.scrollTop || 0);
-      const viewportH = scroller ? scroller.clientHeight : window.innerHeight;
 
-      let bestIdx = 0;
-      let bestDist = Infinity;
-      for (let i = 0; i < sectionDefs.length; i++) {
-        const el = document.querySelector(sectionDefs[i].sel);
-        if (!el) continue;
-        const elTop = scroller
-          ? el.getBoundingClientRect().top - scroller.getBoundingClientRect().top + scroller.scrollTop
-          : el.getBoundingClientRect().top + top;
-        const dist = Math.abs(elTop - (top + viewportH / 2));
-        if (dist < bestDist) { bestDist = dist; bestIdx = i; }
-      }
-      return bestIdx;
-    };
+      let currentIndex = 0;
+      const setActiveDot = (idx) => {
+        sectionDefs.forEach(({ key }, i) => {
+          const dot = navMap.get(key);
+          if (!dot) return;
+          dot.classList.toggle("dot_active", i === idx);
+        });
+      };
+      const updateButtons = (idx) => {
+        const atStart = idx <= 0;
+        const atEnd = idx >= sectionDefs.length - 1;
+        if (prevBtn) {
+          prevBtn.toggleAttribute("disabled", atStart);
+          prevBtn.setAttribute("aria-disabled", String(atStart));
+          prevBtn.classList.toggle("is-disabled", atStart);
+        }
+        if (nextBtn) {
+          nextBtn.toggleAttribute("disabled", atEnd);
+          nextBtn.setAttribute("aria-disabled", String(atEnd));
+          nextBtn.classList.toggle("is-disabled", atEnd);
+        }
+      };
+      const scrollToIndex = (idx) => {
+        idx = clamp(idx, 0, sectionDefs.length - 1);
+        const target = document.querySelector(sectionDefs[idx].sel);
+        if (!target) return;
+        gsap.to(scroller || window, {
+          duration: 0.8,
+          ease: "power2.out",
+          scrollTo: { y: target, autoKill: true },
+          onComplete: () => {
+            currentIndex = idx;
+            setActiveDot(idx);
+            updateButtons(idx);
+          }
+        });
+      };
+      const getNearestIndex = () => {
+        const top = scroller
+          ? scroller.scrollTop
+          : (window.pageYOffset || document.documentElement.scrollTop || 0);
+        const viewportH = scroller ? scroller.clientHeight : window.innerHeight;
 
-    // --- camera proxy (tracks scroll instantly) + camera follow smoothing ---
-    const camProxy = { x: camera.position.x, y: camera.position.y, z: camera.position.z, ox: 0, oy: 0 };
+        let bestIdx = 0;
+        let bestDist = Infinity;
+        for (let i = 0; i < sectionDefs.length; i++) {
+          const el = document.querySelector(sectionDefs[i].sel);
+          if (!el) continue;
+          const elTop = scroller
+            ? el.getBoundingClientRect().top - scroller.getBoundingClientRect().top + scroller.scrollTop
+            : el.getBoundingClientRect().top + top;
+          const dist = Math.abs(elTop - (top + viewportH / 2));
+          if (dist < bestDist) { bestDist = dist; bestIdx = i; }
+        }
+        return bestIdx;
+      };
 
-    // Smooth-follow tweeners for the REAL camera (tweens between last and next)
-    const qCamX = gsap.quickTo(camera.position, "x", { duration: 0.22, ease: "power3.out" });
-    const qCamY = gsap.quickTo(camera.position, "y", { duration: 0.22, ease: "power3.out" });
-    const qCamZ = gsap.quickTo(camera.position, "z", { duration: 0.32, ease: "power3.out" });
-
-    const updateCamera = () => {
-      qCamX(camProxy.x + camProxy.ox);
-      qCamY(camProxy.y + camProxy.oy);
-      qCamZ(camProxy.z);
-      camera.updateMatrixWorld();
-    };
-
-    // pointer parallax (tiny camera offsets)
-    const qOx = gsap.quickTo(camProxy, "ox", { duration: 4, ease: "power3.out" });
-    const qOy = gsap.quickTo(camProxy, "oy", { duration: 4, ease: "power3.out" });
-    const getBounds = () =>
-      scroller?.getBoundingClientRect?.() ?? new DOMRect(0, 0, innerWidth, innerHeight);
-    let bounds = getBounds();
-    const updateBounds = () => (bounds = getBounds());
-    const map = gsap.utils.mapRange;
-    const onMove = (e) => {
-      const x = e.clientX - bounds.left;
-      const y = e.clientY - bounds.top;
-      qOx(map(0, bounds.width, -1, 1, x));
-      qOy(map(0, bounds.height, 0.5, -0.5, y));
-    };
-
-      // Camera follows the proxy every frame (smoothly)
+      const camProxy = { x: camera.position.x, y: camera.position.y, z: camera.position.z, ox: 0, oy: 0 };
+      const qCamX = gsap.quickTo(camera.position, "x", { duration: 0.22, ease: "power3.out" });
+      const qCamY = gsap.quickTo(camera.position, "y", { duration: 0.22, ease: "power3.out" });
+      const qCamZ = gsap.quickTo(camera.position, "z", { duration: 0.32, ease: "power3.out" });
+      const updateCamera = () => {
+        qCamX(camProxy.x + camProxy.ox);
+        qCamY(camProxy.y + camProxy.oy);
+        qCamZ(camProxy.z);
+        camera.updateMatrixWorld();
+      };
+      tickerFn = updateCamera;
       gsap.ticker.add(updateCamera);
 
-      // Section camera mapping (proxy follows scroll instantly; no baked-in lag)
+      const qOx = gsap.quickTo(camProxy, "ox", { duration: 4, ease: "power3.out" });
+      const qOy = gsap.quickTo(camProxy, "oy", { duration: 4, ease: "power3.out" });
+      const getBounds = () =>
+        scroller?.getBoundingClientRect?.() ?? new DOMRect(0, 0, innerWidth, innerHeight);
+      let bounds = getBounds();
+      const updateBounds = () => (bounds = getBounds());
+      const map = gsap.utils.mapRange;
+      const onMove = (e) => {
+        const x = e.clientX - bounds.left;
+        const y = e.clientY - bounds.top;
+        qOx(map(0, bounds.width, -1, 1, x));
+        qOy(map(0, bounds.height, 0.5, -0.5, y));
+      };
+
       sectionDefs.forEach(({ sel, pos }, i) => {
         const el = document.querySelector(sel);
         if (!el) return;
@@ -318,30 +327,17 @@ document.addEventListener(
           overwrite: "auto",
           immediateRender: false,
           scrollTrigger: {
-            onToggle: (self) => console.log("toggled, isActive:", self.isActive),
-            onUpdate: (self) => {
-            console.log(
-              "progress:",
-              self.progress.toFixed(3),
-              "direction:",
-              self.direction,
-              "velocity",
-              self.getVelocity()
-            );
-          },
             trigger: el,
             start: "top center",
-            endTrigger: nextEl || undefined,         // reduce overlap/fighting
+            endTrigger: nextEl || undefined,
             end: nextEl ? "top center" : "bottom center",
-            scrub: true,                              // proxy tracks scroll instantly
+            scrub: true,
             invalidateOnRefresh: true,
-            toggleClass: { targets: el, className: "is-active" },
-            // markers: true,
-          },
+            toggleClass: { targets: el, className: "is-active" }
+          }
         });
       });
 
-      // 🔭 GLOBAL WATCHER: keep nav state in sync at ALL scroll positions
       ScrollTrigger.create({
         scroller: scroller || undefined,
         start: 0,
@@ -353,16 +349,15 @@ document.addEventListener(
             setActiveDot(idx);
             updateButtons(idx);
           }
-        },
+        }
       });
 
-      // DOM parallax elements
       const pEls = gsap.utils.toArray("[data-parallax]");
       const setters = pEls.map((el) => ({
         setX: gsap.quickSetter(el, "x", "px"),
         setY: gsap.quickSetter(el, "y", "px"),
         sx: parseFloat(el.dataset.speedX ?? "0"),
-        sy: parseFloat(el.dataset.speed ?? el.dataset.speedY ?? "0.3"),
+        sy: parseFloat(el.dataset.speed ?? el.dataset.speedY ?? "0.3")
       }));
       ScrollTrigger.create({
         onUpdate(self) {
@@ -372,10 +367,9 @@ document.addEventListener(
             if (sy) setY(-s * sy);
           }
         },
-        invalidateOnRefresh: true,
+        invalidateOnRefresh: true
       });
 
-      // initial sync after layout
       requestAnimationFrame(() => {
         ScrollTrigger.refresh();
         const idx = getNearestIndex();
@@ -384,45 +378,17 @@ document.addEventListener(
         updateButtons(idx);
       });
 
-      // pointer listeners
       const moveTarget = scroller || window;
-      const onPrev = (e) => { e?.preventDefault(); scrollToIndex(currentIndex - 1); };
-      const onNext = (e) => { e?.preventDefault(); scrollToIndex(currentIndex + 1); };
-
-      moveTarget.addEventListener("mousemove", onMove, { passive: true });
-      addEventListener("resize", updateBounds);
-      prevBtn?.addEventListener("click", onPrev);
-      nextBtn?.addEventListener("click", onNext);
-
-    //   // nav dot handlers (store them so we can remove cleanly)
-    //   const dotHandlers = new Map<HTMLElement, let e = () => ();
-    //   navMap.forEach((el, key) => {
-    //     const handler = (e) => {
-    //       e.preventDefault();
-    //       const idx = sectionDefs.findIndex((d) => d.key === key);
-    //       if (idx >= 0) scrollToIndex(idx);
-    //     };
-    //     dotHandlers.set(el, handler);
-    //     el.addEventListener("click", handler);
-    //   });
-
-
-
+      moveTarget.addEventListener("mousemove", onMove, { passive: true, signal });
+      window.addEventListener("resize", updateBounds, { signal });
+      const onPrev = (e) => { e.preventDefault(); scrollToIndex(currentIndex - 1); };
+      const onNext = (e) => { e.preventDefault(); scrollToIndex(currentIndex + 1); };
+      prevBtn?.addEventListener("click", onPrev, { signal });
+      nextBtn?.addEventListener("click", onNext, { signal });
     });
   });
-  },  { once: false });
-
-
-  document.addEventListener("astro:before-swap", () => {
-        console.log(ScrollTrigger.getAll());
-    if (ctx != null) {
-      ctx.revert();
-      ctx = null;
-    }
-    ScrollTrigger.killAll();
-    console.log(ScrollTrigger.getAll());
-  });
-
-
+}, { once: false });
 </script>
+
+
 
