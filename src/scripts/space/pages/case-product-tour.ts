@@ -4,7 +4,6 @@ import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import holographicVertexShader from "@src/shaders/holographic/vertex.glsl";
 import holographicFragmentShader from "@src/shaders/holographic/fragment.glsl";
 import type { Ctx, LoadResult, PageLoader } from "../types";
-import { mountCaseStudyUI } from "../ui/case-studies";
 import { mountTextEffects } from "../ui/text-animator";
 
 const GLTF = (lm: THREE.LoadingManager) => new GLTFLoader(lm);
@@ -57,16 +56,11 @@ const loadProductTour: PageLoader = async ({
   const updater = (dt: number, t: number) => {
     holoMat.uniforms.uTime.value = t;
     tablet.rotation.y = t * 0.2;
-    // No renderer.render() here; manager handles it.
-    // Camera lookAt is also handled globally or via SpaceManager.zoomTo when needed.
   };
 
   const dispose = () => {
     cancelled = true;
-    // ui.dispose();
     uiText.dispose();
-    // No DOM listeners here. Materials/geometries/textures will be
-    // disposed by the manager's disposeObject(group) on route change.
   };
 
   return { group, dispose, updater };

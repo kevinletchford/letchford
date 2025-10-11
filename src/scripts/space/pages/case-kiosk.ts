@@ -4,7 +4,6 @@ import { OBJLoader } from "three/addons/loaders/OBJLoader.js";
 import holographicVertexShader from "@src/shaders/holographic/vertex.glsl";
 import holographicFragmentShader from "@src/shaders/holographic/fragment.glsl";
 import type { Ctx, LoadResult, PageLoader } from "../types";
-import { mountCaseStudyUI } from "../ui/case-studies";
 import { mountTextEffects } from "../ui/text-animator";
 
 const OBJ = (lm: THREE.LoadingManager) => new OBJLoader(lm);
@@ -45,7 +44,7 @@ const loadKiosk: PageLoader = async ({
   laptop.rotation.set(0, 0, 0);
   laptop.scale.set(0.75,0.75, 0.75);
   laptop.position.set(0, 0, 0);
-    laptop.position.set( -20, -30, 75);
+  laptop.position.set( -20, -30, 75);
 
   group.add(laptop);
 
