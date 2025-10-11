@@ -110,11 +110,15 @@ export default function Header() {
 
   return (
     <header className="fixed top-0 z-50 w-full bg-[linear-gradient(to_top,rgba(0,0,0,0),rgba(0,0,0,0.4))] p-4">
-      <div className="grid grid-cols-2 items-center gap-2 md:grid-cols-5">
+      <div className="grid grid-cols-3 items-center gap-2 md:flex justify-between lg:grid-cols-5 lg:grid">
         {/* Brand */}
-        <a className="flex flex-col" href="/">
+        <a className="flex items-center gap-2 col-span-2 lg:col-span-1" href="/">
+        <img src="/icons/logo.svg" width="45" className="opacity-90"/>
+        <span className="flex flex-col">
           <span className="bold">Kevin Letchford</span>
           <span className="text-white/60">Design Engineer</span>
+        </span>
+
         </a>
 
         {/* Desktop center nav (hidden on mobile) */}
