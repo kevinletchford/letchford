@@ -152,7 +152,7 @@ export default function Header() {
               </svg>
             </button>
 
-            <a className="py-2 text-white/70" href="#">
+            <a className="py-2 text-white/70" href="/projects">
               Projects
             </a>
           </nav>
@@ -324,7 +324,7 @@ export default function Header() {
               </div>
             </details>
 
-            <a href="#" className="rounded-xl px-3 py-2 text-lg text-white/90 hover:bg-white/10">
+            <a href="/projects" className="rounded-xl px-3 py-2 text-lg text-white/90 hover:bg-white/10">
               Projects
             </a>
 

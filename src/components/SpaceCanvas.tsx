@@ -34,7 +34,12 @@ export default function SpaceCanvas({
       if (!mounted) return;
 
       // 1) Init renderer/loop
-      window.SpaceManager.init({ canvasId: id });
+      try {
+        await window.SpaceManager.init({ canvasId: id }); // 👈 now awaitable
+      } catch (e) {
+        console.error("[SpaceCanvas] init failed", e);
+        return;
+      }
 
       // 3) Routing sync
       const path = () => {

@@ -210,7 +210,7 @@ document.addEventListener("astro:page-load", () => {
   window.ctx = gsap.context(() => {});
   window.ctx?.add(() => {
 
-            window.Smoother = ScrollSmoother.create({
+      window.Smoother = ScrollSmoother.create({
         wrapper: '#wrapper',
         content: '#content'
         });
@@ -263,7 +263,7 @@ document.addEventListener("astro:page-load", () => {
         idx = clamp(idx, 0, sectionDefs.length - 1);
         const target = document.querySelector(sectionDefs[idx].sel);
         if (!target) return;
-        gsap.to(window.Smoother || window, {
+        gsap.to(window.Smoother, {
           duration: 0.8,
           ease: "power2.out",
            scrollTop: window.Smoother.offset(target, "top top"),
@@ -274,6 +274,16 @@ document.addEventListener("astro:page-load", () => {
           }
         });
       };
+
+      const navItems = document.querySelectorAll('a[data-nav-item]');
+
+      navItems.forEach( (item, key) =>{
+          item.addEventListener("click", (e) => {
+             { e.preventDefault(); scrollToIndex(key); };
+          }, { signal });
+      });
+
+
       const getNearestIndex = () => {
         const top = scroller
           ? scroller.scrollTop

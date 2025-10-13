@@ -37,23 +37,26 @@ const { title = "Kevin Letchford" } = Astro.props;
       }
     </style>
         <ClientRouter />
-    <link rel="icon" href="icons/logo.svg" sizes="any" type="image/svg+xml">
-    <link rel="icon" href="icons/logo.png" sizes="any" type="image/png">
+    <link rel="icon" href="/icons/logo.svg" sizes="any" type="image/svg+xml">
+    <link rel="icon" href="/icons/logo.png" sizes="any" type="image/png">
 
   </head>
   <body class=" text-white/90 ">
     <Header client:load transition:persist />
 
     <!-- WebGL overlay; non-interactive so it won't block scroll -->
+     <div class="glitch-bg">  
     <div id="space-root" class="fixed inset-0 pointer-events-none ">
       <PersistedSpace />
     </div>  
+         </div>
     <slot />
     <script>
       import gsap from "gsap";
       import { ScrollTrigger } from "gsap/ScrollTrigger";
       import { Observer, ScrollToPlugin, ScrollSmoother } from "gsap/all";
       import { SpaceManagerAPI } from "../scripts/space/manager";
+      
         gsap.registerPlugin(ScrollTrigger, ScrollToPlugin, Observer, ScrollSmoother);
       if (!window.__spaceBooted) {
         window.__spaceBooted = true;

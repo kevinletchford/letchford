@@ -77,9 +77,9 @@ export class Manager {
     return () => this.removeUpdater(fn);
   }
 
-  init({ canvasId }: { canvasId: string }) {
-    // ✅ idempotent: don’t re-create renderer/listeners on reruns
-    if (this.renderer) return;
+async init({ canvasId }: { canvasId: string }): Promise<void> {
+    // If already initialized (HMR/StrictMode), just wait until ready.
+    if (this.renderer) return this.whenReady();
 
     const canvas = document.getElementById(canvasId) as HTMLCanvasElement | null;
     if (!canvas) throw new Error("Canvas not found");
@@ -111,7 +111,6 @@ export class Manager {
     addEventListener("keydown", (e) => (this.keys[e.key.toLowerCase()] = true));
     addEventListener("keyup",   (e) => (this.keys[e.key.toLowerCase()] = false));
 
-    // add the stable world-rotation updater once
     this.addUpdater(this.wrUpdater as any);
 
     const tick = () => {
@@ -125,6 +124,9 @@ export class Manager {
 
     this._ready = true;
     this._resolveReady?.();
+
+    // Always return a stable promise so callers can await safely.
+    return this.whenReady();
   }
 
   private onResize = () => {
@@ -157,7 +159,7 @@ export class Manager {
     if (p.startsWith("/case-studies/product-tour/")) return "case-product-tour";
     if (p.startsWith("/projects/")) return "projects";
     if (p.startsWith("/contact/")) return "contact";
-    return "home";
+    return "";
   }
 
   async loadForPath(path: string) {
@@ -220,7 +222,7 @@ export class Manager {
 
 // (B) A small facade that’s easy to expose globally
 export const SpaceManagerAPI = {
-  init: (o: { canvasId: string }) => Manager.I().init(o),
+  init: (o: { canvasId: string }) => Manager.I().init(o), // now returns Promise<void>
   loadForPath: (p: string) => Manager.I().loadForPath(p),
   zoomTo: (pos: THREE.Vector3Like, d?: number, delay?: number) => Manager.I().zoomTo(pos, d, delay),
   getCamera: () => Manager.I().getCamera(),

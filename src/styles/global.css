@@ -285,3 +285,19 @@ html, body { overscroll-behavior: none; }
 section.horizontal, section.horizontal .pin-wrap { 
   touch-action: pan-x;       /* only horizontal gestures here */
 }
+
+/* .three-dee-glitch{
+      &:after{
+        display:block;
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: 20;
+        background-size: 20px 20px;
+        background-image:  repeating-linear-gradient(0deg, #ffffff41, #ffffff41 1px, #e5e5f700 1px, #e5e5f700);
+        mask: linear-gradient(180deg, #0000 0%, #000 660%);
+        animation: banding 1s infinite linear;
+        mix-blend-mode: luminosity;
+        filter: drop-shadow(0 44px 3px white);
+      }
+} */
