@@ -199,10 +199,15 @@
 
 // Cleanup on Astro view transition
 document.addEventListener("astro:before-swap", () => {
+  
   try {
     if (window.ctx) { window.ctx.revert(); window.ctx = null; }
     console.log(window.ScrollSmoother);
     window.ScrollTrigger?.killAll();
+      window.__tickerFn && gsap.ticker.remove(window.__tickerFn);
+      window.__tickerFn = updateCamera;
+      gsap.ticker.add(updateCamera);
+
   } catch (e) {
     console.error(e);
   } finally {
