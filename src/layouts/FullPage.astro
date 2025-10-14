@@ -76,7 +76,7 @@ const { title = "Kevin Letchford" } = Astro.props;
         gsap.config({ nullTargetWarn: false });
 
         // ✅ expose your API for inline rerun scripts
-        window.SpaceManager = SpaceManagerAPI;
+
 
         // an event & promise for late consumers
         window.SpaceReady = Promise.resolve(SpaceManagerAPI);

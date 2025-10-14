@@ -1,6 +1,6 @@
 // src/components/SpaceCanvas.tsx
 import { useEffect, useRef } from "react";
-
+import { SpaceManagerAPI } from "../scripts/space/manager";
 type Props = {
   id?: string;
   pollMs?: number;
@@ -35,6 +35,7 @@ export default function SpaceCanvas({
 
       // 1) Init renderer/loop
       try {
+        window.SpaceManager = SpaceManagerAPI;
         await window.SpaceManager.init({ canvasId: id }); // 👈 now awaitable
       } catch (e) {
         console.error("[SpaceCanvas] init failed", e);
