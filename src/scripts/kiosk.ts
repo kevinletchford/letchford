@@ -83,7 +83,6 @@ const material = new THREE.ShaderMaterial({
     // called when resource is loaded
     function ( object ) {
       tablet = object;
-        console.log(tablet)
         tablet.traverse((child) =>
         {
             if (child instanceof THREE.Mesh) {

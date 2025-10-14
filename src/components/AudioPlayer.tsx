@@ -22,14 +22,11 @@ export default function AudioPlayer({
   }, []);
 
   const toggle = async () => {
-        console.log("click")
     const el = audioRef.current!;
     try {
       if (el.paused) await el.play();
       else el.pause();
     } catch (e) {
-      // autoplay blocked until user interacts
-      console.warn(e);
     }
 
   };

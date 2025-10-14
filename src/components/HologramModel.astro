@@ -94,7 +94,7 @@ document.addEventListener("astro:page-load", () => {
 
     const raw = node.getAttribute('data-props') || '{}';
     let props: any = {};
-    try { props = JSON.parse(raw); } catch (e) { console.error('HologramModel props parse error', e); }
+    try { props = JSON.parse(raw); } catch (e) {  }
     init(node, props);
   });
 });

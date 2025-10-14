@@ -213,7 +213,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const navText = document.querySelector<HTMLDivElement>(".carousel-nav div");
 
   if (!prev || !next || !navText || slides.length === 0) {
-    console.error("Carousel initialization failed: Missing DOM elements.");
     return;
   }
 

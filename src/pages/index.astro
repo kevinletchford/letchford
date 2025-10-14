@@ -222,7 +222,7 @@ document.addEventListener("astro:page-load", () => {
     ];
     const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
 
-    SpaceManager.whenReady().then(() => {
+    window.SpaceManager.whenReady().then(() => {
       if (disposed) return;
 
       const camera = SpaceManager.getCamera();

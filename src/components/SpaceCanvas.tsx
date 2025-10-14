@@ -38,7 +38,6 @@ export default function SpaceCanvas({
         window.SpaceManager = SpaceManagerAPI;
         await window.SpaceManager.init({ canvasId: id }); // 👈 now awaitable
       } catch (e) {
-        console.error("[SpaceCanvas] init failed", e);
         return;
       }
 
@@ -57,7 +56,6 @@ export default function SpaceCanvas({
           window.SpaceManager.loadForPath(p);
           lastPathRef.current = p;
         } catch (e) {
-          console.error("[SpaceCanvas] loadForPath failed", e);
         }
       };
 

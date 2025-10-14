@@ -12,14 +12,17 @@ import { mountTextEffects } from "../ui/text-animator";
   
     const updater = (dt: number, t: number) => {
       if (cancelled) return;
+      camera.position.set(-20, -30, 80);
     };
-  
+
     const dispose = () => {
       cancelled = true;
       uiText.dispose();
     };
+
   
     return { group, dispose, updater };
   };
 
   export default loadProjects;
+

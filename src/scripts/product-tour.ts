@@ -79,7 +79,6 @@ const material = new THREE.ShaderMaterial({
 
   gLTFLoader.load('/rocket/Rocket.glb', (gltf) => {
   tablet = gltf.scene;              // ✅ GLTF.scene is a THREE.Group
-  console.log(tablet);
   tablet.traverse((child) => {
     if (child instanceof THREE.Mesh) {
       child.material = material;    // ok: Mesh.material is assignable to ShaderMaterial

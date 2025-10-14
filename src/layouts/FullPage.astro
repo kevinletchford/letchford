@@ -5,7 +5,8 @@ import "@fontsource-variable/space-grotesk";
 import { ClientRouter } from "astro:transitions";
 
 import PersistedSpace from "@components/PersistedSpace.astro";
-import { slide } from "astro:transitions";
+import { fade } from "astro:transitions";
+
 interface Props {
   title?: string;
 }
@@ -45,7 +46,7 @@ const { title = "Kevin Letchford" } = Astro.props;
     <Header client:load transition:persist />
 
     <!-- WebGL overlay; non-interactive so it won't block scroll -->
-     <div class="glitch-bg">  
+     <div class="glitch-bg" >  
     <div id="space-root" class="fixed inset-0 pointer-events-none ">
       <PersistedSpace />
     </div>  
@@ -76,7 +77,7 @@ const { title = "Kevin Letchford" } = Astro.props;
         gsap.config({ nullTargetWarn: false });
 
         // ✅ expose your API for inline rerun scripts
-
+        window.SpaceManager = SpaceManagerAPI;
 
         // an event & promise for late consumers
         window.SpaceReady = Promise.resolve(SpaceManagerAPI);

@@ -239,9 +239,6 @@ window.addEventListener('resize', () => {
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
-console.log(renderer.capabilities.getMaxAnisotropy());
-
-
 // observer.ts
 
 // Extend the window types for our global + event

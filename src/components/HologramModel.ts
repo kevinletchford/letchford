@@ -134,13 +134,11 @@ renderer.setPixelRatio(1);
       });
 
       rig.add(model);
-
-      console.log(scene);
       gsap.to(rig.position, { x: modelPosition.x, y: modelPosition.y, z: modelPosition.z,  duration: 2.2, yoyo: true, repeat: -1, ease: 'sine.inOut' });
       animate();
     },
     undefined,
-    (err) => console.error('Failed to load model', err)
+    (err) => {}
   );
 
   const state = { overCorner: false };

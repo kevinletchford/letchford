@@ -200,10 +200,8 @@ document.addEventListener("astro:page-load", () => {
 document.addEventListener("astro:before-swap", () => {
   try {
     if (window.ctx) { window.ctx.revert(); window.ctx = null; }
-    console.log(window.ScrollSmoother);
     window.ScrollTrigger?.killAll();
   } catch (e) {
-    console.error(e);
   } finally {
     if (window.__tickerFn && window.gsap) {
       gsap.ticker.remove(window.__tickerFn);

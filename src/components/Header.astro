@@ -84,7 +84,6 @@ const caseStudiesMenu = document.querySelector('#menu-case-studies');
 navLinkEls.forEach((navLink) => {
   navLink.addEventListener('click', (event) => {
      const target = event.currentTarget;
-     console.log(target)
      if (target instanceof HTMLElement) {
         caseStudiesMenu?.classList.toggle('menu-section_closed');
     }

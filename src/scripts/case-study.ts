@@ -8,8 +8,6 @@ interface Window {
   }
 }
 
-console.log("case-study")
-
 // === Config ===
 const WRAP_AROUND = false; // set true to wrap instead of disabling at ends
 

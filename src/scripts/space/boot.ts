@@ -16,7 +16,6 @@ function sync(tag = "") {
 
 export function boot() {
   // Init your canvas/space
-    console.log("lol");
   SpaceManager.init({ canvasId: "webgl-canvas" });
   queueMicrotask(() => sync("microtask"));
   requestAnimationFrame(() => sync("raf"));
@@ -51,5 +50,4 @@ export function boot() {
 
   document.addEventListener("astro:before-swap", cleanup);
 
-  console.log("[boot] attached");
 }
