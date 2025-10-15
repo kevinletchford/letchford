@@ -137,14 +137,14 @@ import Layout from "@layouts/FullPage.astro";
                     </div>
                   </section>
                 <section
-                  class="min-h-[100svh]  flex flex-col justify-center items-center w-full p-10"
+                  class="min-h-[100svh]  flex flex-col justify-center items-center w-full p-5 md:p-10"
                   aria-labelledby="problem-heading"
                   id="problem"
                 >
                   <div class="max-w-5xl prose prose-invert prose-h2:mt-0 prose-h2:md:text-5xl">
                     <h2 id="problem-heading" class="mt-0">The Problem</h2>
                     <p
-                      class="text-slate-300 mb-0 text-xl/10 md:text-2xl/10  bg-black/50 backdrop-blur-2xl rounded-2xl p-8"
+                      class="text-slate-300 text-lg/10 md:text-2xl/10  bg-black/50 backdrop-blur-2xl rounded-2xl p-4 md:p-8 mb-4 md:mb-8"
                     >
                       Sitebulb required a reliable and engaging way to promote its
                       features and product functionality at industry conferences and
@@ -157,7 +157,7 @@ import Layout from "@layouts/FullPage.astro";
                   </div>
                 </section>
                 <section
-                  class="min-h-[100svh]  flex flex-col justify-center items-center w-full p-10"
+                  class="min-h-[100svh]  flex flex-col justify-center items-center w-full p-5 md:p-10"
                   aria-labelledby="solution-heading"
                   id="solution"
                 >
@@ -169,7 +169,7 @@ import Layout from "@layouts/FullPage.astro";
                       The Solution
                     </h2>
                     <p
-                      class="text-slate-300 text-xl/10 md:text-2xl/10  bg-black/50 backdrop-blur-2xl rounded-2xl p-8 mb-8"
+                      class="text-slate-300 text-lg/10 md:text-2xl/10  bg-black/50 backdrop-blur-2xl rounded-2xl p-4 md:p-8 mb-4 md:mb-8"
                     >
                       A <strong class="text-white"
                         >progressive web application (PWA)</strong
@@ -177,22 +177,22 @@ import Layout from "@layouts/FullPage.astro";
                       experience on various touch-enabled devices without any internet dependency.
                     </p>
 
-                    <div class=" bg-black/50 backdrop-blur-2xl rounded-2xl p-8">
+                    <div class="text-slate-300 bg-black/50 backdrop-blur-2xl rounded-2xl p-4 md:p-8">
                         <div class="not-prose">
                             <h3 class="m-0 py-2 text-md md:text-2xl"><strong class="font-bold">Key Features</strong></h3>
                         </div>
 
                         <details class="details">
-                            <summary class="not-prose"><h4 class="m-0 p-0 text-sm md:text-xl">Offline-First Architecture</h4></summary>
+                            <summary class="not-prose"><h4 class="m-0 p-0 text-md md:text-xl">Offline-First Architecture</h4></summary>
                           <p>Video content and slides for uninterrupted playback and presentation.</p>
                         </details>
                         <details class="details">
-                            <summary class="not-prose"><h4 class="m-0 p-0 text-sm md:text-xl">Touchscreen Optimization</h4></summary>
+                            <summary class="not-prose"><h4 class="m-0 p-0 text-md md:text-xl">Touchscreen Optimization</h4></summary>
                             <p>The interface was designed with large targets and minimal UI clutter
                           for a seamless experience on tablets and large touchscreen displays.</p>
                         </details>
                         <details class="details">
-                            <summary class="not-prose"><h4 class="m-0 p-0 text-sm md:text-xl">Video Playback System</h4></summary>
+                            <summary class="not-prose"><h4 class="m-0 p-0 text-md md:text-xl">Video Playback System</h4></summary>
                             <p>A custom HTML5 video player was built using React components to manage:</p>
                           <ul class="list-disc ml-5 mt-1 space-y-1">
                             <li>A flexible video playlist</li>
@@ -201,7 +201,7 @@ import Layout from "@layouts/FullPage.astro";
                           </ul>
                         </details>
                         <details class="details">
-                            <summary class="not-prose"><h4 class="m-0 p-0 text-sm md:text-xl">Presentation Deck Mode</h4></summary>
+                            <summary class="not-prose"><h4 class="m-0 p-0 text-md md:text-xl">Presentation Deck Mode</h4></summary>
                             <p>The application supports slide-based presentations showcasing:</p>
                             <ul class="list-disc ml-5 mt-1 space-y-1">
                               <li>Key product features</li>
@@ -210,7 +210,7 @@ import Layout from "@layouts/FullPage.astro";
                             </ul>
                         </details>
                         <details class="details">
-                            <summary class="not-prose"><h4 class="m-0 p-0 text-sm md:text-xl">Kiosk Mode Integration</h4></summary>
+                            <summary class="not-prose"><h4 class="m-0 p-0 text-md md:text-xl">Kiosk Mode Integration</h4></summary>
                             <p>The app was deployed via <strong class="text-white">Fully Kiosk Browser</strong> on Android tablets, allowing the device to be locked into a secure,
                           single-app experience during conferences.</p>
                         </details>
@@ -218,7 +218,7 @@ import Layout from "@layouts/FullPage.astro";
                   </div>
                 </section>
                 <section
-                  class="min-h-[100svh]  flex flex-col justify-center items-center p-10"
+                  class="min-h-[100svh]  flex flex-col justify-center items-center w-full p-5 md:p-10"
                   aria-labelledby="tech-heading"
                   id="tech"
                 >
@@ -228,10 +228,10 @@ import Layout from "@layouts/FullPage.astro";
                     >
                       Technologies Used
                     </h2>
-                    <div class="overflow-x-auto w-full text-slate-300 mb-0 text-xl/10 md:text-2xl/10  bg-black/50 backdrop-blur-2xl rounded-2xl p-8">
-                      <table
-                        class="table-fixed border-collapse w-full text-left text-slate-300 not-prose"
-                      >
+                <div class="overflow-x-auto w-full text-slate-300 mb-0 text-lg/10 md:text-2xl/10  bg-black/50 backdrop-blur-2xl rounded-2xl p-4 md:p-8">
+                  <table
+                    class="table-fixed border-collapse w-full text-left text-slate-300 not-prose"
+                  >
                         <thead>
                           <tr class="">
                             <th
@@ -283,20 +283,17 @@ import Layout from "@layouts/FullPage.astro";
                   </div>
                 </section>
                 <section
-                  class="min-h-[100svh]  flex flex-col justify-center items-center p-10"
+                  class="min-h-[100svh]  flex flex-col justify-center items-center w-full p-5 md:p-10"
                   aria-labelledby="future-enhancements-heading"
                   id="future"
                 >
-                          <div class="max-w-5xl prose prose-invert prose-h2:mt-0 prose-h2:md:text-5xl">
+                  <div class="max-w-5xl prose prose-invert prose-h2:mt-0 prose-h2:md:text-5xl">
                     <h2 id="future-enhancements-heading" class="mt-0">
                       Future Enhancements
                     </h2>
                     <p
-                      class="text-slate-300 mb-0 text-xl/10 md:text-2xl/10  bg-black/50 backdrop-blur-2xl rounded-2xl p-8"
-                    >
-                      There are plans to integrate with <strong class="text-white"
-                        >Calendly</strong
-                      > to allow event attendees to schedule private demos—especially targeting
+                      class="text-slate-300 mb-0 text-lg/10 md:text-2xl/10  bg-black/50 backdrop-blur-2xl rounded-2xl p-4 md:p-8">
+                      There are plans to integrate with <strong class="text-white">Calendly</strong> to allow event attendees to schedule private demos—especially targeting
                       Sitebulb’s premium cloud offering. This enhancement will further extend
                       the kiosk's utility from a passive promotional tool to an active lead
                       generation channel.
@@ -304,14 +301,14 @@ import Layout from "@layouts/FullPage.astro";
                   </div>
                 </section>
                 <section
-                  class="min-h-[100svh]  flex flex-col justify-center items-center p-10"
+                  class="min-h-[100svh]  flex flex-col justify-center items-center w-full p-5 md:p-10"
                   aria-labelledby="impact-heading"
                   id="impact"
                 >
                   <div class="max-w-5xl prose prose-invert prose-h2:mt-0 prose-h2:md:text-5xl">
                     <h2 id="impact-heading" class="mt-0">Impact</h2>
                     <p
-                      class="text-slate-300 mb-0 text-xl/10 md:text-2xl/10  bg-black/50 backdrop-blur-2xl rounded-2xl p-8"
+                      class="text-slate-300 mb-0 text-lg/10 md:text-2xl/10  bg-black/50 backdrop-blur-2xl rounded-2xl p-4 md:p-8"
                     >
                       The kiosk web app provided a highly engaging and stable solution
                       for event teams, eliminating dependency on venue internet and

@@ -6,8 +6,6 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 import holographicVertexShader from '@src/shaders/holographic/vertex.glsl'
 import holographicFragmentShader from '@src/shaders/holographic/fragment.glsl'
 
-import { gsap } from "gsap";
-
 const canvas = document.getElementById('webgl-canvas') as HTMLCanvasElement;
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);

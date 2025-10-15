@@ -91,7 +91,7 @@ import Layout from "@layouts/FullPage.astro";
             <div class="pin-wrap">
               <div class="animation-wrap px-10 gap-10 to-right">
                  <div
-                    class="w-4xl md:w-[60vw] gallery__item"
+                    class="w-3xl md:w-[60vw] gallery__item"
                     id="gallery-item-1"
                   >
                   <div class="w-full rounded-2xl bg-gradient-to-t from-amber-500/40 to-red-900/10 overflow-hidden relative">
@@ -103,10 +103,10 @@ import Layout from "@layouts/FullPage.astro";
                     <span class="bg-lines"></span>
                   </div>
                   
-                  <p class="mt-5 text-center md:text-lg max-w-prose m-auto text-balance">External authors write the article in Google Docs. </p>
+                  <p class="mt-5 text-center md:text-lg m-auto text-balance max-w-[30ch]">External authors write the article in Google Docs. </p>
                   </div>
                   <div
-                    class="w-4xl md:w-[60vw] gallery__item"
+                    class="w-3xl md:w-[60vw] gallery__item"
                     id="gallery-item-2"
                   >
                   <div class="w-full rounded-2xl bg-gradient-to-t from-blue-500/40 to-red-900/10">
@@ -116,10 +116,10 @@ import Layout from "@layouts/FullPage.astro";
                       class="drop-shadow-2xl"
                     />
                   </div>
-                  <p class="mt-5 text-center md:text-lg max-w-prose m-auto text-balance">The URL for the Google doc is submitted into app.</p>
+                  <p class="mt-5 text-center md:text-lg m-auto text-balance max-w-[30ch]">The URL for the Google doc is submitted into app.</p>
                   </div>
                   <div
-                    class="w-4xl md:w-[60vw] gallery__item"
+                    class="w-3xl md:w-[60vw] gallery__item"
                     id="gallery-item-3"
                   >
                   <div class="w-full rounded-2xl bg-gradient-to-t from-pink-500/40 to-purple-900/10">
@@ -129,10 +129,10 @@ import Layout from "@layouts/FullPage.astro";
                       class="drop-shadow-2xl"
                     />
                   </div>
-                  <p class="mt-5 text-center md:text-lg max-w-prose m-auto text-balance">The app goes and collects all the meta data, author data, people who are mentioned, quotes and embeds.</p>
+                  <p class="mt-5 text-center md:text-lg m-auto text-balance max-w-[30ch]">The app goes and collects all the meta data, author data, people who are mentioned, quotes and embeds.</p>
                   </div>
                   <div
-                    class="w-4xl md:w-[60vw] gallery__item"
+                    class="w-3xl md:w-[60vw] gallery__item"
                     id="gallery-item-4"
                   >
                   <div class="w-full rounded-2xl bg-gradient-to-t from-orange-500/40 to-yellow-900/10">
@@ -142,10 +142,10 @@ import Layout from "@layouts/FullPage.astro";
                       class="drop-shadow-3xl"
                     />
                   </div>
-                  <p class="mt-5 text-center md:text-lg max-w-prose m-auto text-balance">It then creates caches of all the images, and generates a live preview of the Google doc.</p>
+                  <p class="mt-5 text-center md:text-lg m-auto text-balance max-w-[30ch]">It then creates caches of all the images, and generates a live preview of the Google doc.</p>
                   </div>
                   <div
-                    class="w-4xl md:w-[60vw] gallery__item"
+                    class="w-3xl md:w-[60vw] gallery__item"
                     id="gallery-item-5"
                   >
                   <div class="w-full rounded-2xl bg-gradient-to-t from-rose-500/40 to-silver-900/10">
@@ -155,7 +155,7 @@ import Layout from "@layouts/FullPage.astro";
                       class="drop-shadow-2xl"
                     />
                   </div>
-                  <p class="mt-5 text-center md:text-lg max-w-prose m-auto text-balance">
+                  <p class="mt-5 text-center md:text-lg m-auto text-balance max-w-[30ch]">
                     After the document has been published, the app generates share and social images.
                   </p>
                   </div>
@@ -163,19 +163,19 @@ import Layout from "@layouts/FullPage.astro";
             </div>
             </section>
             <section
-                  class="min-h-[100svh]  flex flex-col justify-center items-center w-full p-10"
+                  class="min-h-[100svh]  flex flex-col justify-center items-center w-full p-5 md:p-10"
               aria-labelledby="problem-heading"
               id="problem"
             >
                   <div class="max-w-5xl prose prose-invert prose-h2:mt-0 prose-h2:md:text-5xl">
                 <h2 id="problem-heading" class="mt-0">The Problem</h2>
                 <div
-                  class="text-slate-300 mb-0 text-xl/10 md:text-2xl/10  bg-black/50 backdrop-blur-2xl rounded-2xl p-8"
+                  class="text-slate-300 mb-0 text-lg/10 md:text-2xl/10  bg-black/50 backdrop-blur-2xl rounded-2xl p-4 md:p-8"
                 >
                 <p class="mt-0">
                   At Sitebulb, a significant portion of blog content was sourced from guest contributors who submitted drafts via Google Docs. Converting these raw documents into fully-published blog posts was a highly manual, time-consuming process. It involved:
                 </p>
-                <ul class="list-disc text-slate-300 space-y-2">
+                <ul class="list-disc text-slate-300 space-y-2 text-lg/7 md:text-2xl/10 my-5 md:my-8">
                   <li>Copying and formatting content for the CMS</li>
                   <li>Extracting and uploading images</li>
                   <li>Pulling out quotes and embeds</li>
@@ -190,7 +190,7 @@ import Layout from "@layouts/FullPage.astro";
               </div>
             </section>
             <section
-                  class="min-h-[100svh]  flex flex-col justify-center items-center w-full p-10"
+                  class="min-h-[100svh]  flex flex-col justify-center items-center w-full p-5 md:p-10"
               aria-labelledby="solution-heading"
               id="solution"
             >
@@ -202,21 +202,21 @@ import Layout from "@layouts/FullPage.astro";
                   The Solution
                 </h2>
                 <p
-                  class="text-slate-300 text-xl/10 md:text-2xl/10  bg-black/50 backdrop-blur-2xl rounded-2xl p-8 mb-8"
+                  class="text-slate-300 text-lg/10 md:text-2xl/10  bg-black/50 backdrop-blur-2xl rounded-2xl p-4 md:p-8 mb-8"
                 >
                 A <strong class="text-white">custom admin interface</strong> was developed to take a Google Docs URL and turn it into a structured, CMS-ready article in a matter of minutes.
                 </p>
 
-                <div class=" bg-black/50 backdrop-blur-2xl rounded-2xl p-8">
+                <div class=" bg-black/50 backdrop-blur-2xl rounded-2xl p-4 md:p-8">
                     <div class="not-prose">
                         <h3 class="m-0 py-2 text-md md:text-2xl"><strong class="font-bold">Key Features</strong></h3>
                     </div>
                     <details class="details">
-                        <summary class="not-prose"><h4 class="m-0 p-0 text-sm md:text-xl">Google Docs Parsing</h4></summary>
+                        <summary class="not-prose"><h4 class="m-0 p-0 text-md md:text-xl">Google Docs Parsing</h4></summary>
                         <p>The user enters a Google Docs URL into the admin tool. Using Google Auth and the Google Docs + Drive APIs, the tool reads and processes the document contents.</p>
                     </details>
                     <details class="details">
-                        <summary class="not-prose"><h4 class="m-0 p-0 text-sm md:text-xl">Content Extraction &amp; Processing</h4></summary>
+                        <summary class="not-prose"><h4 class="m-0 p-0 text-md md:text-xl">Content Extraction &amp; Processing</h4></summary>
                       <p>The parser loops through all document elements:</p>
                       <ul class="list-disc ml-5 mt-1 space-y-1">
                         <li>Extracts structured content (headings, body, images, quotes)</li>
@@ -226,12 +226,12 @@ import Layout from "@layouts/FullPage.astro";
                       </ul>
                     </details>
                     <details class="details">
-                  <summary class="not-prose"><h4 class="m-0 p-0 text-sm md:text-xl">Custom Admin Interface</h4></summary>
+                  <summary class="not-prose"><h4 class="m-0 p-0 text-md md:text-xl">Custom Admin Interface</h4></summary>
                         <p>Built with <strong class="text-white">Vite</strong>, <strong class="text-white">TypeScript</strong>, <strong class="text-white">React</strong>, <strong class="text-white">Shadcn</strong>, <strong class="text-white">React Query</strong>, and <strong class="text-white">Tailwind</strong>, the interface previews all parsed content for review and modification before publishing.</p>
                     </details>
 
                     <details class="details">
-                        <summary class="not-prose"><h4 class="m-0 p-0 text-sm md:text-xl">Dynamic Publishing Logic</h4></summary>
+                        <summary class="not-prose"><h4 class="m-0 p-0 text-md md:text-xl">Dynamic Publishing Logic</h4></summary>
                         <p>Once approved, the system:</p>
                         <ul class="list-disc ml-5 mt-1 space-y-1">
                           <li>Creates new CMS entries if they don't already exist (e.g., authors, tags)</li>
@@ -240,22 +240,22 @@ import Layout from "@layouts/FullPage.astro";
                         </ul>
                     </details>
                     <details class="details">
-                        <summary class="not-prose"><h4 class="m-0 p-0 text-sm md:text-xl">Smart Related Content</h4></summary>
+                        <summary class="not-prose"><h4 class="m-0 p-0 text-md md:text-xl">Smart Related Content</h4></summary>
                         <p>Hand-curated related articles were replaced with <strong class="text-white">tag-driven automation</strong>, improving editorial speed while maintaining relevance.</p>
                     </details>
                     <details class="details">
-                        <summary class="not-prose"><h4 class="m-0 p-0 text-sm md:text-xl">Social Share Image Generation</h4></summary>
+                        <summary class="not-prose"><h4 class="m-0 p-0 text-md md:text-xl">Social Share Image Generation</h4></summary>
                         <p>Using <strong class="text-white">Playwright</strong>, the system auto-generates social images based on the article title, meta description, and thumbnail image.</p>
                     </details>
                     <details class="details">
-                        <summary class="not-prose"><h4 class="m-0 p-0 text-sm md:text-xl">Illustration Workflow</h4></summary>
+                        <summary class="not-prose"><h4 class="m-0 p-0 text-md md:text-xl">Illustration Workflow</h4></summary>
                         <p>At the time of implementation, <strong class="text-white">Sora</strong> (without a public API) was used to create thumbnails via manual prompting. Other AI alternatives were evaluated but did not meet quality standards.</p>
                     </details>
                 </div>
               </div>
             </section>
             <section
-                  class="min-h-[100svh]  flex flex-col justify-center items-center w-full p-10"
+                  class="min-h-[100svh]  flex flex-col justify-center items-center w-full p-5 md:p-10"
               aria-labelledby="tech-heading"
               id="tech"
             >
@@ -266,7 +266,7 @@ import Layout from "@layouts/FullPage.astro";
                 >
                   Technologies Used
                 </h2>
-                <div class="overflow-x-auto w-full text-slate-300 mb-0 text-xl/10 md:text-2xl/10  bg-black/50 backdrop-blur-2xl rounded-2xl p-8">
+                <div class="overflow-x-auto w-full text-slate-300 mb-0 text-lg/10 md:text-2xl/10  bg-black/50 backdrop-blur-2xl rounded-2xl p-4 md:p-8">
                   <table
                     class="table-fixed border-collapse w-full text-left text-slate-300 not-prose"
                   >
@@ -331,14 +331,14 @@ import Layout from "@layouts/FullPage.astro";
               </div>
             </section>
             <section
-                  class="min-h-[100svh]  flex flex-col justify-center items-center w-full p-10"
+                  class="min-h-[100svh]  flex flex-col justify-center items-center w-full p-5 md:p-10"
               aria-labelledby="impact-heading"
               id="impact"
             >
                   <div class="max-w-5xl prose prose-invert prose-h2:mt-0 prose-h2:md:text-5xl">
                 <h2 id="impact-heading" class="mt-0">Impact</h2>
                 <p
-                  class="text-slate-300 mb-0 text-xl/10 md:text-2xl/10  bg-black/50 backdrop-blur-2xl rounded-2xl p-8"
+                  class="text-slate-300 mb-0 text-lg/10 md:text-2xl/10  bg-black/50 backdrop-blur-2xl rounded-2xl p-4 md:p-8"
                 >
               This solution reduced editorial production time by <strong class="text-white">over 85%</strong>—from approximately 2 hours down to <strong class="text-white">just 15 minutes per article</strong>. The automation not only saved time but also improved content consistency, ensured better SEO hygiene (thanks to structured metadata), and allowed the content team to focus more on quality and strategy rather than tedious formatting.
 

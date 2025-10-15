@@ -14,6 +14,7 @@ export type HologramClientProps = {
   resourcePath?: string;
   modelPosition?:THREE.Vector3;
   cameraPosition?:THREE.Vector3;
+  modelRotation?:THREE.Vector3;
 };
 
 export default function init(container: HTMLElement, props: HologramClientProps) {
@@ -28,6 +29,7 @@ export default function init(container: HTMLElement, props: HologramClientProps)
     resourcePath,
     cameraPosition = new THREE.Vector3(5, -20, 40),
     modelPosition = new THREE.Vector3(0, 0.3, 0),
+    modelRotation = new THREE.Vector3(0, 0, 0),
   } = props;
 
   // Renderer
@@ -132,6 +134,8 @@ renderer.setPixelRatio(1);
           obj.material = mat;
         }
       });
+
+      model.rotation.set(modelRotation.x, modelRotation.y, modelRotation.z);
 
       rig.add(model);
       gsap.to(rig.position, { x: modelPosition.x, y: modelPosition.y, z: modelPosition.z,  duration: 2.2, yoyo: true, repeat: -1, ease: 'sine.inOut' });

@@ -2,7 +2,9 @@
 import HologramModel from "@components/HologramModel.astro";
 import Layout from "@layouts/FullPage.astro";
 import * as THREE from "three";
+const year = new Date().getFullYear()
 ---
+
 
 <Layout title="Projects | Kevin Letchford - Design Engineer">
   <div
@@ -26,7 +28,7 @@ import * as THREE from "three";
               Projects
             </h1>
             <p class="mt-0 text-slate-300 mb-3 text-xl md:text-2xl">
-              Recent things I’ve designed, built, and tinkered with.
+              Recent projects and products I’ve designed, built, and worked on.
             </p>
           </div>
 
@@ -35,7 +37,7 @@ import * as THREE from "three";
           >
             <ul role="list" class="divide-y divide-white/10 xl:col-span-3">
               <li
-                class="flex flex-col gap-5 md:gap-10 p-5 md:py-10 first:pt-0 last:pb-0 sm:flex-row items-center justify-center"
+                class="flex flex-col gap-5 md:gap-10 py-5 md:py-10 first:pt-0 last:pb-0 sm:flex-row items-center justify-center"
               >
                 <HologramModel
                   width={250}
@@ -109,6 +111,7 @@ import * as THREE from "three";
                 <HologramModel
                   width={250}
                   height={250}
+                  modelRotation={new THREE.Vector3(0, 0.6, 0)}
                   src="/projects/sitebulb.gltf"
                   class="w-full bg-gradient-to-b from-cyan-900/20 to-red-900/10 rounded-xl three-dee-glitch"
                 />
@@ -137,6 +140,11 @@ import * as THREE from "three";
               </li>
             </ul>
           </div>
+
+          <footer class="flex justify-between pt-5 text-slate-500">
+              <p>&copy; letchford.co {year} - All rights reserved</p>
+              <p><a href="/colophon/">Colophon</a></p>
+          </footer>
         </section>
       </article>
     </div>

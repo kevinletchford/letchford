@@ -121,39 +121,10 @@ const loadHome: PageLoader = async ({ three: T, renderer, textureLoader, loading
   orbitPivot.add(satellite);
 
   // --- Astronaut (kept, cleaned) ---
-  const astMtl = await MTL(loadingManager)
-    .setResourcePath("/astronaut/")
-    .loadAsync("/astronaut/Astronaut.mtl");
-  // if (cancelled) return { group, dispose: () => disposeUI?.() };
-  astMtl.preload();
-
-  const astronaut = await OBJ(loadingManager)
-    .setMaterials(astMtl)
-    .setResourcePath("/astronaut/")
-    .loadAsync("/astronaut/Astronaut.obj");
-  // if (cancelled) return { group, dispose: () => disposeUI?.() };
-
-  astronaut.traverse((c) => (c instanceof T.Mesh) && upgradeToStandard(T, c));
-  astronaut.rotation.set(1.25, -1, 0);
-  astronaut.position.set(10, -(planetRadius + 30), 0);
-  group.add(astronaut);
-
+  
   // --- Idle motion & orbit ---
   const yAxis = new T.Vector3(0, 1, 0);
   const planetSpin = 0.015; // radians/sec multiplier
-
-  const baseQuat = astronaut.quaternion.clone();
-  const basePos = astronaut.position.clone();
-  const offset = new T.Vector3();
-  const targetPos = new T.Vector3();
-  const targetEuler = new T.Euler();
-  const tumbleQuat = new T.Quaternion();
-  const desiredQuat = new T.Quaternion();
-
-  const driftAmp = 0.35, k = 0.35, sigma = 0.10, maxOffset = driftAmp;
-  const rotAmp = T.MathUtils.degToRad(8);
-  const speedX = 0.050, speedY = 0.037, speedZ = 0.031;
-  const posSmoothHz = 2.5, rotSmoothHz = 2.0;
 
   // Satellite orbit params
   const orbitSpeed = 0.15; // radians per second around Y after pivot tilts
@@ -170,25 +141,6 @@ const loadHome: PageLoader = async ({ three: T, renderer, textureLoader, loading
     // For simplicity and perf, just add a slow local spin:
     satellite.rotateZ(0.25 * dt);
 
-    // Astronaut gentle drift + tumble (Ornstein–Uhlenbeck)
-    const sdt = Math.sqrt(Math.max(dt, 0));
-    offset.x += (-k * offset.x) * dt + sigma * sdt * (Math.random() * 2 - 1);
-    offset.y += (-k * offset.y) * dt + sigma * sdt * (Math.random() * 2 - 1);
-    offset.z += (-k * offset.z) * dt + sigma * sdt * (Math.random() * 2 - 1);
-    if (offset.length() > maxOffset) offset.setLength(maxOffset);
-
-    targetPos.copy(basePos).add(offset);
-    astronaut.position.lerp(targetPos, 1 - Math.exp(-posSmoothHz * dt));
-
-    targetEuler.set(
-      rotAmp * Math.sin(2 * Math.PI * speedX * t),
-      rotAmp * Math.sin(2 * Math.PI * speedY * t),
-      rotAmp * Math.cos(2 * Math.PI * speedZ * t),
-      "XYZ"
-    );
-    tumbleQuat.setFromEuler(targetEuler);
-    desiredQuat.multiplyQuaternions(baseQuat, tumbleQuat);
-    astronaut.quaternion.slerp(desiredQuat, 1 - Math.exp(-rotSmoothHz * dt));
   };
 
   const dispose = () => {

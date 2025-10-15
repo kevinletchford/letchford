@@ -27,6 +27,7 @@ export interface Props {
   exposure?: number;
   cameraPosition?: THREE.Vector3;
   modelPosition?: THREE.Vector3;
+  modelRotation?:THREE.Vector3;
 }
 
 import holographicVertexShader from '@src/shaders/holographic/vertex.glsl';
@@ -44,7 +45,7 @@ const {
   exposure = 1.0,
   cameraPosition,
   modelPosition,
-
+  modelRotation,
 } = Astro.props as Props;
 
 const id = `holo-${Math.random().toString(36).slice(2)}`;
@@ -67,7 +68,8 @@ const id = `holo-${Math.random().toString(36).slice(2)}`;
     exposure,
     resourcePath,
     cameraPosition,
-    modelPosition
+    modelPosition,
+    modelRotation,
   })}
 >
   <noscript>Enable JavaScript to view the 3D model.</noscript>
