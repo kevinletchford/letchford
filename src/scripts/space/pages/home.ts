@@ -4,6 +4,8 @@ import { MTLLoader } from "three/examples/jsm/loaders/MTLLoader.js";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
 import marsVertexShader from "@src/shaders/mars/vertex.glsl";
 import marsFragmentShader from "@src/shaders/mars/fragment.glsl";
+import holographicVertexShader from "@src/shaders/holographic/vertex.glsl";
+import holographicFragmentShader from "@src/shaders/holographic/fragment.glsl";
 import type { Ctx, LoadResult, PageLoader } from "../types";
 // import { mountHomeUI } from "./home-ui"; // uses AbortController internally and returns { dispose }
 import { mountTextEffects } from "../ui/text-animator";
@@ -48,16 +50,15 @@ const loadHome: PageLoader = async ({ three: T, renderer, textureLoader, loading
   // --- Textures (async, cancellable) ---
   const maxAniso = renderer?.capabilities?.getMaxAnisotropy?.() ?? 8;
 
-  const [marsDay, marsNight, marsSpec] = await Promise.all([
+  const [marsDay, marsNight] = await Promise.all([
     textureLoader.loadAsync("/mars/mars.jpg"),
     textureLoader.loadAsync("/mars/mars-night.jpg"),
-    textureLoader.loadAsync("/mars/mars-specular.jpg"),
   ]);
   // if (cancelled) return { group, dispose: () => disposeUI?.() };
 
   marsDay.colorSpace = T.SRGBColorSpace;
   marsNight.colorSpace = T.SRGBColorSpace;
-  [marsDay, marsNight, marsSpec].forEach((t) => (t.anisotropy = maxAniso));
+  [marsDay, marsNight].forEach((t) => (t.anisotropy = maxAniso));
 
   // --- Mars (shader) ---
   const planetRadius = 10;
@@ -66,7 +67,7 @@ const loadHome: PageLoader = async ({ three: T, renderer, textureLoader, loading
     uniforms: {
       uDayTexture: { value: marsDay },
       uNightTexture: { value: marsNight },
-      uSpecularTexture: { value: marsSpec },
+
       uSunDirection: { value: new T.Vector3(-0.4, 0, 0.1) },
     },
     vertexShader: marsVertexShader,
@@ -77,20 +78,32 @@ const loadHome: PageLoader = async ({ three: T, renderer, textureLoader, loading
   planet.rotation.z = T.MathUtils.degToRad(25.19);
   group.add(planet);
 
-  // --- Satellite (OBJ/MTL) ---
-  const satMtl = await MTL(loadingManager)
-    .setResourcePath("/satellite/")
-    .loadAsync("/satellite/Satellite.mtl");
-  // if (cancelled) return { group, dispose: () => disposeUI?.() };
-  satMtl.preload();
+     const holoMat = new T.ShaderMaterial({
+    vertexShader: holographicVertexShader,
+    fragmentShader: holographicFragmentShader,
+    uniforms: {
+      uTime:  { value: 0 },
+      uColor: { value: new T.Color("#70c1ff") },
+      uAlpha: { value: 0.75 },
+    },
+    transparent: false,
+    side: T.DoubleSide,
+    depthWrite: true,
+    blending: T.AdditiveBlending,
+  }); 
 
   const satellite = await OBJ(loadingManager)
-    .setMaterials(satMtl)
     .setResourcePath("/satellite/")
     .loadAsync("/satellite/Satellite.obj");
-  // if (cancelled) return { group, dispose: () => disposeUI?.() };
 
-  satellite.traverse((c) => (c instanceof T.Mesh) && upgradeToStandard(T, c));
+    console.log(satellite);
+    satellite.traverse((obj) => {
+      if (obj instanceof T.Mesh) {
+        obj.material = holoMat;
+      }
+    });
+
+  // satellite.traverse((c) => (c instanceof T.Mesh) && upgradeToStandard(T, c));
 
   // --- Orbit rig ---
   // We separate the tilt (orbital plane) from the orbit rotation so we can set an initial angle easily.
@@ -162,7 +175,6 @@ const loadHome: PageLoader = async ({ three: T, renderer, textureLoader, loading
     planetMat.dispose();
     marsDay.dispose();
     marsNight.dispose();
-    marsSpec.dispose();
   };
 
   return { group, dispose, updater };
