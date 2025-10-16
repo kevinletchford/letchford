@@ -1,0 +1,8 @@
+---
+const { class: className = "w-full h-[360px] rounded-xl", speed = 1 } = Astro.props;
+---
+
+<canvas data-canvas="constellation" data-speed={String(speed)} class={className} style="background:#0a0a0b"></canvas>
+
+<!-- External, processed by Astro (TS + imports allowed) -->
+<script src="@scripts/demos/constellation-canvas.ts" />

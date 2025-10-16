@@ -1,0 +1,355 @@
+---
+import CaseStudiesScripts from "@components/CaseStudiesScripts.astro";
+import Layout from "@layouts/FullPage.astro";
+---
+
+<Layout title="Animated Product Tour for Sitebulb | Kevin Letchford">
+  <div
+    id="wrapper"
+    class="h-dvh overflow-hidden overflow-y-auto overscroll-none absolute inset-0 bg-gradient-to-r from-cyan-700/70 to-red-900/10"
+  >
+    <div
+      class="section-nav bottom-2 absolute z-30 -translate-1/2 left-1/2 flex gap-4"
+    >
+      <button
+        class="previous-section size-7 rounded-full flex items-center justify-center border-white/20 border backdrop-blur-3xl text-white/70 cursor-pointer"
+        aria-label="Previous slide"
+      >
+        <svg
+          viewBox="0 0 640 640"
+          fill="currentColor"
+          data-slot="icon"
+          aria-hidden="true"
+          class="size-4 text-white/70"
+        >
+          <path
+            d="M308.7 212.7C314.9 206.5 325.1 206.5 331.3 212.7L491.3 372.7C497.5 378.9 497.5 389.1 491.3 395.3C485.1 401.5 474.9 401.5 468.7 395.3L320 246.6L171.3 395.3C165.1 401.5 154.9 401.5 148.7 395.3C142.5 389.1 142.5 378.9 148.7 372.7L308.7 212.7z"
+          ></path>
+        </svg>
+      </button>
+      <nav class="gap-4 items-center flex">
+        <a
+          href="#title"
+          data-nav-item="title"
+          class="dot dot_active min-w-3 min-h-3 rounded-full bg-white/30 block"
+          ><span class="hidden">Title</span></a
+        >
+        <a
+          href="#video"
+          data-nav-item="video"
+          class="dot min-w-3 min-h-3 rounded-full bg-white/30 block"
+          ><span class="hidden">Video</span></a
+        >
+        <a
+          href="#gallery"
+          data-nav-item="gallery"
+          class="dot min-w-3 min-h-3 rounded-full bg-white/30 block"
+          ><span class="hidden">Gallery</span></a
+        >
+        <a
+          href="#problem"
+          data-nav-item="problem"
+          class="dot min-w-3 min-h-3 rounded-full bg-white/30 block"
+          ><span class="hidden">Problem</span></a
+        >
+        <a
+          href="#objective"
+          data-nav-item="problem"
+          class="dot min-w-3 min-h-3 rounded-full bg-white/30 block"
+          ><span class="hidden">Objective</span></a
+        >
+        <a
+          href="#future"
+          data-nav-item="future"
+          class="dot min-w-3 min-h-3 rounded-full bg-white/30 block"
+          ><span class="hidden">Future</span></a
+        >
+      </nav>
+      <button
+        class="next-section size-7 rounded-full flex items-center justify-center border-white/20 border backdrop-blur-3xl text-white/70 cursor-pointer"
+        aria-label="Next slide"
+      >
+        <svg
+          viewBox="0 0 640 640"
+          fill="currentColor"
+          data-slot="icon"
+          aria-hidden="true"
+          class="size-4 text-text/70"
+        >
+          <path
+            d="M308.7 427.3C314.9 433.5 325.1 433.5 331.3 427.3L491.3 267.3C497.5 261.1 497.5 250.9 491.3 244.7C485.1 238.5 474.9 238.5 468.7 244.7L320 393.4L171.3 244.7C165.1 238.5 154.9 238.5 148.7 244.7C142.5 250.9 142.5 261.1 148.7 267.3L308.7 427.3z"
+          ></path>
+        </svg>
+      </button>
+    </div>
+    <div id="content">
+      <article class="w-full">
+        <section
+          class="p-10 min-h-[100svh] flex flex-col justify-center max-w-5xl m-auto w-full"
+          aria-labelledby="title"
+          id="title"
+        >
+          <div
+            class="uppercase tracking-widest font-semibold text-red-400 text-sm"
+          >
+            Case Study
+          </div>
+          <h1
+            id="title"
+            class="mt-2 text-4xl md:text-6xl font-bold text-white mb-3 font-space tracking-tight text-balance load-effect"
+          >
+            Animated Product Tour for Sitebulb
+          </h1>
+          <p class="mt-0 text-slate-300 mb-3 text-xl md:text-2xl">
+            A marketing video that showcases Sitebulbs features
+          </p>
+          <div
+            class="mr-auto inline-flex items-center gap-2 px-3 py-1 border border-slate-600 rounded-full text-sm text-slate-300 bg-slate-800/40"
+          >
+            Animated • Product • Video
+          </div>
+        </section>
+
+        <section
+          id="video"
+          class="grid grid-cols-1 gap-8 lg:mx-0 not-prose min-h-[100svh] snap-start items-center relative"
+        >
+          <div class="snap-center m-w-full m-0-a w-[80vw] m-auto">
+            <script src="https://fast.wistia.com/player.js" async
+            ></script><script
+              src="https://fast.wistia.com/embed/58uy8tdace.js"
+              async
+              type="module"></script><style>
+              wistia-player[media-id="58uy8tdace"]:not(:defined) {
+                background: center / contain no-repeat
+                  url("https://fast.wistia.com/embed/medias/58uy8tdace/swatch");
+                display: block;
+                filter: blur(5px);
+                padding-top: 56.25%;
+              }
+            </style>
+            <wistia-player
+              media-id="58uy8tdace"
+              seo="false"
+              aspect="1.7777777777777777"
+              controls-visible-on-load="false"
+              do-not-track="true"></wistia-player>
+          </div>
+        </section>
+        <section id="gallery" class="horizontal overscroll-none">
+          <div class="pin-wrap">
+            <div class="animation-wrap px-10 gap-10 to-right">
+              <div class="w-3xl md:w-[60vw] gallery__item" id="gallery-item-1">
+                <div
+                  class="w-full rounded-2xl bg-gradient-to-t from-amber-500/40 to-red-900/10 overflow-hidden relative"
+                >
+                  <img
+                    src="/case-studies/product-tour/1.png"
+                    alt=""
+                    class="drop-shadow-2xl"
+                  />
+                  <span class="bg-lines"></span>
+                </div>
+
+                <p
+                  class="mt-5 text-center md:text-lg max-w-[30ch] m-auto text-balance"
+                >
+                  The team began by reviewing a range of product explainer
+                  videos to identify tone, pacing, and visual styles that
+                  matched the brief.
+                </p>
+              </div>
+              <div class="w-3xl md:w-[60vw] gallery__item" id="gallery-item-2">
+                <div
+                  class="w-full rounded-2xl bg-gradient-to-t from-blue-500/40 to-red-900/10"
+                >
+                  <img
+                    src="/case-studies/product-tour/2.png"
+                    alt=""
+                    class="drop-shadow-2xl"
+                  />
+                </div>
+                <p
+                  class="mt-5 text-center md:text-lg max-w-[30ch] m-auto text-balance"
+                >
+                  An initial script was drafted to define the structure and key
+                  talking points. This was then translated into a wireframe
+                  storyboard in Figma.
+                </p>
+              </div>
+              <div class="w-3xl md:w-[60vw] gallery__item" id="gallery-item-3">
+                <div
+                  class="w-full rounded-2xl bg-gradient-to-t from-pink-500/40 to-purple-900/10"
+                >
+                  <img
+                    src="/case-studies/product-tour/3.png"
+                    alt=""
+                    class="drop-shadow-2xl"
+                  />
+                </div>
+                <p
+                  class="mt-5 text-center md:text-lg max-w-[30ch] m-auto text-balance"
+                >
+                  Through a series of jam sessions, the team refined the concept
+                  for each slide. Once finalized, slides were redrawn as
+                  high-fidelity vectors.
+                </p>
+              </div>
+              <div class="w-3xl md:w-[60vw] gallery__item" id="gallery-item-4">
+                <div
+                  class="w-full rounded-2xl bg-gradient-to-t from-orange-500/40 to-yellow-900/10"
+                >
+                  <img
+                    src="/case-studies/product-tour/4.png"
+                    alt=""
+                    class="drop-shadow-3xl"
+                  />
+                </div>
+                <p
+                  class="mt-5 text-center md:text-lg max-w-[30ch] m-auto text-balance"
+                >
+                  Everything was then animated in After Effects, this then went
+                  through multiple revisions and a focus on optimising for flow
+                  and timing.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section
+          class="min-h-[100svh] flex flex-col justify-center items-center w-full p-5 md:p-10"
+          aria-labelledby="problem-heading"
+          id="problem"
+        >
+          <div
+            class="max-w-5xl prose prose-invert prose-h2:mt-0 prose-h2:md:text-5xl"
+          >
+            <h2 id="problem-heading" class="mt-0">The Problem</h2>
+
+            <div class="bg-black/50 backdrop-blur-2xl rounded-2xl p-4 md:p-8">
+              <p
+                class="text-slate-300 mb-0 text-md/10 md:text-2xl/10 pt-0 mt-0"
+              >
+                The project was scoped in close collaboration with the marketing
+                team, who outlined the following priorities:
+              </p>
+              <ul class="text-slate-300 mb-0 text-md/7 md:text-2xl/10">
+                <li>
+                  Visually explain the core functionality and benefits of
+                  Sitebulb
+                </li>
+                <li>Work seamlessly without audio</li>
+                <li>
+                  Function as an on-loop animation for kiosks and conference
+                  booths
+                </li>
+                <li>Adapt well for social media and the website homepage</li>
+              </ul>
+              <p class="text-slate-300 mb-0 text-md/10 md:text-2xl/10">
+                The ideal animation would serve as a 2-minute visual pitch,
+                providing immediate clarity and sparking curiosity — especially
+                among in-house and agency SEOs encountering the tool for the
+                first time.
+              </p>
+            </div>
+          </div>
+        </section>
+        <section
+          class="min-h-[100svh] flex flex-col justify-center items-center w-full p-5 md:p-10"
+          aria-labelledby="problem-heading"
+          id="objective"
+        >
+          <div
+            class="max-w-5xl prose prose-invert prose-h2:mt-0 prose-h2:md:text-5xl"
+          >
+            <h2 id="problem-heading" class="mt-0">Objectives & Goals</h2>
+
+            <div class="bg-black/50 backdrop-blur-2xl rounded-2xl p-4 md:p-8">
+              <p
+                class="text-slate-300 mb-0 text-md/10 md:text-2xl/10 pt-0 mt-0"
+              >
+                Sitebulb needed a compelling way to introduce and promote its
+                product to new audiences across multiple channels — particularly
+                in trade show environments where audio is unavailable and
+                attention spans are short. The solution had to:
+              </p>
+              <ul class="text-slate-300 mb-0 text-md/7 md:text-2xl/10">
+                <li>
+                  Primary Objective: Drive curiosity and excitement about
+                  Sitebulb while providing a high-level overview of what it does
+                </li>
+                <li>Target Audiences: In-house and agency SEO professionals</li>
+                <li>
+                  Key Environments:
+                  <ul>
+                    <li>Trade show screens (on silent loop)</li>
+                    <li>Social media as sales collateral</li>
+                    <li>The homepage as an introductory animation</li>
+                  </ul>
+                </li>
+                <li>
+                  Core requirements included:
+                  <ul>
+                    <li>A runtime of around 2 minutes</li>
+                    <li>No reliance on audio</li>
+                    <li>
+                      Animated transitions blending text, UI mockups, and brand
+                      visuals
+                    </li>
+                    <li>
+                      Styling and tone aligned with Sitebulb’s brand identity
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
+        <section
+          class="min-h-[100svh] flex flex-col justify-center items-center w-full p-5 md:p-10"
+          aria-labelledby="future-enhancements-heading"
+          id="future"
+        >
+          <div
+            class="max-w-5xl prose prose-invert prose-h2:mt-0 prose-h2:md:text-5xl"
+          >
+            <h2 id="future-enhancements-heading" class="mt-0">
+              Outcome & Next Steps
+            </h2>
+            <div class="bg-black/50 backdrop-blur-2xl rounded-2xl p-4 md:p-8">
+              <p class="text-slate-300 mb-0 text-md/10 md:text-2xl/10 pt-0 mt-0">
+                The final animation successfully met the criteria for use in
+                multiple marketing environments:
+              </p>
+              <ul class="text-slate-300 mb-0 text-md/7 md:text-2xl/10">
+                <li>
+                  Seamless playback at events on kiosks and touchscreen displays
+                </li>
+                <li>Clean integration into the Sitebulb homepage</li>
+                <li>
+                  Adaptability for use on social media as standalone promotional
+                  content
+                </li>
+              </ul>
+               <p class="text-slate-300 mb-0 text-md/10 md:text-2xl/10">Future iterations to explore:</p>
+              <ul class="text-slate-300 mb-0 text-md/7 md:text-2xl/10">
+                <li>
+                  Subtitling or on-screen text emphasis for even faster
+                  comprehension
+                </li>
+                <li>
+                  Interactive video formats (clickable sections for feature deep
+                  dives)
+                </li>
+                <li>
+                  Additional variants tailored to specific features or use cases
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
+      </article>
+    </div>
+  </div>
+</Layout>
+<CaseStudiesScripts />

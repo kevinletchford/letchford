@@ -1,0 +1,27 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "include": [".astro/types.d.ts", 
+    "**/*",    
+    "src/**/*.d.ts",
+    "src/**/*.ts",
+    "src/**/*.astro"],
+  "exclude": ["dist"],           
+  "compilerOptions": {
+    "baseUrl": ".",
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
+    "paths": {
+      "@layouts/*": ["src/layouts/*"],
+      "@scripts/*": ["src/scripts/*"],
+      "@components/*": ["src/components/*"],
+      "@assets/*": ["src/assets/*"],
+      "@src/*": ["src/*"]
+    },
+    "types": [
+      "vite-plugin-glsl/ext","@types/react", "@types/react-dom"
+    ]
+  },
+    "files": [
+    "node_modules/gsap/types/index.d.ts"
+  ]
+}

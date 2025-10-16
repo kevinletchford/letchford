@@ -1,0 +1,152 @@
+---
+import HologramModel from "@components/HologramModel.astro";
+import Layout from "@layouts/FullPage.astro";
+import * as THREE from "three";
+const year = new Date().getFullYear()
+---
+
+
+<Layout title="Projects | Kevin Letchford - Design Engineer">
+  <div
+    id="wrapper"
+    class="h-dvh overflow-hidden overflow-y-auto overscroll-none absolute inset-0 bg-gradient-to-r from-cyan-700/70 to-red-900/10"
+  >
+    <div id="content">
+      <article
+        class="max-w-5xl m-auto prose-h2:mt-0 prose-h2:md:text-5xl prose-headings:font-space grid grid-cols-1 gap-8"
+      >
+        <section
+          class="p-8 min-h-[100svh] snap-start flex flex-col justify-center max-w-5xl m-auto w-full"
+          aria-labelledby="title"
+          id="title"
+        >
+          <div class="min-h-[50vh] flex flex-col justify-center">
+            <h1
+              id="title"
+              class="mt-2 pb-4 text-4xl md:text-6xl font-bold text-white mb-3 font-space tracking-tight load-effect "
+            >
+              Projects
+            </h1>
+            <p class="mt-0 text-slate-300 mb-3 text-xl md:text-2xl">
+              Recent projects and products I’ve designed, built, and worked on.
+            </p>
+          </div>
+
+          <div
+            class="inline-flex gap-4 rounded-2xl bg-black/20 backdrop-blur-2xl mr-auto p-5 md:p-10"
+          >
+            <ul role="list" class="divide-y divide-white/10 xl:col-span-3">
+              <li
+                class="flex flex-col gap-5 md:gap-10 py-5 md:py-10 first:pt-0 last:pb-0 sm:flex-row items-center justify-center"
+              >
+                <HologramModel
+                  width={250}
+                  height={250}
+                  cameraPosition={new THREE.Vector3(-3, -0, 40)}
+                  src="/projects/grid.gltf"
+                  class="w-full bg-gradient-to-b from-cyan-900/20 to-red-900/10 rounded-xl three-dee-glitch"
+                />
+
+                <div class="max-w-xl flex-auto flex flex-col">
+                  <h3 class="text-xl/8 font-semibold tracking-tight text-white">
+                    <a
+                      href="/demos/">GSAP Demos
+                    </a>
+                    
+                  </h3>
+                  <p class="text-base/7 text-gray-400">
+                    2D experiments with GSAP
+                  </p>
+                  <p class="mt-6 text-base/7 text-gray-400">
+                    From interactive audio synths to shape-morphing motion studies—quick, exploring timing, easing, and space it self.
+                  </p>
+                  <div class="flex justify-end mt-10">
+                    <a
+                      href="/demos/"
+                      class="rounded-full border border-white/20 px-4 py-2 text-center text-white/80"
+                    >
+                      View Demos
+                    </a>
+                  </div>
+                </div>
+              </li>
+              <li
+                class="flex flex-col gap-5 md:gap-10 p-5 md:py-10 first:pt-0 last:pb-0 sm:flex-row items-center justify-center"
+              >
+                <HologramModel
+                  width={250}
+                  height={250}
+                  cameraPosition={new THREE.Vector3(-5, 7.5, 45)}
+                  src="/projects/spotify.gltf"
+                  class="w-full bg-gradient-to-b from-cyan-900/20 to-red-900/10 rounded-xl three-dee-glitch"
+                />
+
+                <div class="max-w-xl flex-auto flex flex-col">
+                  <h3 class="text-xl/8 font-semibold tracking-tight text-white">
+                    <a
+                      href="https://snatcher.ultr.dev">
+                      Snatcher
+                    </a>
+                  </h3>
+                  <p class="text-base/7 text-gray-400">
+                    Save Tracks from the radio to Spotify
+                  </p>
+                  <p class="mt-6 text-base/7 text-gray-400">
+                    Add the current songs playing to your Spotify account and
+                    find out more about the artists back catalogue.
+                  </p>
+                    <div class="flex justify-end mt-10">
+                    <a
+                      href="https://snatcher.ultr.dev"
+                      class="rounded-full border border-white/20 px-4 py-2 text-center text-white/80"
+                    >
+                      Start Saving Tracks
+                    </a>
+                  </div>
+                </div>
+              </li>
+              <li
+                class="flex flex-col gap-5 md:gap-10 p-5 md:py-10 first:pt-0 last:pb-0 sm:flex-row items-center justify-center"
+              >
+                <HologramModel
+                  width={250}
+                  height={250}
+                  modelRotation={new THREE.Vector3(0, 0.6, 0)}
+                  src="/projects/sitebulb.gltf"
+                  class="w-full bg-gradient-to-b from-cyan-900/20 to-red-900/10 rounded-xl three-dee-glitch"
+                />
+
+               <div class="max-w-xl flex-auto flex flex-col">
+                  <h3 class="text-xl/8 font-semibold tracking-tight text-white">
+                             <a
+                      href="https://sitebulb.com/">
+                      Sitebulb
+                    </a>
+                    
+                  </h3>
+                  <p class="text-base/7 text-gray-400">Web crawler — frontend & site design</p>
+                  <p class="mt-6 text-base/7 text-gray-400">
+                     I’m the frontend developer at Sitebulb, owning the design system and the build of the marketing site and core UI.
+                  </p>
+                    <div class="flex justify-end mt-10">
+                    <a
+                      href="https://sitebulb.com/"
+                      class="rounded-full border border-white/20 px-4 py-2 text-center text-white/80"
+                    >
+                      View Sitebulb
+                    </a>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          <footer class="flex justify-between pt-5 text-slate-500">
+              <p>&copy; letchford.co {year} - All rights reserved</p>
+              <p><a href="/colophon/">Colophon</a></p>
+          </footer>
+        </section>
+      </article>
+    </div>
+  </div>
+</Layout>

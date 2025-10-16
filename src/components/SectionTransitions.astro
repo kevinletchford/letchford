@@ -1,0 +1,55 @@
+---
+/* no frontmatter needed */
+---
+
+
+<script>
+  import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+  gsap.registerPlugin(ScrollTrigger);
+
+  const article = document.querySelector("article");
+  const sections = Array.from(article?.querySelectorAll(":scope > section") ?? []);
+
+  sections.forEach((section) => {
+    const elems = section.querySelectorAll("h1, h2, h3, p, ul, li, a");
+    gsap.set(elems, { opacity: 0, y: 24 });
+
+    ScrollTrigger.create({
+      trigger: section,
+      start: "top 70%",
+      onEnter: () => gsap.to(elems, { opacity: 1, y: 0, duration: 0.8, ease: "power3.out", stagger: 0.06 }),
+      onEnterBack: () => gsap.to(elems, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out", stagger: 0.05 }),
+      onLeave: () => gsap.to(elems, { opacity: 0, y: -12, duration: 0.4, ease: "power1.inOut", stagger: { each: 0.02, from: "end" } }),
+    });
+  });
+
+  ScrollTrigger.create({
+    trigger: article,
+    start: "top top",
+    end: "bottom bottom",
+    snap: {
+      snapTo: (value) => {
+        const idx = Math.round(value * (sections.length - 1));
+        return idx / (sections.length - 1);
+      },
+      duration: 0.3,
+      delay: 0,
+      ease: "power1.inOut",
+    },
+  });
+
+  sections.forEach((section) => {
+    const bg = section.getAttribute("data-bg");
+    if (!bg) return;
+    const setBg = () => gsap.to(document.body, { backgroundColor: bg, duration: 0.6, ease: "power2.out", overwrite: true });
+    ScrollTrigger.create({ trigger: section, start: "top center", end: "bottom center", onEnter: setBg, onEnterBack: setBg });
+  });
+
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
+  if (reduce.matches) {
+    ScrollTrigger.getAll().forEach((st) => st.disable());
+    gsap.globalTimeline.clear();
+    sections.forEach((s) => s.querySelectorAll("h1, h2, h3, p, ul, li, a").forEach((el) => el.removeAttribute("style")));
+  }
+</script>

@@ -1,0 +1,326 @@
+---
+import CaseStudiesScripts from "@components/CaseStudiesScripts.astro";
+import Layout from "@layouts/FullPage.astro";
+---
+
+<Layout
+  title="Promotional Kiosk Progressive Web App for Sitebulb | Kevin Letchford"
+>
+          <div id="wrapper"  class="h-dvh overflow-hidden overflow-y-auto overscroll-none absolute inset-0 bg-gradient-to-r from-cyan-700/70  to-red-900/10 ">
+
+              <div class="section-nav bottom-2 fixed z-30 -translate-1/2 left-1/2 flex gap-4">
+                <button class="previous-section size-7 rounded-full flex items-center justify-center border-white/20 border backdrop-blur-3xl text-white/70  cursor-pointer" aria-label="Previous slide">
+                    <svg viewBox="0 0 640 640" fill="currentColor" data-slot="icon" aria-hidden="true" class=" size-4 text-white/70">
+                        <path d="M308.7 212.7C314.9 206.5 325.1 206.5 331.3 212.7L491.3 372.7C497.5 378.9 497.5 389.1 491.3 395.3C485.1 401.5 474.9 401.5 468.7 395.3L320 246.6L171.3 395.3C165.1 401.5 154.9 401.5 148.7 395.3C142.5 389.1 142.5 378.9 148.7 372.7L308.7 212.7z"/>
+                    </svg>
+                </button>
+                <nav class="gap-4  items-center  flex">
+                  <a
+                    href="#title"
+                    data-nav-item="title"
+                    class="dot dot_active min-w-3 min-h-3 rounded-full bg-white/30 block"
+                    ><span class="hidden">Title</span></a
+                  >
+                  <a
+                    href="#gallery"
+                    data-nav-item="gallery"
+                    class="dot min-w-3 min-h-3 rounded-full bg-white/30 block"
+                    ><span class="hidden">Gallery</span></a
+                  >
+                  <a
+                    href="#problem"
+                    data-nav-item="problem"
+                    class="dot min-w-3 min-h-3 rounded-full bg-white/30 block"
+                    ><span class="hidden">Problem</span></a
+                  >
+                  <a
+                    href="#solution"
+                    data-nav-item="solution"
+                    class="dot min-w-3 min-h-3 rounded-full bg-white/30 block"
+                    ><span class="hidden">Solution</span></a
+                  >
+                  <a
+                    href="#tech"
+                    data-nav-item="tech"
+                    class="dot min-w-3 min-h-3 rounded-full bg-white/30 block"
+                    ><span class="hidden">Tech</span></a
+                  >
+                  <a
+                    href="#future"
+                    data-nav-item="future"
+                    class="dot min-w-3 min-h-3 rounded-full bg-white/30 block"
+                    ><span class="hidden">Future</span></a
+                  >
+                  <a
+                    href="#impact"
+                    data-nav-item="impact"
+                    class="dot min-w-3 min-h-3 rounded-full bg-white/30 block"
+                    ><span class="hidden">Impact</span></a
+                  >
+                </nav>
+                <button class="next-section size-7 rounded-full flex items-center justify-center border-white/20 border backdrop-blur-3xl text-white/70 cursor-pointer" aria-label="Next slide">
+                    <svg viewBox="0 0 640 640" fill="currentColor" data-slot="icon" aria-hidden="true" class="size-4 text-text/70">
+                        <path d="M308.7 427.3C314.9 433.5 325.1 433.5 331.3 427.3L491.3 267.3C497.5 261.1 497.5 250.9 491.3 244.7C485.1 238.5 474.9 238.5 468.7 244.7L320 393.4L171.3 244.7C165.1 238.5 154.9 238.5 148.7 244.7C142.5 250.9 142.5 261.1 148.7 267.3L308.7 427.3z"/>
+                    </svg>
+                </button>
+              </div>
+              <div id="content">
+                <article class="w-full">
+                  <section
+                    class="p-10 min-h-[100svh]  flex flex-col justify-center max-w-5xl m-auto w-full"
+                    aria-labelledby="title"
+                    id="title"
+                  >
+                    <div
+                      class="uppercase tracking-widest font-semibold text-red-400 text-sm"
+                    >
+                      Case Study
+                    </div>
+                    <h1
+                      id="title"
+                      class="mt-2 text-4xl md:text-6xl font-bold text-white mb-3 font-space tracking-tight text-balance load-effect"
+                    >
+                      Promotional Kiosk PWA for Sitebulb
+                    </h1>
+                    <p class="mt-0 text-slate-300 mb-3 text-xl md:text-2xl ">
+                      An offline-first, touch-optimized experience for conference demos.
+                    </p>
+                    <div
+                      class="mr-auto inline-flex items-center gap-2 px-3 py-1 border border-slate-600 rounded-full text-sm text-slate-300 bg-slate-800/40"
+                    >
+                      PWA • Offline • Touchscreen
+                    </div>
+                  </section>
+                  <section  id="gallery" class="horizontal overscroll-none">
+                    <div class="pin-wrap">
+                      <div class="animation-wrap px-10 gap-10 to-right">
+                         <div class="w-4xl md:w-[80vw] gallery__item"
+                          id="gallery-item-1"
+                        >
+                          <img
+                            src="/case-studies/kiosk/discovery.png"
+                            alt=""
+                            class="w-full rounded-2xl"
+                          />
+                        </div>
+                        <div
+                          class="w-4xl md:w-[80vw] gallery__item"
+                          id="gallery-item-2"
+                        >
+                          <img
+                            src="/case-studies/kiosk/features.png"
+                            alt=""
+                            class="w-full rounded-2xl"
+                          />
+                        </div>
+                        <div
+                          class="w-4xl md:w-[80vw] gallery__item"
+                          id="gallery-item-3"
+                        >
+                          <img
+                            src="/case-studies/kiosk/free-trial.png"
+                            alt=""
+                            class="w-full rounded-2xl"
+                          />
+                        </div>
+                        <div
+                          class="w-4xl md:w-[80vw] gallery__item"
+                          id="gallery-item-4"
+                        >
+                          <img
+                            src="/case-studies/kiosk/walkthrough.png"
+                            alt=""
+                            class="w-full rounded-2xl"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+                <section
+                  class="min-h-[100svh]  flex flex-col justify-center items-center w-full p-5 md:p-10"
+                  aria-labelledby="problem-heading"
+                  id="problem"
+                >
+                  <div class="max-w-5xl prose prose-invert prose-h2:mt-0 prose-h2:md:text-5xl">
+                    <h2 id="problem-heading" class="mt-0">The Problem</h2>
+                    <p
+                      class="text-slate-300 text-lg/10 md:text-2xl/10  bg-black/50 backdrop-blur-2xl rounded-2xl p-4 md:p-8 mb-4 md:mb-8"
+                    >
+                      Sitebulb required a reliable and engaging way to promote its
+                      features and product functionality at industry conferences and
+                      trade shows. The solution needed to support a combination of video
+                      demos and slides, function seamlessly on tablets and touchscreen
+                      TVs, and work <strong class="text-white">fully offline</strong> due
+                      to unreliable venue internet connections and the need to serve high-resolution
+                      media assets.
+                    </p>
+                  </div>
+                </section>
+                <section
+                  class="min-h-[100svh]  flex flex-col justify-center items-center w-full p-5 md:p-10"
+                  aria-labelledby="solution-heading"
+                  id="solution"
+                >
+                  <div class="max-w-5xl prose prose-invert prose-h2:mt-0 prose-h2:md:text-5xl">
+                    <h2
+                      id="solution-heading"
+                      class=""
+                    >
+                      The Solution
+                    </h2>
+                    <p
+                      class="text-slate-300 text-lg/10 md:text-2xl/10  bg-black/50 backdrop-blur-2xl rounded-2xl p-4 md:p-8 mb-4 md:mb-8"
+                    >
+                      A <strong class="text-white"
+                        >progressive web application (PWA)</strong
+                      > was developed to address these needs, offering a robust and interactive
+                      experience on various touch-enabled devices without any internet dependency.
+                    </p>
+
+                    <div class="text-slate-300 bg-black/50 backdrop-blur-2xl rounded-2xl p-4 md:p-8">
+                        <div class="not-prose">
+                            <h3 class="m-0 py-2 text-md md:text-2xl"><strong class="font-bold">Key Features</strong></h3>
+                        </div>
+
+                        <details class="details">
+                            <summary class="not-prose"><h4 class="m-0 p-0 text-md md:text-xl">Offline-First Architecture</h4></summary>
+                          <p>Video content and slides for uninterrupted playback and presentation.</p>
+                        </details>
+                        <details class="details">
+                            <summary class="not-prose"><h4 class="m-0 p-0 text-md md:text-xl">Touchscreen Optimization</h4></summary>
+                            <p>The interface was designed with large targets and minimal UI clutter
+                          for a seamless experience on tablets and large touchscreen displays.</p>
+                        </details>
+                        <details class="details">
+                            <summary class="not-prose"><h4 class="m-0 p-0 text-md md:text-xl">Video Playback System</h4></summary>
+                            <p>A custom HTML5 video player was built using React components to manage:</p>
+                          <ul class="list-disc ml-5 mt-1 space-y-1">
+                            <li>A flexible video playlist</li>
+                            <li>Custom title cards before each video</li>
+                            <li>Pause and resume functionality for smooth user control</li>
+                          </ul>
+                        </details>
+                        <details class="details">
+                            <summary class="not-prose"><h4 class="m-0 p-0 text-md md:text-xl">Presentation Deck Mode</h4></summary>
+                            <p>The application supports slide-based presentations showcasing:</p>
+                            <ul class="list-disc ml-5 mt-1 space-y-1">
+                              <li>Key product features</li>
+                              <li>Competitor comparisons</li>
+                              <li>QR codes for instant free trial downloads</li>
+                            </ul>
+                        </details>
+                        <details class="details">
+                            <summary class="not-prose"><h4 class="m-0 p-0 text-md md:text-xl">Kiosk Mode Integration</h4></summary>
+                            <p>The app was deployed via <strong class="text-white">Fully Kiosk Browser</strong> on Android tablets, allowing the device to be locked into a secure,
+                          single-app experience during conferences.</p>
+                        </details>
+                    </div>
+                  </div>
+                </section>
+                <section
+                  class="min-h-[100svh]  flex flex-col justify-center items-center w-full p-5 md:p-10"
+                  aria-labelledby="tech-heading"
+                  id="tech"
+                >
+                  <div class="max-w-5xl prose prose-invert prose-h2:mt-0 prose-h2:md:text-5xl">
+                    <h2
+                      id="tech-heading"
+                    >
+                      Technologies Used
+                    </h2>
+                <div class="overflow-x-auto w-full text-slate-300 mb-0 text-lg/10 md:text-2xl/10  bg-black/50 backdrop-blur-2xl rounded-2xl p-4 md:p-8">
+                  <table
+                    class="table-fixed border-collapse w-full text-left text-slate-300 not-prose"
+                  >
+                        <thead>
+                          <tr class="">
+                            <th
+                              scope="col"
+                              class=" px-4 py-2 font-semibold text-white"
+                              >Stack Area</th
+                            >
+                            <th
+                              scope="col"
+                              class=" px-4 py-2 font-semibold text-white"
+                              >Tools &amp; Frameworks</th
+                            >
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <th
+                              scope="row"
+                              class=" px-4 py-2 text-slate-200 font-medium"
+                              >Frontend</th
+                            >
+                            <td class=" px-4 py-2"
+                              >TypeScript, React, Tailwind CSS</td
+                            >
+                          </tr>
+                          <tr>
+                            <th
+                              scope="row"
+                              class=" px-4 py-2 text-slate-200 font-medium"
+                              >Deployment</th
+                            >
+                            <td class=" px-4 py-2"
+                              >Fully Kiosk Browser (Android)</td
+                            >
+                          </tr>
+                          <tr>
+                            <th
+                              scope="row"
+                              class=" px-4 py-2 text-slate-200 font-medium"
+                              >Media Handling</th
+                            >
+                            <td class=" px-4 py-2"
+                              >Custom HTML5 video player components</td
+                            >
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </section>
+                <section
+                  class="min-h-[100svh]  flex flex-col justify-center items-center w-full p-5 md:p-10"
+                  aria-labelledby="future-enhancements-heading"
+                  id="future"
+                >
+                  <div class="max-w-5xl prose prose-invert prose-h2:mt-0 prose-h2:md:text-5xl">
+                    <h2 id="future-enhancements-heading" class="mt-0">
+                      Future Enhancements
+                    </h2>
+                    <p
+                      class="text-slate-300 mb-0 text-lg/10 md:text-2xl/10  bg-black/50 backdrop-blur-2xl rounded-2xl p-4 md:p-8">
+                      There are plans to integrate with <strong class="text-white">Calendly</strong> to allow event attendees to schedule private demos—especially targeting
+                      Sitebulb’s premium cloud offering. This enhancement will further extend
+                      the kiosk's utility from a passive promotional tool to an active lead
+                      generation channel.
+                    </p>
+                  </div>
+                </section>
+                <section
+                  class="min-h-[100svh]  flex flex-col justify-center items-center w-full p-5 md:p-10"
+                  aria-labelledby="impact-heading"
+                  id="impact"
+                >
+                  <div class="max-w-5xl prose prose-invert prose-h2:mt-0 prose-h2:md:text-5xl">
+                    <h2 id="impact-heading" class="mt-0">Impact</h2>
+                    <p
+                      class="text-slate-300 mb-0 text-lg/10 md:text-2xl/10  bg-black/50 backdrop-blur-2xl rounded-2xl p-4 md:p-8"
+                    >
+                      The kiosk web app provided a highly engaging and stable solution
+                      for event teams, eliminating dependency on venue internet and
+                      allowing Sitebulb to deliver polished, interactive demos and
+                      marketing material with confidence. It also laid the groundwork
+                      for additional lead-capture capabilities in the future.
+                    </p>
+                  </div>
+                </section>
+                </article>
+              </div>
+          </div>
+</Layout>
+
+<CaseStudiesScripts />

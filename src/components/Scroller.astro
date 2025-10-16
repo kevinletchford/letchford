@@ -1,0 +1,233 @@
+<div class="scrolling-text">
+  <div class="rail">
+      <h2>Design Engineer / Creative Developer</h2>
+  </div>
+</div>
+
+
+<style>
+
+
+.scrolling-text {
+  overflow: hidden;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  border-bottom: 3px dashed var(--grey);
+  border-top: 3px dashed var(--grey);
+  .rail {
+    display: flex;
+    h2 {
+      font-weight: thin;
+      white-space: nowrap;
+      font-size: 200px;
+      font-weight: 900;
+      letter-spacing: ls(120);
+      line-height: 1em;
+      margin: 0 2rem 0 0;
+    }
+  }
+}
+
+</style>
+
+<script>
+import {gsap} from "gsap";
+import { ScrollTrigger } from "gsap/all";
+
+console.clear();
+
+gsap.registerPlugin(ScrollTrigger);
+
+const scrollingText = gsap.utils.toArray('.rail h2');
+
+const tl = horizontalLoop(scrollingText, {
+  repeat: -1,
+});
+
+let speedTween;
+
+ScrollTrigger.create({
+  trigger: ".scrolling-text",
+  start: "top bottom",
+  end: "bottom top",
+  onUpdate: (self) => {
+    speedTween && speedTween.kill();
+    speedTween = gsap.timeline()
+    .to(tl, {
+      timeScale: 3 * self.direction,
+      duration: 0.25
+    })
+    .to(tl, {
+      timeScale: 1 * self.direction,
+      duration: 1.5
+    }, "+=0.5")
+  },
+
+})
+
+/*
+Observer.create({
+  onChangeY(self) {
+    let factor = 2.5;
+    if (self.deltaY < 0) {
+      factor *= -1;
+    } 
+    gsap.timeline({
+      defaults: {
+        ease: "none",
+      }
+    })
+      .to(tl, { timeScale: factor * 2.5, duration: 0.2 })
+      .to(tl, { timeScale: factor / 2.5, duration: 1 }, "+=0.3");
+  }
+});
+*/
+
+/*
+This helper function makes a group of elements animate along the x-axis in a seamless, responsive loop.
+
+Features:
+ - Uses xPercent so that even if the widths change (like if the window gets resized), it should still work in most cases.
+ - When each item animates to the left or right enough, it will loop back to the other side
+ - Optionally pass in a config object with values like "speed" (default: 1, which travels at roughly 100 pixels per second), paused (boolean),  repeat, reversed, and paddingRight.
+ - The returned timeline will have the following methods added to it:
+   - next() - animates to the next element using a timeline.tweenTo() which it returns. You can pass in a vars object to control duration, easing, etc.
+   - previous() - animates to the previous element using a timeline.tweenTo() which it returns. You can pass in a vars object to control duration, easing, etc.
+   - toIndex() - pass in a zero-based index value of the element that it should animate to, and optionally pass in a vars object to control duration, easing, etc. Always goes in the shortest direction
+   - current() - returns the current index (if an animation is in-progress, it reflects the final index)
+   - times - an Array of the times on the timeline where each element hits the "starting" spot. There's also a label added accordingly, so "label1" is when the 2nd element reaches the start.
+ */
+
+interface HorizontalLoopConfig {
+  repeat?: number;
+  paused?: boolean;
+  speed?: number;
+  snap?: boolean | number | ((value: number) => number);
+  paddingRight?: number;
+  reversed?: boolean;
+}
+
+interface HorizontalLoopTimeline extends gsap.core.Timeline {
+  next: (vars?: TweenVars) => gsap.core.Tween;
+  previous: (vars?: TweenVars) => gsap.core.Tween;
+  current: () => number;
+  toIndex: (index: number, vars?: TweenVars) => gsap.core.Tween;
+  times: number[];
+}
+
+function horizontalLoop(
+  items: Element[] | string | NodeListOf<Element>,
+  config: HorizontalLoopConfig = {}
+): HorizontalLoopTimeline {
+  const elements: Element[] = gsap.utils.toArray(items);
+  const tl = gsap.timeline({
+    repeat: config.repeat,
+    paused: config.paused,
+    defaults: { ease: "none" },
+    onReverseComplete: () =>
+      tl.totalTime(tl.rawTime() + tl.duration() * 100),
+  }) as HorizontalLoopTimeline;
+
+  const length = elements.length;
+  const startX = elements[0].getBoundingClientRect().left + window.scrollX;
+  const times: number[] = [];
+  const widths: number[] = [];
+  const xPercents: number[] = [];
+  let curIndex = 0;
+  const pixelsPerSecond = (config.speed || 1) * 100;
+
+  const snap =
+    config.snap === false
+      ? (v: number) => v
+      : gsap.utils.snap(config.snap ?? 1);
+
+  let totalWidth: number, curX: number, distanceToStart: number, distanceToLoop: number;
+
+  gsap.set(elements, {
+    xPercent: (i: number, el: Element) => {
+      const w = widths[i] = parseFloat(gsap.getProperty(el, "width", "px") as string);
+      const x = parseFloat(gsap.getProperty(el, "x", "px") as string);
+      const xp = parseFloat(gsap.getProperty(el, "xPercent") as string);
+      xPercents[i] = snap((x / w) * 100 + xp);
+      return xPercents[i];
+    }
+  });
+
+  gsap.set(elements, { x: 0 });
+
+  const last = elements[length - 1];
+  totalWidth =
+    last.getBoundingClientRect().left +
+    (xPercents[length - 1] / 100) * widths[length - 1] -
+    startX +
+    last.getBoundingClientRect().width * (gsap.getProperty(last, "scaleX") as number) +
+    (config.paddingRight || 0);
+
+  for (let i = 0; i < length; i++) {
+    const item = elements[i];
+    curX = (xPercents[i] / 100) * widths[i];
+    distanceToStart = item.getBoundingClientRect().left + curX - startX;
+    distanceToLoop = distanceToStart + widths[i] * (gsap.getProperty(item, "scaleX") as number);
+
+    tl.to(
+      item,
+      {
+        xPercent: snap(((curX - distanceToLoop) / widths[i]) * 100),
+        duration: distanceToLoop / pixelsPerSecond,
+      },
+      0
+    ).fromTo(
+      item,
+      {
+        xPercent: snap(
+          ((curX - distanceToLoop + totalWidth) / widths[i]) * 100
+        ),
+      },
+      {
+        xPercent: xPercents[i],
+        duration:
+          (curX - distanceToLoop + totalWidth - curX) / pixelsPerSecond,
+        immediateRender: false,
+      },
+      distanceToLoop / pixelsPerSecond
+    ).add("label" + i, distanceToStart / pixelsPerSecond);
+
+    times[i] = distanceToStart / pixelsPerSecond;
+  }
+
+  function toIndex(index: number, vars: TweenVars = {}): gsap.core.Tween {
+    if (Math.abs(index - curIndex) > length / 2) {
+      index += index > curIndex ? -length : length;
+    }
+    const newIndex = gsap.utils.wrap(0, length, index);
+    let time = times[newIndex];
+
+    if ((time > tl.time()) !== (index > curIndex)) {
+      vars.modifiers = { time: gsap.utils.wrap(0, tl.duration()) };
+      time += tl.duration() * (index > curIndex ? 1 : -1);
+    }
+
+    curIndex = newIndex;
+    vars.overwrite = true;
+    return tl.tweenTo(time, vars);
+  }
+
+  tl.next = (vars?: TweenVars) => toIndex(curIndex + 1, vars);
+  tl.previous = (vars?: TweenVars) => toIndex(curIndex - 1, vars);
+  tl.current = () => curIndex;
+  tl.toIndex = (index: number, vars?: TweenVars) => toIndex(index, vars);
+  tl.times = times;
+
+  tl.progress(1, true).progress(0, true);
+
+  if (config.reversed) {
+    tl.vars.onReverseComplete?.();
+    tl.reverse();
+  }
+
+  return tl;
+}
+
+
+</script>

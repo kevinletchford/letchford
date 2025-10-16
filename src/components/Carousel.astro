@@ -1,0 +1,282 @@
+<section>
+
+  <div class="carousel" aria-label="carousel of images">
+    
+    <div class="carousel-slide">
+      <img src="https://images.unsplash.com/photo-1659733582156-d2a11801e59f?q=50&w=1600">
+      <h2>We're No</h2>
+      <h5>Strangers to love</h5>
+    </div>
+    
+    <div class="carousel-slide">
+      <img src="https://images.unsplash.com/photo-1543362137-5df0547b039d?q=50&w=1600">
+      <h2>You Know</h2>
+      <h5>The rules and so do I</h5>
+    </div>
+    
+    <div class="carousel-slide">
+      <img src="https://images.unsplash.com/photo-1631142260228-305ccb610dba?q=50&w=1600">
+      <h2>Full commitment</h2>
+      <h5>Is what I'm thikning of</h5>
+    </div>
+    
+    <div class="carousel-slide">
+      <img src="https://images.unsplash.com/photo-1708022766976-49ca46c0f7de?q=50&w=1600">
+      <h2>You Wouldn't</h2>
+      <h5>Get this from any other guy</h5>
+    </div>
+    
+    <div class="carousel-slide">
+      <img src="https://images.unsplash.com/photo-1631142260079-970258649676?q=50&w=1600">
+      <h2>I Just Wanna</h2>
+      <h5>Tell you how I'm feeling</h5>
+    </div>
+    
+    <div class="carousel-slide">
+      <img src="https://images.unsplash.com/photo-1708022809820-2668e65877b9?q=50&w=1600">
+      <h2>Gotta Make</h2>
+      <h5>You understand</h5>
+    </div>
+    
+    <div class="carousel-slide">
+      <img src="https://images.unsplash.com/photo-1708022796522-ff65b57439de?q=50&w=1600">
+      <h2>Never Gonna</h2>
+      <h5>Give you up</h5>
+    </div>
+    
+    <div class="carousel-slide">
+      <img src="https://images.unsplash.com/photo-1708022790103-a514cb89a034?q=50&w=1600">
+      <h2>Never Gonna</h2>
+      <h5>Let you down</h5>
+    </div>
+  </div>
+
+  <nav class="carousel-nav">
+    <button class="prev" tabindex="0" aria-label="Previous Slide"></button>
+    <button class="next" tabindex="0" aria-label="Next Slide"></button>
+    <div>1/8</div>
+  </nav>
+  
+</section>
+
+
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: "Roboto", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 600;
+  background: #000;
+  font-size: clamp(16px, 3.3vw, 64px);
+}
+
+section {
+  width: 100vw;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.carousel {
+  width: 100vw;
+  height: 70vh;
+  gap: 10px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  display: flex;
+  -webkit-overflow-scrolling: touch;
+}
+
+.carousel-slide {
+  position: relative;
+  flex: 0 0 75%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  scroll-snap-align: center;
+}
+
+.carousel-slide-abs {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 75vw;
+  height: 70vh;
+  perspective: 750px;
+}
+
+.carousel-slide img {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+h2 {
+  position: relative;
+  margin: 0;
+  font-size: 1.8rem;
+}
+
+h5 {
+  position: relative;
+  margin: 2% 0 0 0;
+  font-size: 1rem;
+  font-weight: 100;
+  letter-spacing: 0.3px;
+}
+
+.carousel-nav {
+  display: none; /* displayed in the JS */
+  position: absolute;
+  width: 100%;
+}
+
+.carousel-nav button {
+  cursor: pointer;
+  border: none;
+  font-size: 3rem;
+  position: absolute;
+  aspect-ratio: 1.5;
+  width: 7vw;
+  max-width: 75px;
+  min-width: 27px;
+  height: auto;
+  max-height: 3.7vh;
+  background-color: transparent;
+  background-size: cover;
+  overflow: visible;
+  background-image: url("data:image/svg+xml,%3Csvg stroke='%23fff' fill='none' xmlns='http://www.w3.org/2000/svg' viewBox='0 1 22 15'%3E%3Cpath d='M2,11 11,2 20,11'/%3E%3C/svg%3E");
+}
+
+.prev {
+  transform: translateY(-50%) rotate(-90deg);
+}
+
+.next {
+  transform: translateY(-50%) rotate(90deg);
+  right: 0;
+}
+
+.carousel-nav div {
+  position: absolute;
+  top: 36vh;
+  width: 100%;
+  text-align: center;
+  color: #fff;
+  font-weight: 200;
+  opacity: 0.5;
+  letter-spacing: 0.25rem;
+  font-size: clamp(22px, 3.9vw, 44px);
+}
+
+/* Simplify the scroll bar appearance */
+::-webkit-scrollbar {
+  height: 13px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  border-top: 6px solid #000;
+  background: #555;
+  width: 50%;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #bbb;
+}
+
+
+</style>
+
+<script>
+import {gsap} from "gsap";
+const slides = gsap.utils.toArray(".carousel-slide");
+
+// Ensure we wait for the DOM to fully load
+document.addEventListener("DOMContentLoaded", () => {
+  const slides: HTMLElement[] = gsap.utils.toArray<HTMLElement>(".carousel-slide");
+  const prev = document.querySelector<HTMLButtonElement>(".prev");
+  const next = document.querySelector<HTMLButtonElement>(".next");
+  const navText = document.querySelector<HTMLDivElement>(".carousel-nav div");
+
+  if (!prev || !next || !navText || slides.length === 0) {
+    return;
+  }
+
+  let currentIndex = 0;
+
+  // Disable scroll-snap behavior for animated transitions
+  gsap.set(".carousel", { scrollSnapType: "none" });
+
+  // Show navigation controls
+  gsap.set(".carousel-nav", { display: "block" });
+
+  // Stack slides in the center with only the first visible
+  slides.forEach((slide, i) => {
+    slide.classList.add("carousel-slide-abs");
+    gsap.set(slide.children, { opacity: i === 0 ? 1 : 0 });
+  });
+
+  const changeSlide = (dir: number): void => {
+    const oldLayers = slides[currentIndex].children;
+    currentIndex = gsap.utils.wrap(0, slides.length, currentIndex += dir);
+    const newLayers = slides[currentIndex].children;
+    gsap.killTweensOf([oldLayers, newLayers]);
+
+    gsap.timeline({ defaults:{ ease: "expo" } })
+        // update progress text
+        .set(".carousel-nav div", { innerText: `${currentIndex + 1}/${slides.length}` })
+    
+        // old slide outro
+        .to(oldLayers[0], {
+        duration: 0.3,
+        rotateY: (dir<0 ? -75 : 75),
+        scale: 0.6,
+        ease: "power2.in"
+        }, 0)
+        .to(oldLayers, {
+        duration: 0.3,
+        opacity: 0,
+        ease: "power2.in"
+        }, 0)
+        
+        // new slide intro
+        .to(newLayers, {
+        opacity: 1,
+        ease: "power1.inOut",
+        stagger: 0.2
+        }, 0.2)
+        .fromTo(newLayers[0], {
+        rotateY: (dir<0 ? 90 : -90),
+        scale: 0.6
+        },{
+        rotateY: 0,
+        scale: 1
+        }, 0.3)
+        .fromTo([newLayers[1], newLayers[2]], {
+        y: 35
+        },{
+        duration: 1,
+        y: 0,
+        stagger: 0.14
+        }, 0.4);
+  };
+
+  // Button event listeners
+  next.addEventListener("click", () => changeSlide(1));
+  prev.addEventListener("click", () => changeSlide(-1));
+});
+</script>

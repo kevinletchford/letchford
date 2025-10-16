@@ -1,0 +1,22 @@
+---
+const { class: className = "w-full h-[360px] rounded-xl", speed = 1 } = Astro.props;
+---
+
+<div class="relative">
+  <canvas
+    data-canvas="aurora"
+    data-speed={String(speed)}
+    data-ribbons="5"
+    data-amp="0.1"
+    data-noise="10"
+    data-glow="0.8"
+    data-colors="#7ef9ff,#8b5cf6,#7cffb8,#80ffea,#a0c4ff"
+    class={className}
+    style="background:#0a0a0b"
+  ></canvas>
+
+  <!-- (optional) add any overlay UI here -->
+</div>
+
+<!-- load the demo script -->
+<script src="@scripts/demos/aurora-canvas.ts" />

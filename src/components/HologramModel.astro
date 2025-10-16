@@ -1,0 +1,103 @@
+---
+/**
+ * HologramModel.astro
+ * Astro wrapper that renders a .gltf/.glb via Three.js with a custom shader.
+ * Client logic lives in HologramModel.ts and is bundled by Astro/Vite.
+ */
+
+ import * as THREE from 'three';
+
+export interface Props {
+  /** URL to the .gltf or .glb model */
+  src: string;
+  /** Optional CSS class applied to container */
+  class?: string;
+  /** Explicit pixel width/height if not using CSS; defaults are square */
+  width?: number;
+  height?: number;
+  /** For .gltf with external .bin/textures, set resource path (folder URL). If omitted, it will be auto-derived. */
+  resourcePath?: string;
+  /** Max radians to tilt toward hovered corner */
+  hoverTilt?: number; // ~0.25 rad ≈ 14°
+  /** How much to lift model on hover (scene units) */
+  hoverLift?: number; // 0.1 is subtle
+  /** Additional shader uniforms you want to pass through */
+  shaderUniforms?: Record<string, any>;
+  /** Renderer exposure multiplier */
+  exposure?: number;
+  cameraPosition?: THREE.Vector3;
+  modelPosition?: THREE.Vector3;
+  modelRotation?:THREE.Vector3;
+}
+
+import holographicVertexShader from '@src/shaders/holographic/vertex.glsl';
+import holographicFragmentShader from '@src/shaders/holographic/fragment.glsl';
+
+const {
+  src: modelSrc,
+  class: className = '',
+  width = 300,
+  height = 300,
+  resourcePath,
+  hoverTilt = 0.25,
+  hoverLift = 0.1,
+  shaderUniforms = {},
+  exposure = 1.0,
+  cameraPosition,
+  modelPosition,
+  modelRotation,
+} = Astro.props as Props;
+
+const id = `holo-${Math.random().toString(36).slice(2)}`;
+---
+
+<div
+  id={id}
+  class={`hologram-wrapper relative ${className}`}
+  style={`--w:${width}px;--h:${height}px;`}
+  aria-label="3D hologram model"
+  role="img"
+  data-props={JSON.stringify({
+    modelSrc,
+    vertexShader: holographicVertexShader,
+    fragmentShader: holographicFragmentShader,
+    hoverTilt,
+    hoverLift,
+    shaderUniforms,
+    id,
+    exposure,
+    resourcePath,
+    cameraPosition,
+    modelPosition,
+    modelRotation,
+  })}
+>
+  <noscript>Enable JavaScript to view the 3D model.</noscript>
+</div>
+
+<style>
+  .hologram-wrapper { width: var(--w); height: var(--h); display: block; }
+  .hologram-wrapper:focus { outline: none; }
+  canvas.holo-canvas { display:block; width:100%; height:100%; }
+</style>
+
+<!-- NOTE: In Astro, inline <script> in .astro files are bundled by Vite automatically.
+     You do NOT need type="module" here; imports will work. Keep this script plain JS. -->
+<script>
+  import init from './HologramModel.ts';
+document.addEventListener("astro:page-load", () => {
+  // Initialize every wrapper on the page (safe for multiple instances)
+  const nodes = document.querySelectorAll('.hologram-wrapper[data-props]');
+  nodes.forEach((el) => {
+    const node = el as HTMLElement;
+    // Use a data-attribute sentinel to avoid TS property errors
+    if (node.hasAttribute('data-holo-inited')) return;
+    node.setAttribute('data-holo-inited', '');
+
+    const raw = node.getAttribute('data-props') || '{}';
+    let props: any = {};
+    try { props = JSON.parse(raw); } catch (e) {  }
+    init(node, props);
+  });
+});
+</script>
