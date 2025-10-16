@@ -46,14 +46,14 @@ world.position.x = 0;
 scene.add(world);
 
 
-// After you create `textureLoader`, somewhere near your other textures:
-const starsTex = textureLoader.load('/stars/stars.jpg');
-starsTex.colorSpace = THREE.SRGBColorSpace;                   // if authored in sRGB
-starsTex.mapping = THREE.EquirectangularReflectionMapping;    // treat as 360° pano
-starsTex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+// // After you create `textureLoader`, somewhere near your other textures:
+// const starsTex = textureLoader.load('/stars/stars.jpg');
+// starsTex.colorSpace = THREE.SRGBColorSpace;                   // if authored in sRGB
+// starsTex.mapping = THREE.EquirectangularReflectionMapping;    // treat as 360° pano
+// starsTex.anisotropy = renderer.capabilities.getMaxAnisotropy();
 
-// Use as sky background (no parallax, always behind everything)
-scene.background = starsTex;
+// // Use as sky background (no parallax, always behind everything)
+// scene.background = starsTex;
 
 let tablet: THREE.Group;
 
