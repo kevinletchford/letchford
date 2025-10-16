@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "include": [
+    "/*"
+  ],
+  "exclude": [
+    "/",
+    "/_astro/*",
+    "/.DS_Store",
+    "/.assetsignore",
+    "/favicon.svg",
+    "/astronaut/*",
+    "/audio/*",
+    "/case-studies/*",
+    "/laptop/*",
+    "/mars/*",
+    "/icons/*",
+    "/satellite/*",
+    "/fonts/*",
+    "/rocket/*",
+    "/stars/*",
+    "/tablet/*",
+    "/about",
+    "/article_automation_case_study_updated",
+    "/contact",
+    "/demos",
+    "/promotional_kiosk_case_study"
+  ]
+}
