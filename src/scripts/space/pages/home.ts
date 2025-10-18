@@ -162,7 +162,6 @@ const loadHome: PageLoader = async ({ three: T, renderer, textureLoader, loading
     planetMat.dispose();
     marsDay.dispose();
     marsNight.dispose();
-    marsSpec.dispose();
   };
 
   return { group, dispose, updater };

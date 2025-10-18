@@ -253,8 +253,26 @@ const loadContact: PageLoader = async ({ three: T, camera }: Ctx): Promise<LoadR
   const updater = (dt: number, t: number) => {
     if (cancelled) return;
     bh.update(dt, t);
-    camera.position.set(-20, -30, 80);
   };
+
+    document.addEventListener("astro:before-preparation", (event) => {
+    const originalLoader = event.loader;
+    event.loader = async function () {
+      const camera = window.SpaceManager.getCamera();
+      const camProxy = { x: -20, y: -30, z: 90, ox: 0, oy: 0 };
+      const qCamX = gsap.quickTo(camera.position, "x", { duration: 0.62, ease: "power3.out" });
+      const qCamY = gsap.quickTo(camera.position, "y", { duration: 0.62, ease: "power3.out" });
+      const qCamZ = gsap.quickTo(camera.position, "z", { duration: 0.62, ease: "power3.out" });
+      const updateCamera = () => {
+        qCamX(camProxy.x + camProxy.ox);
+        qCamY(camProxy.y + camProxy.oy);
+        qCamZ(camProxy.z);
+        camera.updateMatrixWorld();
+      };
+      await originalLoader();
+      updateCamera();
+    };
+  });
 
   const dispose = () => {
     cancelled = true;
@@ -263,5 +281,8 @@ const loadContact: PageLoader = async ({ three: T, camera }: Ctx): Promise<LoadR
 
   return { group, dispose, updater };
 };
+
+
+
 
 export default loadContact;
