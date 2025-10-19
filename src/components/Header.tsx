@@ -123,7 +123,7 @@ export default function Header() {
 
         {/* Desktop center nav (hidden on mobile) */}
         <div className="col-span-3 hidden items-center justify-center md:flex">
-          <nav className="flex items-center justify-between gap-6 rounded-full border border-white/20 px-6 backdrop-blur-3xl">
+          <nav className="flex items-center justify-between gap-6 rounded-full border border-white/20 px-6 md:backdrop-blur-3xl">
             <a className="py-2 text-white/70" href="/">
               About
             </a>
@@ -161,7 +161,7 @@ export default function Header() {
         {/* Right controls (desktop) */}
         <div className="hidden items-center justify-end gap-4 md:flex">
           <a
-            className="flex items-center justify-between gap-6 rounded-full border border-white/20 px-6 py-2 text-white/70 backdrop-blur-3xl"
+            className="flex items-center justify-between gap-6 rounded-full border border-white/20 px-6 py-2 text-white/70 md:backdrop-blur-3xl"
             href="/contact/"
           >
             Contact
@@ -179,7 +179,7 @@ export default function Header() {
             aria-expanded={mobileOpen}
             aria-controls="mobile-menu"
             aria-label={mobileOpen ? "Close menu" : "Open menu"}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/20 backdrop-blur-3xl"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/20 md:backdrop-blur-3xl"
           >
             {/* Burger / close icon */}
             <span className="relative block h-4 w-4">
@@ -223,7 +223,7 @@ export default function Header() {
           id="desktop-menu-solutions"
           className="backdrop:bg-transparent duration-200 ease-in-out pt-4"
         >
-          <div className="-outline-offset-1 flex-auto overflow-hidden rounded-3xl bg-gradient-to-b from-blue-900/10 to-cyan-500/10 text-sm/6 outline outline-1 outline-white/10 drop-shadow-2xl backdrop-blur-3xl max-w-5xl m-auto">
+          <div className="-outline-offset-1 flex-auto overflow-hidden rounded-3xl bg-gradient-to-b from-blue-900/10 to-cyan-500/10 text-sm/6 outline outline-1 outline-white/10 drop-shadow-2xl md:backdrop-blur-3xl max-w-5xl m-auto">
             <div className="grid grid-cols-1 gap-x-2 gap-y-1 p-4 lg:grid-cols-3 bg-gradient-to-b">
               {/* --- item 1 --- */}
               <div className="group relative flex gap-x-6 rounded-lg p-4 hover:bg-white/5">
@@ -298,7 +298,7 @@ export default function Header() {
         <div
           ref={mobilePanelRef}
           className={cx(
-            "fixed inset-y-0 right-0 z-30 w-[88%] max-w-sm bg-black/70 p-6 backdrop-blur-2xl transition-transform",
+            "fixed inset-y-0 right-0 z-30 w-[88%] max-w-sm bg-black/70 p-6 md:backdrop-blur-2xl transition-transform",
             mobileOpen ? "translate-x-0" : "translate-x-full"
           )}
           role="dialog"

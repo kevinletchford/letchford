@@ -8,7 +8,7 @@ import Layout from "@layouts/FullPage.astro";
 >
 <div id="wrapper"  class="h-dvh overflow-hidden overflow-y-auto overscroll-none absolute inset-0 bg-gradient-to-r from-cyan-700/70  to-red-900/10 ">
         <div class="section-nav bottom-2 absolute z-30 -translate-1/2 left-1/2 flex gap-4">
-          <button class="previous-section size-7 rounded-full flex items-center justify-center border-white/20 border backdrop-blur-3xl text-white/70  cursor-pointer" aria-label="Previous slide">
+          <button class="previous-section size-7 rounded-full flex items-center justify-center border-white/20 border md:backdrop-blur-3xl text-white/70  cursor-pointer" aria-label="Previous slide">
               <svg viewBox="0 0 640 640" fill="currentColor" data-slot="icon" aria-hidden="true" class=" size-4 text-white/70">
                   <path d="M308.7 212.7C314.9 206.5 325.1 206.5 331.3 212.7L491.3 372.7C497.5 378.9 497.5 389.1 491.3 395.3C485.1 401.5 474.9 401.5 468.7 395.3L320 246.6L171.3 395.3C165.1 401.5 154.9 401.5 148.7 395.3C142.5 389.1 142.5 378.9 148.7 372.7L308.7 212.7z"/>
               </svg>
@@ -51,7 +51,7 @@ import Layout from "@layouts/FullPage.astro";
               ><span class="hidden">Impact</span></a
             >
           </nav>
-          <button class="next-section size-7 rounded-full flex items-center justify-center border-white/20 border backdrop-blur-3xl text-white/70 cursor-pointer" aria-label="Next slide">
+          <button class="next-section size-7 rounded-full flex items-center justify-center border-white/20 border md:backdrop-blur-3xl text-white/70 cursor-pointer" aria-label="Next slide">
               <svg viewBox="0 0 640 640" fill="currentColor" data-slot="icon" aria-hidden="true" class="size-4 text-text/70">
                   <path d="M308.7 427.3C314.9 433.5 325.1 433.5 331.3 427.3L491.3 267.3C497.5 261.1 497.5 250.9 491.3 244.7C485.1 238.5 474.9 238.5 468.7 244.7L320 393.4L171.3 244.7C165.1 238.5 154.9 238.5 148.7 244.7C142.5 250.9 142.5 261.1 148.7 267.3L308.7 427.3z"/>
               </svg>
@@ -170,7 +170,7 @@ import Layout from "@layouts/FullPage.astro";
                   <div class="max-w-5xl prose prose-invert prose-h2:mt-0 prose-h2:md:text-5xl">
                 <h2 id="problem-heading" class="mt-0">The Problem</h2>
                 <div
-                  class="text-slate-300 mb-0 text-lg/10 md:text-2xl/10  bg-black/50 backdrop-blur-2xl rounded-2xl p-4 md:p-8"
+                  class="text-slate-300 mb-0 text-lg/10 md:text-2xl/10  bg-black/50 md:backdrop-blur-2xl rounded-2xl p-4 md:p-8"
                 >
                 <p class="mt-0">
                   At Sitebulb, a significant portion of blog content was sourced from guest contributors who submitted drafts via Google Docs. Converting these raw documents into fully-published blog posts was a highly manual, time-consuming process. It involved:
@@ -202,12 +202,12 @@ import Layout from "@layouts/FullPage.astro";
                   The Solution
                 </h2>
                 <p
-                  class="text-slate-300 text-lg/10 md:text-2xl/10  bg-black/50 backdrop-blur-2xl rounded-2xl p-4 md:p-8 mb-8"
+                  class="text-slate-300 text-lg/10 md:text-2xl/10  bg-black/50 md:backdrop-blur-2xl rounded-2xl p-4 md:p-8 mb-8"
                 >
                 A <strong class="text-white">custom admin interface</strong> was developed to take a Google Docs URL and turn it into a structured, CMS-ready article in a matter of minutes.
                 </p>
 
-                <div class=" bg-black/50 backdrop-blur-2xl rounded-2xl p-4 md:p-8">
+                <div class=" bg-black/50 md:backdrop-blur-2xl rounded-2xl p-4 md:p-8">
                     <div class="not-prose">
                         <h3 class="m-0 py-2 text-md md:text-2xl"><strong class="font-bold">Key Features</strong></h3>
                     </div>
@@ -266,7 +266,7 @@ import Layout from "@layouts/FullPage.astro";
                 >
                   Technologies Used
                 </h2>
-                <div class="overflow-x-auto w-full text-slate-300 mb-0 text-lg/10 md:text-2xl/10  bg-black/50 backdrop-blur-2xl rounded-2xl p-4 md:p-8">
+                <div class="overflow-x-auto w-full text-slate-300 mb-0 text-lg/10 md:text-2xl/10  bg-black/50 md:backdrop-blur-2xl rounded-2xl p-4 md:p-8">
                   <table
                     class="table-fixed border-collapse w-full text-left text-slate-300 not-prose"
                   >
@@ -338,7 +338,7 @@ import Layout from "@layouts/FullPage.astro";
                   <div class="max-w-5xl prose prose-invert prose-h2:mt-0 prose-h2:md:text-5xl">
                 <h2 id="impact-heading" class="mt-0">Impact</h2>
                 <p
-                  class="text-slate-300 mb-0 text-lg/10 md:text-2xl/10  bg-black/50 backdrop-blur-2xl rounded-2xl p-4 md:p-8"
+                  class="text-slate-300 mb-0 text-lg/10 md:text-2xl/10  bg-black/50 md:backdrop-blur-2xl rounded-2xl p-4 md:p-8"
                 >
               This solution reduced editorial production time by <strong class="text-white">over 85%</strong>—from approximately 2 hours down to <strong class="text-white">just 15 minutes per article</strong>. The automation not only saved time but also improved content consistency, ensured better SEO hygiene (thanks to structured metadata), and allowed the content team to focus more on quality and strategy rather than tedious formatting.
 
