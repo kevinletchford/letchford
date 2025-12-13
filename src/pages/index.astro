@@ -284,25 +284,24 @@ document.addEventListener("astro:page-load", () => {
       });
 
 
-      const getNearestIndex = () => {
-        const top = scroller
-          ? scroller.scrollTop
-          : (window.pageYOffset || document.documentElement.scrollTop || 0);
-        const viewportH = scroller ? scroller.clientHeight : window.innerHeight;
+      // --- Intersection Observer for Active State (Robust on Mobile) ---
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const idx = sectionDefs.findIndex(d => d.sel === `#${entry.target.id}`);
+            if (idx !== -1) {
+              currentIndex = idx;
+              setActiveDot(idx);
+              updateButtons(idx);
+            }
+          }
+        });
+      }, { threshold: 0.5 }); // 50% visibility triggers change
 
-        let bestIdx = 0;
-        let bestDist = Infinity;
-        for (let i = 0; i < sectionDefs.length; i++) {
-          const el = document.querySelector(sectionDefs[i].sel);
-          if (!el) continue;
-          const elTop = scroller
-            ? el.getBoundingClientRect().top - scroller.getBoundingClientRect().top + scroller.scrollTop
-            : el.getBoundingClientRect().top + top;
-          const dist = Math.abs(elTop - (top + viewportH / 2));
-          if (dist < bestDist) { bestDist = dist; bestIdx = i; }
-        }
-        return bestIdx;
-      };
+      sectionDefs.forEach(({ sel }) => {
+        const el = document.querySelector(sel);
+        if (el) observer.observe(el);
+      });
 
       const camProxy = { x: camera.position.x, y: camera.position.y, z: camera.position.z, ox: 0, oy: 0 };
       const qCamX = gsap.quickTo(camera.position, "x", { duration: 0.22, ease: "power3.out" });
@@ -353,20 +352,6 @@ document.addEventListener("astro:page-load", () => {
         });
       });
 
-      ScrollTrigger.create({
-        scroller: scroller || undefined,
-        start: 0,
-        end: () => ScrollTrigger.maxScroll(scroller || window),
-        onUpdate: () => {
-          const idx = getNearestIndex();
-          if (idx !== currentIndex) {
-            currentIndex = idx;
-            setActiveDot(idx);
-            updateButtons(idx);
-          }
-        }
-      });
-
       const pEls = gsap.utils.toArray("[data-parallax]");
       const setters = pEls.map((el) => ({
         setX: gsap.quickSetter(el, "x", "px"),
@@ -387,10 +372,6 @@ document.addEventListener("astro:page-load", () => {
 
       requestAnimationFrame(() => {
         ScrollTrigger.refresh();
-        const idx = getNearestIndex();
-        currentIndex = idx;
-        setActiveDot(idx);
-        updateButtons(idx);
       });
 
       const moveTarget = scroller || window;
