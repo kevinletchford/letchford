@@ -84,8 +84,16 @@ async init({ canvasId }: { canvasId: string }): Promise<void> {
     const canvas = document.getElementById(canvasId) as HTMLCanvasElement | null;
     if (!canvas) throw new Error("Canvas not found");
 
-    this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-    this.renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    const isMobile = window.matchMedia('(max-width: 768px)').matches;
+
+    this.renderer = new THREE.WebGLRenderer({ 
+      canvas, 
+      antialias: !isMobile, 
+      powerPreference: isMobile ? "default" : "high-performance" 
+    });
+
+    const maxPR = isMobile ? 1.5 : 2;
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, maxPR));
     this.renderer.setSize(innerWidth, innerHeight);
     this.renderer.setClearColor(0x000000);
 
