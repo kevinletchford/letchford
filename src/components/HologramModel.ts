@@ -192,7 +192,8 @@ renderer.setPixelRatio(1);
 
   let raf = 0;
   function animate() {
-    (baseUniforms.uTime.value as number) = clock.getElapsedTime();
+    // Check if renderer/context is lost/disposed before rendering?
+    baseUniforms.uTime.value = clock.getElapsedTime();
     renderer.render(scene, camera);
     raf = requestAnimationFrame(animate);
   }
@@ -216,4 +217,5 @@ renderer.setPixelRatio(1);
   }
 
   window.addEventListener('beforeunload', cleanup);
+  return cleanup;
 }

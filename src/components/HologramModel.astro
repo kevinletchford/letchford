@@ -85,21 +85,31 @@ const id = `holo-${Math.random().toString(36).slice(2)}`;
      You do NOT need type="module" here; imports will work. Keep this script plain JS. -->
 <script>
   import init from './HologramModel.ts';
-document.addEventListener("astro:page-load", () => {
-  // Initialize every wrapper on the page (safe for multiple instances)
-  const nodes = document.querySelectorAll('.hologram-wrapper[data-props]');
-  nodes.forEach((el) => {
-    const node = el as HTMLElement;
-    // Use a data-attribute sentinel to avoid TS property errors
-    if (node.hasAttribute('data-holo-inited')) return;
-    node.setAttribute('data-holo-inited', '');
 
-    const raw = node.getAttribute('data-props') || '{}';
-    let props: any = {};
-    try { props = JSON.parse(raw); } catch (e) {  }
-    init(node, props);
+  // Global cleanup queue for navigation
+  const q = (window as any)._holoCleanups = (window as any)._holoCleanups || [];
+
+  // Cleanup old holograms before swapping page content
+  document.addEventListener('astro:before-swap', () => {
+    while (q.length) q.pop()?.();
+  }, { once: true });
+
+  document.addEventListener("astro:page-load", () => {
+    // Initialize every wrapper on the current page
+    const nodes = document.querySelectorAll('.hologram-wrapper[data-props]');
+    nodes.forEach((el) => {
+      const node = el as HTMLElement;
+      if (node.hasAttribute('data-holo-inited')) return;
+      node.setAttribute('data-holo-inited', '');
+
+      const raw = node.getAttribute('data-props') || '{}';
+      let props: any = {};
+      try { props = JSON.parse(raw); } catch (e) {}
+
+      const cleanup = init(node, props);
+      if (cleanup) q.push(cleanup);
+    });
   });
-});
 
 
 </script>

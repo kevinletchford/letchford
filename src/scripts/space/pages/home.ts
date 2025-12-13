@@ -48,10 +48,16 @@ const loadHome: PageLoader = async ({ three: T, renderer, textureLoader, loading
 
   // --- Textures (async, cancellable) ---
   const maxAniso = renderer?.capabilities?.getMaxAnisotropy?.() ?? 8;
+  const isMobile = window.matchMedia('(max-width: 768px)').matches;
+
+  // Use smaller textures/geometry on mobile to prevent crashes
+  const dayPath   = isMobile ? "/mars/mars-low.jpg"       : "/mars/mars-high.jpg";
+  const nightPath = isMobile ? "/mars/mars-night-low.jpg" : "/mars/mars-night-high.jpg";
+  const segs      = isMobile ? 64 : 256;
 
   const [marsDay, marsNight] = await Promise.all([
-    textureLoader.loadAsync("/mars/mars.webp"),
-    textureLoader.loadAsync("/mars/mars-night.webp"),
+    textureLoader.loadAsync(dayPath),
+    textureLoader.loadAsync(nightPath),
   ]);
   // if (cancelled) return { group, dispose: () => disposeUI?.() };
 
@@ -61,17 +67,17 @@ const loadHome: PageLoader = async ({ three: T, renderer, textureLoader, loading
 
   // --- Mars (shader) ---
   const planetRadius = 10;
-  const planetGeo = new T.SphereGeometry(planetRadius, 256, 256);
+  const planetGeo = new T.SphereGeometry(planetRadius, segs, segs);
   const planetMat = new T.ShaderMaterial({
     uniforms: {
       uDayTexture: { value: marsDay },
       uNightTexture: { value: marsNight },
-      uSpecularTexture: { value: marsDay },
+      uSpecularTexture: { value: marsDay }, // Reusing day texture for specular as per original
       uSunDirection: { value: new T.Vector3(-0.4, 0, 0.1) },
     },
     vertexShader: marsVertexShader,
     fragmentShader: marsFragmentShader,
-    lights: false,
+    lights: false, 
   });
   const planet = new T.Mesh(planetGeo, planetMat);
   planet.rotation.z = T.MathUtils.degToRad(25.19);
