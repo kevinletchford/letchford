@@ -63,7 +63,7 @@ const loadHome: PageLoader = async ({ three: T, renderer, textureLoader, loading
 
   marsDay.colorSpace = T.SRGBColorSpace;
   marsNight.colorSpace = T.SRGBColorSpace;
-  [marsDay, marsNight].forEach((t) => (t.anisotropy = maxAniso));
+  [marsDay, marsNight].forEach((t) => (t.anisotropy = isMobile ? 1 : maxAniso));
 
   // --- Mars (shader) ---
   const planetRadius = 10;

@@ -92,7 +92,7 @@ async init({ canvasId }: { canvasId: string }): Promise<void> {
       powerPreference: isMobile ? "default" : "high-performance" 
     });
 
-    const maxPR = isMobile ? 1.5 : 2;
+    const maxPR = isMobile ? 1 : 2;
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, maxPR));
     this.renderer.setSize(innerWidth, innerHeight);
     this.renderer.setClearColor(0x000000);
@@ -104,7 +104,7 @@ async init({ canvasId }: { canvasId: string }): Promise<void> {
     const starsTex = this.textureLoader.load("/stars/stars.webp");
     starsTex.colorSpace = THREE.SRGBColorSpace;
     starsTex.mapping = THREE.EquirectangularReflectionMapping;
-    starsTex.anisotropy = this.renderer.capabilities.getMaxAnisotropy();
+    starsTex.anisotropy = isMobile ? 1 : this.renderer.capabilities.getMaxAnisotropy();
     this.scene.background = starsTex;
 
     this.scene.add(new THREE.AmbientLight(0xffffff, 0.4));

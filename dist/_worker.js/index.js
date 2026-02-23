@@ -1,27 +1,29 @@
 globalThis.process ??= {}; globalThis.process.env ??= {};
 import { r as renderers } from './chunks/_@astro-renderers_e1OMd7gC.mjs';
 import { c as createExports, s as serverEntrypointModule } from './chunks/_@astrojs-ssr-adapter_CIH0x9dO.mjs';
-import { manifest } from './manifest_C_Znz2pe.mjs';
+import { manifest } from './manifest_C0C4jk0q.mjs';
 
 const serverIslandMap = new Map();;
 
 const _page0 = () => import('./pages/case-studies/automation.astro.mjs');
 const _page1 = () => import('./pages/case-studies/kiosk.astro.mjs');
 const _page2 = () => import('./pages/case-studies/product-tour.astro.mjs');
-const _page3 = () => import('./pages/contact.astro.mjs');
-const _page4 = () => import('./pages/demos.astro.mjs');
-const _page5 = () => import('./pages/projects.astro.mjs');
-const _page6 = () => import('./pages/promotional_kiosk_case_study.astro.mjs');
-const _page7 = () => import('./pages/index.astro.mjs');
+const _page3 = () => import('./pages/case-studies/wrapped.astro.mjs');
+const _page4 = () => import('./pages/contact.astro.mjs');
+const _page5 = () => import('./pages/demos.astro.mjs');
+const _page6 = () => import('./pages/projects.astro.mjs');
+const _page7 = () => import('./pages/promotional_kiosk_case_study.astro.mjs');
+const _page8 = () => import('./pages/index.astro.mjs');
 const pageMap = new Map([
     ["src/pages/case-studies/automation.astro", _page0],
     ["src/pages/case-studies/kiosk.astro", _page1],
     ["src/pages/case-studies/product-tour.astro", _page2],
-    ["src/pages/contact.astro", _page3],
-    ["src/pages/demos.astro", _page4],
-    ["src/pages/projects.astro", _page5],
-    ["src/pages/promotional_kiosk_case_study.md", _page6],
-    ["src/pages/index.astro", _page7]
+    ["src/pages/case-studies/wrapped.astro", _page3],
+    ["src/pages/contact.astro", _page4],
+    ["src/pages/demos.astro", _page5],
+    ["src/pages/projects.astro", _page6],
+    ["src/pages/promotional_kiosk_case_study.md", _page7],
+    ["src/pages/index.astro", _page8]
 ]);
 
 const _manifest = Object.assign(manifest, {
