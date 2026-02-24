@@ -262,7 +262,8 @@ section h2{
   flex-wrap: nowrap;
 }
 
-html, body, section.horizontal {
+/* Removed html, body to fix Windows ScrollSmoother mouse wheel issue */
+section.horizontal {
   overflow-x: hidden;
 }
 
@@ -280,7 +281,10 @@ section.horizontal .animation-wrap {
 html, body { overscroll-behavior: none; }
 
 /* if you have a custom scroller */
-#wrapper { overscroll-behavior: contain; }
+#wrapper { 
+  overscroll-behavior: contain; 
+  overflow-x: hidden;
+}
 
 /* the pinned horizontal section(s) */
 section.horizontal, section.horizontal .pin-wrap { 
