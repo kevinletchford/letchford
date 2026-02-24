@@ -58,7 +58,7 @@ export function initSmoother(opts: SmootherOpts = {}) {
         smooth,
         smoothTouch,
         effects,
-        normalizeScroll: false,
+        normalizeScroll: true,
       });
 
       // cleanup for this media context
