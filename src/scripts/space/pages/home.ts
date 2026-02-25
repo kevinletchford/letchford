@@ -8,6 +8,7 @@ import marsFragmentShader from "@src/shaders/mars/fragment.glsl";
 import type { Ctx, LoadResult, PageLoader } from "../types";
 // import { mountHomeUI } from "./home-ui"; // uses AbortController internally and returns { dispose }
 import { mountTextEffects } from "../ui/text-animator";
+import { isMobileDevice } from "../manager";
 
 const MTL = (lm: THREE.LoadingManager) => new MTLLoader(lm);
 const OBJ = (lm: THREE.LoadingManager) => new OBJLoader(lm);
@@ -48,11 +49,11 @@ const loadHome: PageLoader = async ({ three: T, renderer, textureLoader, loading
 
   // --- Textures (async, cancellable) ---
   const maxAniso = renderer?.capabilities?.getMaxAnisotropy?.() ?? 8;
-  const isMobile = window.matchMedia('(max-width: 768px)').matches;
+  const isMobile = isMobileDevice();
 
   // Use smaller textures/geometry on mobile to prevent crashes
-  const dayPath   = isMobile ? "/mars/mars-low.jpg"       : "/mars/mars-high.jpg";
-  const nightPath = isMobile ? "/mars/mars-night-low.jpg" : "/mars/mars-night-high.jpg";
+  const dayPath   = isMobile ? "/mars/mars-mobile.jpg"       : "/mars/mars-high.jpg";
+  const nightPath = isMobile ? "/mars/mars-night-mobile.jpg" : "/mars/mars-night-high.jpg";
   const segs      = isMobile ? 64 : 256;
 
   const [marsDay, marsNight] = await Promise.all([

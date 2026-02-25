@@ -4,6 +4,11 @@ import gsap from "gsap"; // ✅ you use gsap below, import it explicitly
 import { lazyLoaders } from "./pages";
 import type { PageLoader } from "./types";
 
+export const isMobileDevice = () => {
+  if (typeof window === "undefined") return false;
+  return window.matchMedia('(max-width: 1024px), (pointer: coarse), (hover: none)').matches;
+};
+
 // (A) Persist the singleton across re-runs/HMR on the window object
 declare global {
   interface Window {
@@ -84,7 +89,7 @@ async init({ canvasId }: { canvasId: string }): Promise<void> {
     const canvas = document.getElementById(canvasId) as HTMLCanvasElement | null;
     if (!canvas) throw new Error("Canvas not found");
 
-    const isMobile = window.matchMedia('(max-width: 768px)').matches;
+    const isMobile = isMobileDevice();
 
     this.renderer = new THREE.WebGLRenderer({ 
       canvas, 

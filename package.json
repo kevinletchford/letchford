@@ -19,6 +19,7 @@
     "npm": "^11.5.2",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
+    "sharp": "^0.34.5",
     "tailwindcss": "^4.1.11",
     "three": "^0.179.1",
     "vite-plugin-glsl": "^1.5.1"

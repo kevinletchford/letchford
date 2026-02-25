@@ -1,7 +1,7 @@
 globalThis.process ??= {}; globalThis.process.env ??= {};
-import { r as renderers } from './chunks/_@astro-renderers_e1OMd7gC.mjs';
-import { c as createExports, s as serverEntrypointModule } from './chunks/_@astrojs-ssr-adapter_CIH0x9dO.mjs';
-import { manifest } from './manifest_C0C4jk0q.mjs';
+import { r as renderers } from './chunks/_@astro-renderers_CVXl_z1Q.mjs';
+import { c as createExports, s as serverEntrypointModule } from './chunks/_@astrojs-ssr-adapter_cia9Gnsk.mjs';
+import { manifest } from './manifest_B303-6k9.mjs';
 
 const serverIslandMap = new Map();;
 
@@ -30,7 +30,7 @@ const _manifest = Object.assign(manifest, {
     pageMap,
     serverIslandMap,
     renderers,
-    actions: () => import('./_noop-actions.mjs'),
+    actions: () => import('./noop-entrypoint.mjs'),
     middleware: () => import('./_astro-internal_middleware.mjs')
 });
 const _args = undefined;
