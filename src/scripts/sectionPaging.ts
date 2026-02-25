@@ -51,20 +51,35 @@ export function initSectionPaging() {
   window.addEventListener("scroll", syncIndex);
   window.addEventListener("resize", () => ScrollTrigger.refresh());
 
+  let cooldown = false;
+
 Observer.create({
   target: window,
   type: "wheel,touch,pointer,scroll",
   wheelSpeed: 1,
   tolerance: 8,
   preventDefault: true,
-  onDown: () => scrollToIndex(index + 1),
-  onUp: () => scrollToIndex(index - 1),
+  onDown: () => {
+    if (cooldown) return;
+    scrollToIndex(index + 1);
+    startCooldown();
+  },
+  onUp: () => {
+    if (cooldown) return;
+    scrollToIndex(index - 1);
+    startCooldown();
+  },
   onChangeY: (self) => {
-    if (Math.abs(self.deltaY) > 30) {
-      scrollToIndex(index + (self.deltaY > 0 ? 1 : -1));
-    }
+    if (cooldown || Math.abs(self.deltaY) <= 30) return;
+    scrollToIndex(index + (self.deltaY > 0 ? 1 : -1));
+    startCooldown();
   }
 });
+
+function startCooldown() {
+  cooldown = true;
+  setTimeout(() => { cooldown = false; }, 1000); // 1-second debounce for scroll wheels
+}
 
 // add keyboard separately
 window.addEventListener("keydown", (e) => {

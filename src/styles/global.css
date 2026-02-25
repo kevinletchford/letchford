@@ -293,9 +293,6 @@ body {
 }
 
 /* if you have a custom scroller */
-#wrapper {
-  overscroll-behavior: contain;
-}
 
 /* the pinned horizontal section(s) */
 section.horizontal,
