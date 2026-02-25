@@ -2,14 +2,13 @@
 import HologramModel from "@components/HologramModel.astro";
 import Layout from "@layouts/FullPage.astro";
 import * as THREE from "three";
-const year = new Date().getFullYear()
+const year = new Date().getFullYear();
 ---
-
 
 <Layout title="Projects | Kevin Letchford - Design Engineer">
   <div
     id="wrapper"
-    class="h-dvh overflow-hidden overflow-y-auto overscroll-none absolute inset-0 bg-gradient-to-r from-cyan-700/70 to-red-900/10"
+    class="h-dvh overflow-y-auto absolute inset-0 bg-gradient-to-r from-cyan-700/70 to-red-900/10"
   >
     <div id="content">
       <article
@@ -23,7 +22,7 @@ const year = new Date().getFullYear()
           <div class="min-h-[50vh] flex flex-col justify-center">
             <h1
               id="title"
-              class="mt-2 pb-4 text-4xl md:text-6xl font-bold text-white mb-3 font-space tracking-tight load-effect "
+              class="mt-2 pb-4 text-4xl md:text-6xl font-bold text-white mb-3 font-space tracking-tight load-effect"
             >
               Projects
             </h1>
@@ -49,16 +48,14 @@ const year = new Date().getFullYear()
 
                 <div class="max-w-xl flex-auto flex flex-col">
                   <h3 class="text-xl/8 font-semibold tracking-tight text-white">
-                    <a
-                      href="/demos/">GSAP Demos
-                    </a>
-                    
+                    <a href="/demos/">GSAP Demos </a>
                   </h3>
                   <p class="text-base/7 text-gray-400">
                     2D experiments with GSAP
                   </p>
                   <p class="mt-6 text-base/7 text-gray-400">
-                    From interactive audio synths to shape-morphing motion studies—quick, exploring timing, easing, and space it self.
+                    From interactive audio synths to shape-morphing motion
+                    studies—quick, exploring timing, easing, and space it self.
                   </p>
                   <div class="flex justify-end mt-10">
                     <a
@@ -83,10 +80,7 @@ const year = new Date().getFullYear()
 
                 <div class="max-w-xl flex-auto flex flex-col">
                   <h3 class="text-xl/8 font-semibold tracking-tight text-white">
-                    <a
-                      href="https://snatcher.ultr.dev">
-                      Snatcher
-                    </a>
+                    <a href="https://snatcher.ultr.dev"> Snatcher </a>
                   </h3>
                   <p class="text-base/7 text-gray-400">
                     Save Tracks from the radio to Spotify
@@ -95,7 +89,7 @@ const year = new Date().getFullYear()
                     Add the current songs playing to your Spotify account and
                     find out more about the artists back catalogue.
                   </p>
-                    <div class="flex justify-end mt-10">
+                  <div class="flex justify-end mt-10">
                     <a
                       href="https://snatcher.ultr.dev"
                       class="rounded-full border border-white/20 px-4 py-2 text-center text-white/80"
@@ -116,19 +110,18 @@ const year = new Date().getFullYear()
                   class="w-full bg-gradient-to-b from-cyan-900/20 to-red-900/10 rounded-xl three-dee-glitch"
                 />
 
-               <div class="max-w-xl flex-auto flex flex-col">
+                <div class="max-w-xl flex-auto flex flex-col">
                   <h3 class="text-xl/8 font-semibold tracking-tight text-white">
-                             <a
-                      href="https://sitebulb.com/">
-                      Sitebulb
-                    </a>
-                    
+                    <a href="https://sitebulb.com/"> Sitebulb </a>
                   </h3>
-                  <p class="text-base/7 text-gray-400">Web crawler — frontend & site design</p>
-                  <p class="mt-6 text-base/7 text-gray-400">
-                     I’m the frontend developer at Sitebulb, owning the design system and the build of the marketing site and core UI.
+                  <p class="text-base/7 text-gray-400">
+                    Web crawler — frontend & site design
                   </p>
-                    <div class="flex justify-end mt-10">
+                  <p class="mt-6 text-base/7 text-gray-400">
+                    I’m the frontend developer at Sitebulb, owning the design
+                    system and the build of the marketing site and core UI.
+                  </p>
+                  <div class="flex justify-end mt-10">
                     <a
                       href="https://sitebulb.com/"
                       class="rounded-full border border-white/20 px-4 py-2 text-center text-white/80"
@@ -142,8 +135,8 @@ const year = new Date().getFullYear()
           </div>
 
           <footer class="flex justify-between pt-5 text-slate-500">
-              <p>&copy; letchford.co {year} - All rights reserved</p>
-              <p><a href="/colophon/">Colophon</a></p>
+            <p>&copy; letchford.co {year} - All rights reserved</p>
+            <p><a href="/colophon/">Colophon</a></p>
           </footer>
         </section>
       </article>
