@@ -84,6 +84,44 @@ const loadHome: PageLoader = async ({ three: T, renderer, textureLoader, loading
   planet.rotation.z = T.MathUtils.degToRad(25.19);
   group.add(planet);
 
+  // --- Atmosphere Halo ---
+  let atmoGeo: THREE.SphereGeometry | undefined;
+  let atmoMat: THREE.ShaderMaterial | undefined;
+  
+  if (!isMobile) {
+    const atmoRadius = planetRadius * 1.03; // tighter radius based on feedback
+    atmoGeo = new T.SphereGeometry(atmoRadius, segs, segs);
+    atmoMat = new T.ShaderMaterial({
+      uniforms: {
+        uColor: { value: new T.Color(0xffddbb) } // very pale, subtle warm tint
+      },
+      vertexShader: `
+        varying vec3 vNormal;
+        void main() {
+          vNormal = normalize(normalMatrix * normal);
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      `,
+      fragmentShader: `
+        uniform vec3 uColor;
+        varying vec3 vNormal;
+        void main() {
+          // vNormal is in view-space, vec3(0,0,1) is towards the camera
+          float f = max(0.0, dot(vNormal, vec3(0.0, 0.0, 1.0)));
+          // Very subtle ramp: only barely visible near the edges
+          float intensity = smoothstep(0.4, 0.0, f) * smoothstep(0.0, 0.2, f);
+          gl_FragColor = vec4(uColor, intensity * 0.3); // much more translucent
+        }
+      `,
+      blending: T.AdditiveBlending,
+      side: T.FrontSide, 
+      transparent: true,
+      depthWrite: false
+    });
+    const atmosphere = new T.Mesh(atmoGeo, atmoMat);
+    group.add(atmosphere);
+  }
+
   // --- Satellite (OBJ/MTL) ---
   const satMtl = await MTL(loadingManager)
     .setResourcePath("/satellite/")
@@ -167,6 +205,8 @@ const loadHome: PageLoader = async ({ three: T, renderer, textureLoader, loading
 
     planetGeo.dispose();
     planetMat.dispose();
+    atmoGeo?.dispose();
+    atmoMat?.dispose();
     marsDay.dispose();
     marsNight.dispose();
   };

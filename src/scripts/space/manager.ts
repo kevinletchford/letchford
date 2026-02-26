@@ -33,6 +33,7 @@ export class Manager {
 
   renderer!: THREE.WebGLRenderer;
   scene!: THREE.Scene;
+  cameraRig = new THREE.Group();
   camera!: THREE.PerspectiveCamera;
   clock = new THREE.Clock();
 
@@ -44,8 +45,11 @@ export class Manager {
 
   currentKey: string | null = null;
   currentDispose: (() => void) | null = null;
-  shootingStars!: ShootingStars;
-  twinklingStars!: TwinklingStars;
+  shootingStars?: ShootingStars;
+  twinklingStars?: TwinklingStars;
+
+  mouse = new THREE.Vector2(0, 0);
+  targetMouse = new THREE.Vector2(0, 0);
 
   private pageUpdater: ((dt: number, t: number) => void) | null = null;
   private updaters: Array<(dt: number, t: number) => void> = [];
@@ -107,7 +111,13 @@ async init({ canvasId }: { canvasId: string }): Promise<void> {
     this.renderer.setClearColor(0x000000);
 
     this.scene = new THREE.Scene();
+
+    this.scene.add(this.cameraRig);
+
     this.camera = new THREE.PerspectiveCamera(50, innerWidth / innerHeight, 0.1, 2000);
+    this.cameraRig.add(this.camera);
+    // Move the rig instead of the camera directly, so zoomTo can animate the rig
+    // or we can animate the camera inside the rig. Let's keep camera animated by GSAP and parallax applied to rig.
     this.camera.position.set(-20, -30, 80);
 
     const starsTex = this.textureLoader.load("/stars/stars.jpg");
@@ -124,13 +134,37 @@ async init({ canvasId }: { canvasId: string }): Promise<void> {
     this.scene.add(this.world);
     this.scene.add(this.pageLayer);
 
-    this.shootingStars = new ShootingStars(isMobile);
-    this.scene.add(this.shootingStars.mesh);
-    
-    this.twinklingStars = new TwinklingStars(isMobile);
-    this.scene.add(this.twinklingStars.mesh);
+    if (!isMobile) {
+      this.shootingStars = new ShootingStars(false);
+      this.scene.add(this.shootingStars.mesh);
+      
+      this.twinklingStars = new TwinklingStars(false);
+      this.scene.add(this.twinklingStars.mesh);
+    }
 
     addEventListener("resize", this.onResize);
+    
+    if (isMobile) {
+      // Listen for gyroscope/accelerometer on mobile
+      addEventListener("deviceorientation", (e) => {
+        if (e.gamma === null || e.beta === null) return;
+        // gamma is left/right tilt [-90 to 90]
+        // beta is front/back tilt [-180 to 180]
+        // Map these roughly to a [-1, 1] range for the existing targetMouse logic
+        let x = e.gamma / 45; 
+        let y = (e.beta - 45) / 45; // Assume holding phone at a 45 degree angle naturally
+        
+        // clamp
+        this.targetMouse.x = Math.max(-1, Math.min(1, x));
+        this.targetMouse.y = Math.max(-1, Math.min(1, y));
+      });
+    } else {
+      // Mouse for desktop
+      addEventListener("mousemove", (e) => {
+        this.targetMouse.x = (e.clientX / innerWidth) * 2 - 1;
+        this.targetMouse.y = -(e.clientY / innerHeight) * 2 + 1;
+      });
+    }
     addEventListener("keydown", (e) => (this.keys[e.key.toLowerCase()] = true));
     addEventListener("keyup",   (e) => (this.keys[e.key.toLowerCase()] = false));
 
@@ -139,9 +173,37 @@ async init({ canvasId }: { canvasId: string }): Promise<void> {
     const tick = () => {
       const dt = Math.min(this.clock.getDelta(), 0.05);
       const t = this.clock.elapsedTime;
+      
+      // Frame-rate independent smoothing factor
+      const lerpFactor = 1.0 - Math.exp(-3.0 * dt);
+      
+      this.mouse.lerp(this.targetMouse, lerpFactor);
+
+      // Parallax & Breathing
+      const targetRigX = this.mouse.x * 2.5; // parallax range
+      const targetRigY = this.mouse.y * 2.5;
+      
+      // Breathing effect (slower and softer)
+      const breatheX = Math.sin(t * 0.3) * 0.4;
+      const breatheY = Math.cos(t * 0.25) * 0.4;
+
+      // Apply to rig with smoothing
+      this.cameraRig.position.x = THREE.MathUtils.lerp(this.cameraRig.position.x, targetRigX + breatheX, lerpFactor * 2.0);
+      this.cameraRig.position.y = THREE.MathUtils.lerp(this.cameraRig.position.y, targetRigY + breatheY, lerpFactor * 2.0);
+      
+      // Slight rotation parallax
+      const targetRotY = -this.mouse.x * 0.02;
+      const targetRotX = this.mouse.y * 0.02;
+      this.cameraRig.rotation.y = THREE.MathUtils.lerp(this.cameraRig.rotation.y, targetRotY, lerpFactor * 2.0);
+      this.cameraRig.rotation.x = THREE.MathUtils.lerp(this.cameraRig.rotation.x, targetRotX, lerpFactor * 2.0);
+
       for (const u of this.updaters) u(dt, t);
-      this.shootingStars.update(dt);
-      this.twinklingStars.update(t);
+      
+      if (!isMobile) {
+        this.shootingStars?.update(dt);
+        this.twinklingStars?.update(t);
+      }
+      
       this.renderer.render(this.scene, this.camera);
       requestAnimationFrame(tick);
     };
