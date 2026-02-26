@@ -138,7 +138,13 @@ const on = <T extends keyof HTMLElementEventMap>(
  * - Re-animates on hover
  * - Returns a disposer that removes listeners and destroys all SplitText instances
  */
+import { isMobileDevice } from "../manager";
+
 export async function mountTextEffects(): Promise<Disposer> {
+  if (isMobileDevice()) {
+    return { dispose: () => {} };
+  }
+
   await nextFrame(); // ensure the swapped DOM is present
 
   const ac = new AbortController();

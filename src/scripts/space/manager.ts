@@ -106,10 +106,10 @@ async init({ canvasId }: { canvasId: string }): Promise<void> {
     this.camera = new THREE.PerspectiveCamera(50, innerWidth / innerHeight, 0.1, 2000);
     this.camera.position.set(-20, -30, 80);
 
-    const starsTex = this.textureLoader.load("/stars/stars.webp");
+    const starsTex = this.textureLoader.load("/stars/stars.jpg");
     starsTex.colorSpace = THREE.SRGBColorSpace;
     starsTex.mapping = THREE.EquirectangularReflectionMapping;
-    starsTex.anisotropy = isMobile ? 1 : this.renderer.capabilities.getMaxAnisotropy();
+    starsTex.anisotropy = isMobile ? 1 : (this.renderer.capabilities.getMaxAnisotropy?.() ?? 4);
     this.scene.background = starsTex;
 
     this.scene.add(new THREE.AmbientLight(0xffffff, 0.4));

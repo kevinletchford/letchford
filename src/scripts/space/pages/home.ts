@@ -52,9 +52,9 @@ const loadHome: PageLoader = async ({ three: T, renderer, textureLoader, loading
   const isMobile = isMobileDevice();
 
   // Use smaller textures/geometry on mobile to prevent crashes
-  const dayPath   = isMobile ? "/mars/mars-mobile.jpg"       : "/mars/mars-high.jpg";
-  const nightPath = isMobile ? "/mars/mars-night-mobile.jpg" : "/mars/mars-night-high.jpg";
-  const segs      = isMobile ? 64 : 256;
+  const dayPath   = isMobile ? "/mars/mars-mobile.jpg"       : "/mars/mars.jpg";
+  const nightPath = isMobile ? "/mars/mars-night-mobile.jpg" : "/mars/mars-night.jpg";
+  const segs      = isMobile ? 64 : 128;
 
   const [marsDay, marsNight] = await Promise.all([
     textureLoader.loadAsync(dayPath),
