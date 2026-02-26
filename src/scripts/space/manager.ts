@@ -3,6 +3,8 @@ import * as THREE from "three";
 import gsap from "gsap"; // ✅ you use gsap below, import it explicitly
 import { lazyLoaders } from "./pages";
 import type { PageLoader } from "./types";
+import { ShootingStars } from "./shooting-stars";
+import { TwinklingStars } from "./twinkling-stars";
 
 export const isMobileDevice = () => {
   if (typeof window === "undefined") return false;
@@ -42,6 +44,8 @@ export class Manager {
 
   currentKey: string | null = null;
   currentDispose: (() => void) | null = null;
+  shootingStars!: ShootingStars;
+  twinklingStars!: TwinklingStars;
 
   private pageUpdater: ((dt: number, t: number) => void) | null = null;
   private updaters: Array<(dt: number, t: number) => void> = [];
@@ -120,6 +124,12 @@ async init({ canvasId }: { canvasId: string }): Promise<void> {
     this.scene.add(this.world);
     this.scene.add(this.pageLayer);
 
+    this.shootingStars = new ShootingStars(isMobile);
+    this.scene.add(this.shootingStars.mesh);
+    
+    this.twinklingStars = new TwinklingStars(isMobile);
+    this.scene.add(this.twinklingStars.mesh);
+
     addEventListener("resize", this.onResize);
     addEventListener("keydown", (e) => (this.keys[e.key.toLowerCase()] = true));
     addEventListener("keyup",   (e) => (this.keys[e.key.toLowerCase()] = false));
@@ -130,6 +140,8 @@ async init({ canvasId }: { canvasId: string }): Promise<void> {
       const dt = Math.min(this.clock.getDelta(), 0.05);
       const t = this.clock.elapsedTime;
       for (const u of this.updaters) u(dt, t);
+      this.shootingStars.update(dt);
+      this.twinklingStars.update(t);
       this.renderer.render(this.scene, this.camera);
       requestAnimationFrame(tick);
     };
