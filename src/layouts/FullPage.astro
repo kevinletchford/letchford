@@ -21,7 +21,8 @@ const { title = "Kevin Letchford" } = Astro.props;
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
     <style>
-      html, body {
+      html,
+      body {
         margin: 0;
         padding: 0;
         width: 100%;
@@ -38,30 +39,89 @@ const { title = "Kevin Letchford" } = Astro.props;
         height: 100%;
       }
     </style>
-        <ClientRouter />
-    <link rel="icon" href="/icons/logo.svg" sizes="any" type="image/svg+xml">
-    <link rel="icon" href="/icons/logo.png" sizes="any" type="image/png">
-
+    <ClientRouter />
+    <link rel="icon" href="/icons/logo.svg" sizes="any" type="image/svg+xml" />
+    <link rel="icon" href="/icons/logo.png" sizes="any" type="image/png" />
   </head>
-  <body class=" text-white/90 ">
+  <body class="text-white/90">
     <Header client:load transition:persist />
 
     <!-- WebGL overlay; non-interactive so it won't block scroll -->
-     <div class="glitch-bg" >  
-    <div id="space-root" class="fixed inset-0 pointer-events-none ">
-      <PersistedSpace />
-    </div>  
-         </div>
+    <div class="glitch-bg">
+      <div id="space-root" class="fixed inset-0 pointer-events-none">
+        <PersistedSpace />
+      </div>
+    </div>
+
+    <!-- PRELOADER -->
+    <div
+      id="global-preloader"
+      transition:persist="preloader"
+      class="fixed inset-0 md:inset-auto md:bottom-6 md:right-6 z-[9999] bg-black md:bg-transparent flex flex-col items-center md:items-end justify-center md:justify-end transition-opacity duration-700"
+    >
+      <!-- Mobile: centered fullscreen; Desktop: bottom-right badge -->
+      <div
+        class="md:bg-black/60 md:backdrop-blur-sm md:rounded-lg md:px-4 md:py-3 flex flex-col items-center md:items-start gap-2 w-48 md:w-40"
+      >
+        <span class="text-white/60 font-space tracking-widest text-xs uppercase"
+          >letchford.co</span
+        >
+        <!-- Infinite loading bar -->
+        <div class="w-full h-[4px] bg-white/10 rounded-full overflow-hidden">
+          <div class="h-full bg-white/70 rounded-full animate-loading-bar">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <style>
+      @keyframes loading-bar {
+        0% {
+          transform: translateX(-100%);
+        }
+        50% {
+          transform: translateX(0%);
+        }
+        100% {
+          transform: translateX(100%);
+        }
+      }
+      .animate-loading-bar {
+        width: 50%;
+        animation: loading-bar 1.4s ease-in-out infinite;
+      }
+    </style>
+
     <slot />
 
-
+    <script is:inline>
+      window.addEventListener("space:page-loading", () => {
+        const preloader = document.getElementById("global-preloader");
+        if (preloader) {
+          preloader.style.opacity = "1";
+          preloader.style.pointerEvents = "auto";
+        }
+      });
+      window.addEventListener("space:page-loaded", () => {
+        const preloader = document.getElementById("global-preloader");
+        if (preloader) {
+          preloader.style.opacity = "0";
+          preloader.style.pointerEvents = "none";
+        }
+      });
+    </script>
     <script>
       import gsap from "gsap";
       import { ScrollTrigger } from "gsap/ScrollTrigger";
       import { Observer, ScrollToPlugin, ScrollSmoother } from "gsap/all";
       import { SpaceManagerAPI } from "../scripts/space/manager";
-      
-        gsap.registerPlugin(ScrollTrigger, ScrollToPlugin, Observer, ScrollSmoother);
+
+      gsap.registerPlugin(
+        ScrollTrigger,
+        ScrollToPlugin,
+        Observer,
+        ScrollSmoother,
+      );
       if (!window.__spaceBooted) {
         window.__spaceBooted = true;
 
@@ -72,10 +132,9 @@ const { title = "Kevin Letchford" } = Astro.props;
         window.ScrollSmoother = ScrollSmoother;
 
         window.Smoother = ScrollSmoother.create({
-        wrapper: '#wrapper',
-        content: '#content'
+          wrapper: "#wrapper",
+          content: "#content",
         });
-
 
         gsap.config({ nullTargetWarn: false });
 
@@ -87,8 +146,5 @@ const { title = "Kevin Letchford" } = Astro.props;
         window.dispatchEvent(new Event("space:ready"));
       }
     </script>
-
-
-    
   </body>
 </html>

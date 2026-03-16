@@ -49,13 +49,17 @@ export default function SpaceCanvas({
         return p.replace(/\/+/, "/");
       };
 
-      const sync = (tag = "") => {
+      const sync = async (tag = "") => {
         const p = path();
         if (p === lastPathRef.current) return;
+        lastPathRef.current = p; // prevent concurrent syncs for the same path
         try {
-          window.SpaceManager.loadForPath(p);
-          lastPathRef.current = p;
+          window.dispatchEvent(new CustomEvent("space:page-loading", { detail: { path: p } }));
+          await window.SpaceManager.loadForPath(p);
+          window.dispatchEvent(new CustomEvent("space:page-loaded", { detail: { path: p } }));
         } catch (e) {
+          console.error("Failed to load path", p, e);
+          window.dispatchEvent(new CustomEvent("space:page-loaded", { detail: { path: p, error: e } }));
         }
       };
 
