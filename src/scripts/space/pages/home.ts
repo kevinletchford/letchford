@@ -1,31 +1,16 @@
 // src/space/pages/home.ts
 import * as THREE from "three";
-import { MTLLoader } from "three/examples/jsm/loaders/MTLLoader.js";
-import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
 import marsVertexShader from "@src/shaders/mars/vertex.glsl";
 import marsFragmentShader from "@src/shaders/mars/fragment.glsl";
 
 import type { Ctx, LoadResult, PageLoader } from "../types";
 // import { mountHomeUI } from "./home-ui"; // uses AbortController internally and returns { dispose }
 import { mountTextEffects } from "../ui/text-animator";
-import { isMobileDevice } from "../manager";
+import { byTier } from "../device";
 
-const MTL = (lm: THREE.LoadingManager) => new MTLLoader(lm);
-const OBJ = (lm: THREE.LoadingManager) => new OBJLoader(lm);
-
-function upgradeToStandard(T: typeof THREE, mesh: THREE.Mesh) {
+function upgradeToStandard(T: typeof THREE, mesh: THREE.Mesh, map: THREE.Texture) {
   const oldMat = mesh.material as THREE.Material | THREE.Material[] | undefined;
-  let map: THREE.Texture | undefined;
-
-  if (Array.isArray(oldMat)) {
-    for (const m of oldMat) {
-      if (!map && (m as any).map) map = (m as any).map as THREE.Texture;
-      m.dispose?.();
-    }
-  } else if (oldMat) {
-    if ((oldMat as any).map) map = (oldMat as any).map as THREE.Texture;
-    oldMat.dispose?.();
-  }
+  (Array.isArray(oldMat) ? oldMat : [oldMat]).forEach((m) => m?.dispose?.());
 
   mesh.material = new T.MeshStandardMaterial({
     map,
@@ -36,7 +21,7 @@ function upgradeToStandard(T: typeof THREE, mesh: THREE.Mesh) {
   });
 }
 
-const loadHome: PageLoader = async ({ three: T, renderer, textureLoader, loadingManager }: Ctx): Promise<LoadResult> => {
+const loadHome: PageLoader = async ({ three: T, renderer, tier, assets, defer, add }: Ctx): Promise<LoadResult> => {
   const group = new T.Group();
   // keep planet centered in local group-space; offset the whole scene with the parent transform if needed elsewhere
   group.position.set(-10, -30, 50);
@@ -47,20 +32,19 @@ const loadHome: PageLoader = async ({ three: T, renderer, textureLoader, loading
   // const { dispose: disposeUI } = mountHomeUI();
   const uiText = await mountTextEffects();
 
-  // --- Textures (async, cancellable) ---
+  // --- Textures (critical: the preloader waits for these) ---
   const maxAniso = renderer?.capabilities?.getMaxAnisotropy?.() ?? 8;
-  const isMobile = isMobileDevice();
+  const isMobile = tier !== "high";
 
   // Use smaller textures/geometry on mobile to prevent crashes
-  const dayPath   = isMobile ? "/mars/mars-mobile.jpg"       : "/mars/mars.jpg";
-  const nightPath = isMobile ? "/mars/mars-night-mobile.jpg" : "/mars/mars-night.jpg";
+  const dayPath   = byTier(tier, { high: "/mars/mars.jpg",       mid: "/mars/mars-mobile.jpg" });
+  const nightPath = byTier(tier, { high: "/mars/mars-night.jpg", mid: "/mars/mars-night-mobile.jpg" });
   const segs      = isMobile ? 64 : 128;
 
   const [marsDay, marsNight] = await Promise.all([
-    textureLoader.loadAsync(dayPath),
-    textureLoader.loadAsync(nightPath),
+    assets.texture(dayPath),
+    assets.texture(nightPath),
   ]);
-  // if (cancelled) return { group, dispose: () => disposeUI?.() };
 
   marsDay.colorSpace = T.SRGBColorSpace;
   marsNight.colorSpace = T.SRGBColorSpace;
@@ -122,21 +106,6 @@ const loadHome: PageLoader = async ({ three: T, renderer, textureLoader, loading
     group.add(atmosphere);
   }
 
-  // --- Satellite (OBJ/MTL) ---
-  const satMtl = await MTL(loadingManager)
-    .setResourcePath("/satellite/")
-    .loadAsync("/satellite/Satellite.mtl");
-  // if (cancelled) return { group, dispose: () => disposeUI?.() };
-  satMtl.preload();
-
-  const satellite = await OBJ(loadingManager)
-    .setMaterials(satMtl)
-    .setResourcePath("/satellite/")
-    .loadAsync("/satellite/Satellite.obj");
-  // if (cancelled) return { group, dispose: () => disposeUI?.() };
-
-  satellite.traverse((c) => (c instanceof T.Mesh) && upgradeToStandard(T, c));
-
   // --- Orbit rig ---
   // We separate the tilt (orbital plane) from the orbit rotation so we can set an initial angle easily.
   const tiltPivot = new T.Group();
@@ -147,10 +116,6 @@ const loadHome: PageLoader = async ({ three: T, renderer, textureLoader, loading
   const orbitAltitude = 3; // distance above the planet surface
   const orbitRadius = planetRadius + orbitAltitude; // total radius from center
 
-  // Satellite mesh setup
-  satellite.scale.setScalar(0.05);
-  satellite.position.set(orbitRadius, 0, 0); // start on +X before we rotate the orbit
-
   // Tilt the orbital plane a bit for visual interest
   const tiltX = T.MathUtils.degToRad(15);
   const tiltY = T.MathUtils.degToRad(10);
@@ -160,10 +125,29 @@ const loadHome: PageLoader = async ({ three: T, renderer, textureLoader, loading
   const initialOrbitAngle = T.MathUtils.degToRad(180);
   orbitPivot.rotation.y = initialOrbitAngle;
 
-  // optional: a subtle local rotation so it isn't perfectly rigid in space
-  satellite.rotation.set(0, -20, 10);
+  // --- Satellite (secondary: streamed in after Mars, dropped on low-tier devices) ---
+  let satellite: THREE.Group | null = null;
+  defer(async (deferredAssets) => {
+    const [obj, map] = await Promise.all([
+      deferredAssets.obj("/satellite/Satellite.obj"),
+      deferredAssets.texture(byTier(tier, {
+        high: "/satellite/Satellite_BaseColor.png",
+        mid: "/satellite/Satellite_BaseColor.webp",
+      })),
+    ]);
 
-  orbitPivot.add(satellite);
+    map.colorSpace = T.SRGBColorSpace;
+    map.wrapS = map.wrapT = T.RepeatWrapping;
+    obj.traverse((c) => (c instanceof T.Mesh) && upgradeToStandard(T, c, map));
+
+    obj.scale.setScalar(0.05);
+    obj.position.set(orbitRadius, 0, 0); // start on +X before we rotate the orbit
+    // optional: a subtle local rotation so it isn't perfectly rigid in space
+    obj.rotation.set(0, -20, 10);
+
+    await add(obj, orbitPivot);
+    satellite = obj;
+  }, { optional: true });
 
   // --- Astronaut (kept, cleaned) ---
   
@@ -184,7 +168,7 @@ const loadHome: PageLoader = async ({ three: T, renderer, textureLoader, loading
     // Optional: keep satellite oriented tangentially along its orbit
     // Compute tangent by differentiating the pivot rotation around Y (approximate with small step)
     // For simplicity and perf, just add a slow local spin:
-    satellite.rotateZ(0.25 * dt);
+    satellite?.rotateZ(0.25 * dt);
 
   };
 

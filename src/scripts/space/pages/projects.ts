@@ -2,13 +2,11 @@
 import * as THREE from "three";
 import type { Ctx, LoadResult, PageLoader } from "../types";
 import { mountTextEffects } from "../ui/text-animator";
-import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
 import holographicVertexShader from "@src/shaders/holographic/vertex.glsl";
 import holographicFragmentShader from "@src/shaders/holographic/fragment.glsl";
 
-const OBJ = (lm: THREE.LoadingManager) => new OBJLoader(lm);
 
-  const loadProjects: PageLoader = async ({ three: T, camera, loadingManager }: Ctx): Promise<LoadResult> => {
+  const loadProjects: PageLoader = async ({ three: T, camera, assets }: Ctx): Promise<LoadResult> => {
     const group = new T.Group();
     let cancelled = false;
 
@@ -27,9 +25,7 @@ const OBJ = (lm: THREE.LoadingManager) => new OBJLoader(lm);
     blending: T.AdditiveBlending,
   }); 
 
-    const astronaut = await OBJ(loadingManager)
-      .setResourcePath("/astronaut/")
-      .loadAsync("/astronaut/Astronaut.obj");
+    const astronaut = await assets.obj("/astronaut/Astronaut.obj");
 
     astronaut.traverse((obj) => {
       if (obj instanceof T.Mesh) {

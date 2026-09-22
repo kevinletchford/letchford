@@ -38,6 +38,8 @@ export default function SpaceCanvas({
         window.SpaceManager = SpaceManagerAPI;
         await window.SpaceManager.init({ canvasId: id }); // 👈 now awaitable
       } catch (e) {
+        // No WebGL: release the preloader rather than waiting for its timeout.
+        window.dispatchEvent(new CustomEvent("space:page-loaded", { detail: { error: e } }));
         return;
       }
 

@@ -53,7 +53,7 @@ const { title = "Kevin Letchford" } = Astro.props;
       </div>
     </div>
 
-    <!-- PRELOADER -->
+    <!-- PRELOADER: first load only; later navigations stream 3D content in -->
     <div
       id="global-preloader"
       transition:persist="preloader"
@@ -66,9 +66,9 @@ const { title = "Kevin Letchford" } = Astro.props;
         <span class="text-white/60 font-space tracking-widest text-xs uppercase"
           >letchford.co</span
         >
-        <!-- Infinite loading bar -->
+        <!-- Indeterminate until the first progress event, then shows real progress -->
         <div class="w-full h-[4px] bg-white/10 rounded-full overflow-hidden">
-          <div class="h-full bg-white/70 rounded-full animate-loading-bar">
+          <div id="preloader-bar" class="h-full bg-white/70 rounded-full animate-loading-bar">
           </div>
         </div>
       </div>
@@ -86,7 +86,13 @@ const { title = "Kevin Letchford" } = Astro.props;
           transform: translateX(100%);
         }
       }
-      .animate-loading-bar {
+      #preloader-bar {
+        width: 100%;
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.3s ease-out;
+      }
+      #preloader-bar.animate-loading-bar {
         width: 50%;
         animation: loading-bar 1.4s ease-in-out infinite;
       }
@@ -95,20 +101,46 @@ const { title = "Kevin Letchford" } = Astro.props;
     <slot />
 
     <script is:inline>
-      window.addEventListener("space:page-loading", () => {
-        const preloader = document.getElementById("global-preloader");
-        if (preloader) {
-          preloader.style.opacity = "1";
-          preloader.style.pointerEvents = "auto";
-        }
-      });
-      window.addEventListener("space:page-loaded", () => {
-        const preloader = document.getElementById("global-preloader");
-        if (preloader) {
-          preloader.style.opacity = "0";
-          preloader.style.pointerEvents = "none";
-        }
-      });
+      // Inline scripts re-run after client-side navigation; only bind once per document.
+      if (!window.__preloaderBound) {
+        window.__preloaderBound = true;
+        let shown = 0;
+        let done = false;
+
+        const onProgress = (e) => {
+          const { loaded, total } = e.detail;
+          const bar = document.getElementById("preloader-bar");
+          if (done || !total || !bar) return;
+          bar.classList.remove("animate-loading-bar");
+          // Totals grow as requests are discovered; never let the bar move backwards.
+          shown = Math.max(shown, loaded / total);
+          bar.style.transform = `scaleX(${shown})`;
+        };
+
+        const finish = () => {
+          if (done) return;
+          done = true;
+          window.removeEventListener("space:load-progress", onProgress);
+          const preloader = document.getElementById("global-preloader");
+          const bar = document.getElementById("preloader-bar");
+          if (bar) {
+            bar.classList.remove("animate-loading-bar");
+            bar.style.transform = "scaleX(1)";
+          }
+          if (!preloader) return;
+          // The element is transition:persist'ed, so it stays hidden across navigations.
+          setTimeout(() => {
+            preloader.style.opacity = "0";
+            preloader.style.pointerEvents = "none";
+            setTimeout(() => (preloader.style.visibility = "hidden"), 700);
+          }, 200);
+        };
+
+        window.addEventListener("space:load-progress", onProgress);
+        window.addEventListener("space:page-loaded", finish, { once: true });
+        // Never trap the visitor behind the preloader if WebGL or a request fails.
+        setTimeout(finish, 15000);
+      }
     </script>
     <script>
       import gsap from "gsap";

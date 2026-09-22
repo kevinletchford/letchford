@@ -2,14 +2,11 @@
 import * as THREE from "three";
 import gsap from "gsap"; // ✅ you use gsap below, import it explicitly
 import { lazyLoaders } from "./pages";
-import type { PageLoader } from "./types";
+import type { Ctx, PageLoader } from "./types";
 import { ShootingStars } from "./shooting-stars";
 import { TwinklingStars } from "./twinkling-stars";
-
-export const isMobileDevice = () => {
-  if (typeof window === "undefined") return false;
-  return window.matchMedia('(max-width: 1024px), (pointer: coarse), (hover: none)').matches;
-};
+import { AssetLoader, AbortError, isAbortError, type Assets } from "./assets";
+import { byTier, getDeviceTier, isMobileDevice, type DeviceTier } from "./device";
 
 // (A) Persist the singleton across re-runs/HMR on the window object
 declare global {
@@ -40,10 +37,13 @@ export class Manager {
   world = new THREE.Group();
   pageLayer = new THREE.Group();
 
-  loadingManager = new THREE.LoadingManager();
-  textureLoader = new THREE.TextureLoader(this.loadingManager);
+  tier: DeviceTier = "high";
+  assets!: AssetLoader;
 
   currentKey: string | null = null;
+  private session: AbortController | null = null;
+  private bootPromise: Promise<void> = Promise.resolve();
+  private mountChain: Promise<void> = Promise.resolve();
   currentDispose: (() => void) | null = null;
   shootingStars?: ShootingStars;
   twinklingStars?: TwinklingStars;
@@ -98,14 +98,17 @@ async init({ canvasId }: { canvasId: string }): Promise<void> {
     if (!canvas) throw new Error("Canvas not found");
 
     const isMobile = isMobileDevice();
+    this.tier = getDeviceTier();
+    this.assets = new AssetLoader(this.tier);
+    const lowPower = this.tier !== "high";
 
     this.renderer = new THREE.WebGLRenderer({ 
       canvas, 
-      antialias: !isMobile, 
-      powerPreference: isMobile ? "default" : "high-performance" 
+      antialias: !lowPower, 
+      powerPreference: lowPower ? "default" : "high-performance" 
     });
 
-    const maxPR = isMobile ? 1 : 2;
+    const maxPR = lowPower ? 1 : 2;
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, maxPR));
     this.renderer.setSize(innerWidth, innerHeight);
     this.renderer.setClearColor(0x000000);
@@ -120,11 +123,17 @@ async init({ canvasId }: { canvasId: string }): Promise<void> {
     // or we can animate the camera inside the rig. Let's keep camera animated by GSAP and parallax applied to rig.
     this.camera.position.set(-20, -30, 80);
 
-    const starsTex = this.textureLoader.load("/stars/stars.jpg");
-    starsTex.colorSpace = THREE.SRGBColorSpace;
-    starsTex.mapping = THREE.EquirectangularReflectionMapping;
-    starsTex.anisotropy = isMobile ? 1 : (this.renderer.capabilities.getMaxAnisotropy?.() ?? 4);
-    this.scene.background = starsTex;
+    // Tracked by the preloader: the first page isn't "loaded" until the sky is in.
+    this.bootPromise = this.assets
+      .bind(new AbortController().signal)
+      .texture(byTier(this.tier, { high: "/stars/stars.jpg", mid: "/stars/stars.webp" }))
+      .then((starsTex) => {
+        starsTex.colorSpace = THREE.SRGBColorSpace;
+        starsTex.mapping = THREE.EquirectangularReflectionMapping;
+        starsTex.anisotropy = lowPower ? 1 : (this.renderer.capabilities.getMaxAnisotropy?.() ?? 4);
+        this.scene.background = starsTex;
+      })
+      .catch((e) => console.error("Failed to load star background", e));
 
     this.scene.add(new THREE.AmbientLight(0xffffff, 0.4));
     const dir = new THREE.DirectionalLight(0xffffff, 1);
@@ -134,7 +143,7 @@ async init({ canvasId }: { canvasId: string }): Promise<void> {
     this.scene.add(this.world);
     this.scene.add(this.pageLayer);
 
-    if (!isMobile) {
+    if (!lowPower) {
       this.shootingStars = new ShootingStars(false);
       this.scene.add(this.shootingStars.mesh);
       
@@ -199,7 +208,7 @@ async init({ canvasId }: { canvasId: string }): Promise<void> {
 
       for (const u of this.updaters) u(dt, t);
       
-      if (!isMobile) {
+      if (!lowPower) {
         this.shootingStars?.update(dt);
         this.twinklingStars?.update(t);
       }
@@ -253,40 +262,122 @@ async init({ canvasId }: { canvasId: string }): Promise<void> {
     const key = this.routeToKey(path);
     if (key === this.currentKey) return;
 
+    // Cancel anything the previous navigation was still loading, so a slow page
+    // can't add its objects on top of the page we've moved to.
+    this.session?.abort();
+    const session = new AbortController();
+    this.session = session;
+
     this.unloadCurrent();
+    this.currentKey = key;
 
-    const factory = lazyLoaders[key];
-    if (factory) {
-      const mod = await factory();
-      const loader: PageLoader = mod.default;
-      const { group, dispose, updater } = await loader({
-        three: THREE,
-        scene: this.scene,
-        parent: this.pageLayer,
-        camera: this.camera,
-        renderer: this.renderer,
-        textureLoader: this.textureLoader,
-        loadingManager: this.loadingManager,
-      });
+    try {
+      const factory = lazyLoaders[key];
+      if (factory) await this.mountPage(factory, session.signal);
+      await this.bootPromise;
+    } catch (e) {
+      if (isAbortError(e)) return;
+      if (this.session === session) this.currentKey = null; // allow a retry
+      throw e;
+    }
+  }
 
-      this.pageLayer.add(group);
+  private async mountPage(factory: () => Promise<{ default: PageLoader }>, signal: AbortSignal) {
+    const mod = await factory();
+    if (signal.aborted) throw new AbortError();
 
-      if (updater) {
-        this.pageUpdater = updater;
-        this.addUpdater(updater);
-      } else {
-        this.pageUpdater = null;
-      }
+    const deferred: Array<(assets: Assets) => Promise<void>> = [];
+    const ctx: Ctx = {
+      three: THREE,
+      scene: this.scene,
+      parent: this.pageLayer,
+      camera: this.camera,
+      renderer: this.renderer,
+      tier: this.tier,
+      signal,
+      assets: this.assets.bind(signal, "critical"),
+      defer: (task, opts) => {
+        if (opts?.optional && this.tier === "low") return;
+        deferred.push(task);
+      },
+      add: (obj, parent) => this.mount(obj, parent, signal),
+    };
 
-      this.currentDispose = () => {
-        try { dispose?.(); } catch {}
-        killTweensDeep(group);
-        disposeObject(group);
-      };
+    const { group, dispose, updater } = await mod.default(ctx);
+    const teardown = () => {
+      try { dispose?.(); } catch {}
+      killTweensDeep(group);
+      disposeObject(group);
+    };
+    if (signal.aborted) {
+      teardown();
+      throw new AbortError();
     }
 
-    this.renderer.compile(this.scene, this.camera);
-    this.currentKey = key;
+    this.currentDispose = teardown;
+    if (updater) {
+      this.pageUpdater = updater;
+      this.addUpdater(updater);
+    }
+
+    // Stream the page's objects in one by one rather than uploading everything in a single frame.
+    const children = group.children.slice();
+    group.clear();
+    this.pageLayer.add(group);
+    await Promise.all(children.map((c) => this.assets.track(this.mount(c, group, signal))));
+
+    this.runDeferred(deferred, signal);
+  }
+
+  private runDeferred(tasks: Array<(assets: Assets) => Promise<void>>, signal: AbortSignal) {
+    if (!tasks.length) return;
+    const assets = this.assets.bind(signal, "deferred");
+    const start = () => {
+      if (signal.aborted) return;
+      for (const task of tasks) {
+        task(assets).catch((e) => {
+          if (!isAbortError(e)) console.error("Deferred page task failed", e);
+        });
+      }
+    };
+    if (this.tier === "high") start();
+    else whenIdle(start);
+  }
+
+  /**
+   * Upload textures and compile shaders for `obj` off the critical frame, then add it.
+   * Mounts are serialised; on low-power tiers each GPU upload gets its own frame.
+   */
+  private mount(obj: THREE.Object3D, parent: THREE.Object3D, signal: AbortSignal): Promise<void> {
+    const throttle = this.tier !== "high";
+    const run = async () => {
+      if (signal.aborted) return disposeObject(obj);
+
+      for (const tex of collectTextures(obj)) {
+        this.renderer.initTexture(tex);
+        if (throttle) {
+          await nextFrame();
+          if (signal.aborted) return disposeObject(obj);
+        }
+      }
+
+      try {
+        // Never let a stalled compile block every later mount.
+        await Promise.race([
+          this.renderer.compileAsync(obj, this.camera, this.scene),
+          new Promise((r) => setTimeout(r, 4000)),
+        ]);
+      } catch {}
+      if (signal.aborted) return disposeObject(obj);
+
+      parent.add(obj);
+      reveal(obj);
+      if (throttle) await nextFrame();
+    };
+
+    const next = this.mountChain.then(run, run);
+    this.mountChain = next.catch(() => {});
+    return next;
   }
 
   unloadCurrent() {
@@ -294,12 +385,16 @@ async init({ canvasId }: { canvasId: string }): Promise<void> {
       this.removeUpdater(this.pageUpdater);
       this.pageUpdater = null;
     }
-    if (this.currentDispose) {
-      try { this.currentDispose(); } catch {}
-      this.currentDispose = null;
-    }
-    this.pageLayer.children.slice().forEach(disposeObject);
+    // Take the old page off screen now, but free its GPU resources only once any
+    // in-flight mount has settled: disposing a material mid-compileAsync throws inside three.
+    const teardown = this.currentDispose;
+    const leftovers = this.pageLayer.children.slice();
+    this.currentDispose = null;
     this.pageLayer.clear();
+    this.mountChain.then(() => {
+      try { teardown?.(); } catch {}
+      leftovers.forEach(disposeObject);
+    });
   }
 
   zoomTo(pos: THREE.Vector3Like, duration = 1, delay = 0) {
@@ -321,10 +416,62 @@ export const SpaceManagerAPI = {
   onTick: (fn: (dt: number, t: number) => void) => Manager.I().onTick(fn),
 };
 
+const nextFrame = () => new Promise<void>((r) => requestAnimationFrame(() => r()));
+
+function whenIdle(fn: () => void) {
+  if ("requestIdleCallback" in window) requestIdleCallback(fn, { timeout: 1500 });
+  else setTimeout(fn, 200);
+}
+
+function forEachMaterial(root: THREE.Object3D, fn: (m: THREE.Material) => void) {
+  const seen = new Set<THREE.Material>();
+  root.traverse((o: any) => {
+    if (!o.material) return;
+    const mats: THREE.Material[] = Array.isArray(o.material) ? o.material : [o.material];
+    mats.forEach((m) => {
+      if (!seen.has(m)) { seen.add(m); fn(m); }
+    });
+  });
+}
+
+/** Every texture referenced by materials (plain map slots and shader uniforms). */
+function collectTextures(root: THREE.Object3D): THREE.Texture[] {
+  const out = new Set<THREE.Texture>();
+  forEachMaterial(root, (m: any) => {
+    for (const v of Object.values(m)) if ((v as any)?.isTexture) out.add(v as THREE.Texture);
+    if (m.uniforms) {
+      for (const u of Object.values(m.uniforms) as any[]) if (u?.value?.isTexture) out.add(u.value);
+    }
+  });
+  return [...out];
+}
+
+/** Fade in via uAlpha/opacity where the material supports it, otherwise scale in. */
+function reveal(obj: THREE.Object3D) {
+  const fades: Array<{ target: any; key: "value" | "opacity"; to: number }> = [];
+  forEachMaterial(obj, (m: any) => {
+    const uAlpha = m.uniforms?.uAlpha;
+    // Remember the resting value so a reveal mid-way through another can't lock in a low alpha.
+    if (uAlpha) fades.push({ target: uAlpha, key: "value", to: (m.userData.revealTo ??= uAlpha.value) });
+    else if (m.transparent && !m.isShaderMaterial) fades.push({ target: m, key: "opacity", to: (m.userData.revealTo ??= m.opacity) });
+  });
+
+  if (fades.length) {
+    for (const f of fades) {
+      f.target[f.key] = 0;
+      gsap.to(f.target, { [f.key]: f.to, duration: 0.8, ease: "power2.out" });
+    }
+  } else {
+    const s = obj.scale.clone();
+    obj.scale.setScalar(0.0001);
+    gsap.to(obj.scale, { x: s.x, y: s.y, z: s.z, duration: 1.2, ease: "expo.out" });
+  }
+}
+
 /** Kill GSAP tweens on an object tree to avoid lingering animations. */
 function killTweensDeep(root: THREE.Object3D) {
   root.traverse(o => {
-    try { gsap.killTweensOf(o); } catch {}
+    try { gsap.killTweensOf(o); gsap.killTweensOf(o.scale); } catch {}
     const any = o as any;
     if (any.material) {
       const mats = Array.isArray(any.material) ? any.material : [any.material];

@@ -1,16 +1,14 @@
 // src/space/pages/case-product-tour.ts
 import * as THREE from "three";
-import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import holographicVertexShader from "@src/shaders/holographic/vertex.glsl";
 import holographicFragmentShader from "@src/shaders/holographic/fragment.glsl";
 import type { Ctx, LoadResult, PageLoader } from "../types";
 import { mountTextEffects } from "../ui/text-animator";
 
-const GLTF = (lm: THREE.LoadingManager) => new GLTFLoader(lm);
 
 const loadProductTour: PageLoader = async ({
   three: T,
-  loadingManager,
+  assets,
 }: Ctx): Promise<LoadResult> => {
   const group = new T.Group();
   let cancelled = false;
@@ -31,7 +29,7 @@ const loadProductTour: PageLoader = async ({
   }); 
 
   // Load the GLTF (rocket/tablet)
-  const gltf = await GLTF(loadingManager).loadAsync("/rocket/Rocket.glb");
+  const gltf = await assets.gltf("/rocket/Rocket.glb");
   if (cancelled) return { group };
 
   const tablet = gltf.scene;
