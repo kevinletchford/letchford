@@ -1,16 +1,14 @@
 // src/space/pages/case-kiosk.ts
 import * as THREE from "three";
-import { OBJLoader } from "three/addons/loaders/OBJLoader.js";
 import holographicVertexShader from "@src/shaders/holographic/vertex.glsl";
 import holographicFragmentShader from "@src/shaders/holographic/fragment.glsl";
 import type { Ctx, LoadResult, PageLoader } from "../types";
 import { mountTextEffects } from "../ui/text-animator";
 
-const OBJ = (lm: THREE.LoadingManager) => new OBJLoader(lm);
 
 const loadKiosk: PageLoader = async ({
   three: T,
-  loadingManager,
+  assets,
 }: Ctx): Promise<LoadResult> => {
   const group = new T.Group();
   let cancelled = false;
@@ -31,7 +29,7 @@ const loadKiosk: PageLoader = async ({
   });
 
   // Load OBJ (laptop)
-  const laptop = await OBJ(loadingManager).loadAsync("/laptop/Laptop-2.obj");
+  const laptop = await assets.obj("/laptop/Laptop-2.obj");
   if (cancelled) return { group };
 
   laptop.traverse((obj) => {
