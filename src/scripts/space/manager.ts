@@ -59,6 +59,10 @@ export class Manager {
   private pitch = 0;
   private wrUpdater = (dt: number) => this.updateWorldRotation(dt);
 
+  private isTouch = false;
+  private viewport = { w: 0, h: 0 };
+  private resizeQueued = false;
+
   private _ready = false;
   private _readyPromise: Promise<void>;
   private _resolveReady!: () => void;
@@ -98,6 +102,7 @@ async init({ canvasId }: { canvasId: string }): Promise<void> {
     if (!canvas) throw new Error("Canvas not found");
 
     const isMobile = isMobileDevice();
+    this.isTouch = isMobile;
     this.tier = getDeviceTier();
     this.assets = new AssetLoader(this.tier);
     const lowPower = this.tier !== "high";
@@ -111,6 +116,7 @@ async init({ canvasId }: { canvasId: string }): Promise<void> {
     const maxPR = lowPower ? 1 : 2;
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, maxPR));
     this.renderer.setSize(innerWidth, innerHeight);
+    this.viewport = { w: innerWidth, h: innerHeight };
     this.renderer.setClearColor(0x000000);
 
     this.scene = new THREE.Scene();
@@ -226,9 +232,24 @@ async init({ canvasId }: { canvasId: string }): Promise<void> {
   }
 
   private onResize = () => {
-    this.camera.aspect = innerWidth / innerHeight;
-    this.camera.updateProjectionMatrix();
-    this.renderer.setSize(innerWidth, innerHeight);
+    if (this.resizeQueued) return;
+    this.resizeQueued = true;
+    requestAnimationFrame(() => {
+      this.resizeQueued = false;
+      const w = innerWidth;
+      const h = innerHeight;
+
+      // iOS fires resize every time the URL bar collapses/expands while scrolling.
+      // Reallocating the WebGL drawing buffer that often crashes Safari ("A problem
+      // repeatedly occurred"), so on touch devices keep the canvas at the tallest
+      // height seen and only resize for a width change (rotation) or a taller viewport.
+      if (this.isTouch && w === this.viewport.w && h <= this.viewport.h) return;
+      this.viewport = { w, h };
+
+      this.camera.aspect = w / h;
+      this.camera.updateProjectionMatrix();
+      this.renderer.setSize(w, h);
+    });
   };
 
   private updateWorldRotation(dt: number) {
