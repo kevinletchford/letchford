@@ -1,5 +1,6 @@
 ---
 import Layout from "@layouts/FullPage.astro";
+import { PROJECTS } from "@src/data/projects";
 ---
 
 <Layout title="Kevin Letchford - Design Engineer">
@@ -60,6 +61,12 @@ import Layout from "@layouts/FullPage.astro";
           ><span class="hidden">Skills</span></a
         >
         <a
+          href="#projects"
+          data-nav-item="projects"
+          class="dot min-w-3 min-h-3 rounded-full bg-white/30 block"
+          ><span class="hidden">Projects</span></a
+        >
+        <a
           href="#experience"
           data-nav-item="experience"
           class="dot min-w-3 min-h-3 rounded-full bg-white/30 block"
@@ -88,6 +95,82 @@ import Layout from "@layouts/FullPage.astro";
           ></path>
         </svg>
       </button>
+    </div>
+    <!-- Project hologram controls on the Mars surface (driven by space/portals.ts) -->
+    <div
+      id="portal-layer"
+      class="fixed inset-0 z-20 pointer-events-none invisible opacity-0 transition-opacity duration-500"
+      inert
+    >
+      <a
+        data-portal-main
+        href={PROJECTS[0].href}
+        aria-label={`Enter ${PROJECTS[0].title}`}
+        class="group absolute left-0 top-0 pointer-events-auto rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-cyan-200/80 will-change-transform"
+      >
+        <span class="absolute left-1/2 top-full mt-4 -translate-x-1/2 w-max max-w-[80vw] text-center">
+          <span
+            data-portal-title
+            class="block font-space text-sm md:text-lg font-bold uppercase tracking-widest text-cyan-50 [text-shadow:0_0_14px_rgb(34_211_238/0.9)]"
+            >{PROJECTS[0].title}</span
+          >
+          <span
+            data-portal-blurb
+            class="block mt-1 text-sm md:text-base text-white/90 [text-shadow:0_1px_6px_rgb(0_0_0/0.8)]"
+            >{PROJECTS[0].blurb}</span
+          >
+        </span>
+      </a>
+      <div
+        class="absolute bottom-16 left-1/2 -translate-x-1/2 w-max max-w-[calc(100vw-2rem)] pointer-events-auto lg:bottom-auto lg:top-1/2 lg:left-8 lg:translate-x-0 lg:-translate-y-1/2 lg:w-72"
+      >
+        <p
+          aria-hidden="true"
+          class="m-0 font-space text-2xl lg:text-4xl font-bold text-white text-center lg:text-left [text-shadow:0_2px_12px_rgb(0_0_0/0.5)]"
+        >
+          Projects
+        </p>
+        <p
+          class="mt-1 mb-3 lg:mb-4 text-sm lg:text-base text-white/90 text-center lg:text-left [text-shadow:0_1px_8px_rgb(0_0_0/0.6)]"
+        >
+          Choose a project, then step through the portal.
+        </p>
+        <div
+          role="group"
+          aria-label="Choose a project"
+          data-portal-list
+          class="flex justify-center gap-2 md:gap-3 lg:flex-col"
+        >
+        {
+          PROJECTS.map((p, i) => (
+            <button
+              type="button"
+              data-portal-pick={p.key}
+              aria-pressed={i === 0 ? "true" : "false"}
+              title={p.title}
+              class="flex items-center gap-3 p-1 lg:pr-4 lg:w-72 text-left rounded-xl cursor-pointer border border-cyan-200/20 bg-cyan-950/40 md:backdrop-blur opacity-60 transition hover:opacity-100 hover:border-cyan-200/50 outline-none focus-visible:ring-2 focus-visible:ring-white/80 aria-pressed:opacity-100 aria-pressed:border-cyan-200 aria-pressed:bg-cyan-500/15 aria-pressed:shadow-[0_0_18px_rgb(34_211_238/0.6)]"
+            >
+              <span class="relative block size-10 md:size-12 shrink-0 rounded-lg overflow-hidden bg-black/40">
+                <img
+                  src={p.image}
+                  alt=""
+                  loading="lazy"
+                  class="size-full object-cover object-top mix-blend-screen saturate-50"
+                />
+              </span>
+              <span class="sr-only lg:not-sr-only lg:block lg:min-w-0">
+                <span class="block font-space text-xs font-bold uppercase tracking-widest text-cyan-50 truncate">
+                  {p.title}
+                </span>
+                <span class="hidden lg:block mt-0.5 text-xs text-white/70 truncate">
+                  {p.blurb}
+                </span>
+              </span>
+            </button>
+          ))
+        }
+        </div>
+      </div>
     </div>
     <div id="content">
       <article
@@ -336,6 +419,11 @@ import Layout from "@layouts/FullPage.astro";
           </div>
         </section>
 
+        <!-- The visible title and controls live in #portal-layer, over the Mars surface -->
+        <section class="min-h-[100svh] scroll-m-20" id="projects">
+          <h2 class="sr-only">Projects</h2>
+        </section>
+
         <section
           class="min-h-[100svh] flex flex-col justify-center py-2 px-5 scroll-m-20"
           id="experience"
@@ -541,6 +629,11 @@ import Layout from "@layouts/FullPage.astro";
           { key: "header", sel: "#header", pos: { x: -20, y: -30, z: 80 } },
           { key: "skills", sel: "#skills", pos: { x: -20, y: -30, z: 70 } },
           {
+            key: "projects",
+            sel: "#projects",
+            pos: { x: -10, y: -40, z: 70 },
+          },
+          {
             key: "experience",
             sel: "#experience",
             pos: { x: -10, y: -40, z: 70 },
@@ -717,6 +810,48 @@ import Layout from "@layouts/FullPage.astro";
                 toggleClass: { targets: el, className: "is-active" },
               },
             });
+          });
+
+          // Mars surface: dive into the planet on the way into Projects (the
+          // portals live on the surface), climb back out on the way into Experience.
+          const surface = { v: 0, enter: 0, exit: 0 };
+          const baseGradientFrom = scroller
+            ? getComputedStyle(scroller).getPropertyValue("--tw-gradient-from")
+            : "";
+          const applySurface = () => {
+            SpaceManager.setParam("marsSurface", surface.v);
+            if (!scroller || !baseGradientFrom) return;
+            // Swap the cyan wash for a dark warm one so copy stays legible over the ground.
+            if (surface.v < 0.001) scroller.style.removeProperty("--tw-gradient-from");
+            else
+              scroller.style.setProperty(
+                "--tw-gradient-from",
+                `color-mix(in oklab, ${baseGradientFrom}, rgb(24 10 4 / 0.6) ${Math.round(surface.v * 100)}%)`,
+              );
+          };
+          const qSurface = gsap.quickTo(surface, "v", {
+            duration: 0.5,
+            ease: "power2.out",
+            onUpdate: applySurface,
+          });
+          const setSurface = () => qSurface(surface.enter * (1 - surface.exit));
+          ScrollTrigger.create({
+            trigger: "#projects",
+            start: "top bottom",
+            end: "top 15%",
+            onUpdate: (self) => {
+              surface.enter = self.progress;
+              setSurface();
+            },
+          });
+          ScrollTrigger.create({
+            trigger: "#experience",
+            start: "top bottom",
+            end: "top 35%",
+            onUpdate: (self) => {
+              surface.exit = self.progress;
+              setSurface();
+            },
           });
 
           const pEls = gsap.utils.toArray("[data-parallax]");

@@ -2,7 +2,7 @@
 import * as THREE from "three";
 import gsap from "gsap"; // ✅ you use gsap below, import it explicitly
 import { lazyLoaders } from "./pages";
-import type { Ctx, PageLoader } from "./types";
+import type { Ctx, PageLoader, View } from "./types";
 import { ShootingStars } from "./shooting-stars";
 import { TwinklingStars } from "./twinkling-stars";
 import { AssetLoader, AbortError, isAbortError, type Assets } from "./assets";
@@ -52,6 +52,8 @@ export class Manager {
   targetMouse = new THREE.Vector2(0, 0);
 
   private pageUpdater: ((dt: number, t: number) => void) | null = null;
+  private view: View | null = null;
+  private params: Record<string, number> = {};
   private updaters: Array<(dt: number, t: number) => void> = [];
 
   private keys: Record<string, boolean> = {};
@@ -219,7 +221,8 @@ async init({ canvasId }: { canvasId: string }): Promise<void> {
         this.twinklingStars?.update(t);
       }
       
-      this.renderer.render(this.scene, this.camera);
+      const view = this.view;
+      this.renderer.render(view?.scene ?? this.scene, view?.camera ?? this.camera);
       requestAnimationFrame(tick);
     };
     tick();
@@ -322,6 +325,10 @@ async init({ canvasId }: { canvasId: string }): Promise<void> {
         deferred.push(task);
       },
       add: (obj, parent) => this.mount(obj, parent, signal),
+      setView: (view) => {
+        if (!signal.aborted) this.view = view;
+      },
+      param: (key) => this.params[key] ?? 0,
     };
 
     const { group, dispose, updater } = await mod.default(ctx);
@@ -401,7 +408,13 @@ async init({ canvasId }: { canvasId: string }): Promise<void> {
     return next;
   }
 
+  setParam(key: string, value: number) {
+    this.params[key] = value;
+  }
+
   unloadCurrent() {
+    this.view = null;
+    this.params = {};
     if (this.pageUpdater) {
       this.removeUpdater(this.pageUpdater);
       this.pageUpdater = null;
@@ -435,6 +448,7 @@ export const SpaceManagerAPI = {
   getPageLayer: () => Manager.I().getPageLayer(),
   whenReady: () => Manager.I().whenReady(),
   onTick: (fn: (dt: number, t: number) => void) => Manager.I().onTick(fn),
+  setParam: (key: string, value: number) => Manager.I().setParam(key, value),
 };
 
 const nextFrame = () => new Promise<void>((r) => requestAnimationFrame(() => r()));
