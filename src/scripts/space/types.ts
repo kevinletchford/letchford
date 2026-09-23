@@ -26,7 +26,13 @@ export type Ctx = {
   defer: (task: (assets: Assets) => Promise<void>, opts?: DeferOptions) => void;
   /** Upload + compile `obj` without blocking a frame, then add it to `parent` with a reveal. */
   add: (obj: THREE.Object3D, parent: THREE.Object3D) => Promise<void>;
+  /** Render a different scene/camera instead of the shared space scene (null = back to space). Reset on unload. */
+  setView: (view: View | null) => void;
+  /** Read a value the page's DOM script set with `SpaceManager.setParam` (0 when unset). */
+  param: (key: string) => number;
 };
+
+export type View = { scene: THREE.Scene; camera: THREE.Camera };
 
 export type LoadResult = {
   group: THREE.Group;
