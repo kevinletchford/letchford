@@ -4,7 +4,7 @@
 // Every build uses a fresh seed, so no two visits get the same landscape.
 import * as THREE from "three";
 import { byTier, type DeviceTier } from "./device";
-import { createBeaconMaterial } from "./beacon";
+import { createBeaconMaterial, HOLO_COLOR } from "./beacon";
 
 export type MarsSurface = {
   scene: THREE.Scene;
@@ -517,7 +517,7 @@ export async function createMarsSurface(opts: {
   for (let i = 0; i < beaconPos.count; i++) {
     beaconPos.setY(i, height(beaconPos.getX(i) + BEACON.x, beaconPos.getZ(i) + BEACON.z) + 0.05);
   }
-  const beaconMat = createBeaconMaterial();
+  const beaconMat = createBeaconMaterial(HOLO_COLOR);
   const beacon = new THREE.Mesh(beaconGeo, beaconMat);
   beacon.position.set(BEACON.x, 0, BEACON.z);
   beacon.renderOrder = 1;

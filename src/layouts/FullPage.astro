@@ -5,6 +5,7 @@ import "@fontsource-variable/space-grotesk";
 import { ClientRouter } from "astro:transitions";
 
 import PersistedSpace from "@components/PersistedSpace.astro";
+import PortalReturn from "@components/PortalReturn.astro";
 import { fade } from "astro:transitions";
 
 interface Props {
@@ -99,6 +100,7 @@ const { title = "Kevin Letchford" } = Astro.props;
     </style>
 
     <slot />
+    <PortalReturn />
 
     <script is:inline>
       // Inline scripts re-run after client-side navigation; only bind once per document.

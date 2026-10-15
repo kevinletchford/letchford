@@ -1,0 +1,45 @@
+---
+// "Back to projects" for pages entered through the Mars hologram (see space/portals.ts).
+// Hidden unless the visitor came through the portal for this page.
+import { PROJECTS } from "@src/data/projects";
+
+const routes = Object.fromEntries(PROJECTS.map((p) => [p.key, p.href]));
+---
+
+<a
+  id="portal-return"
+  href="/"
+  data-routes={JSON.stringify(routes)}
+  aria-label="Back to projects"
+  class="fixed top-24 left-4 md:left-6 z-40 hidden items-center gap-2 rounded-full border border-red-300/30 bg-red-950/40 md:backdrop-blur-3xl px-3 py-1.5 text-sm text-white/80 transition hover:text-white hover:border-red-300/70 hover:shadow-[0_0_18px_rgb(248_113_113/0.5)] outline-none focus-visible:ring-2 focus-visible:ring-red-300/80"
+>
+  <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4">
+    <path
+      fill-rule="evenodd"
+      clip-rule="evenodd"
+      d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z"
+    ></path>
+  </svg>
+  <span>Projects</span>
+</a>
+
+<script>
+  import { peekPortal } from "../scripts/portal-return";
+
+  const trim = (path: string) => path.replace(/\/+$/, "");
+
+  const show = () => {
+    const el = document.getElementById("portal-return");
+    if (!el) return;
+    const routes: Record<string, string> = JSON.parse(el.dataset.routes ?? "{}");
+    const key = peekPortal();
+    const href = key ? routes[key] : undefined;
+    const cameThrough = !!href && trim(href) === trim(location.pathname);
+    el.classList.toggle("hidden", !cameThrough);
+    el.classList.toggle("flex", cameThrough);
+  };
+
+  // Pages without the client router never fire astro:page-load
+  show();
+  document.addEventListener("astro:page-load", show);
+</script>

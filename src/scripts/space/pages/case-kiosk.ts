@@ -1,66 +1,89 @@
 // src/space/pages/case-kiosk.ts
-import * as THREE from "three";
-import holographicVertexShader from "@src/shaders/holographic/vertex.glsl";
-import holographicFragmentShader from "@src/shaders/holographic/fragment.glsl";
+// Promotional kiosk: a freestanding landscape touchscreen showing a grid of tiles, with taps rippling across it.
 import type { Ctx, LoadResult, PageLoader } from "../types";
 import { mountTextEffects } from "../ui/text-animator";
+import { HOLO_ACCENT, frameMesh, makeHolo, pill, roundedRect } from "../holo";
 
-
-const loadKiosk: PageLoader = async ({
-  three: T,
-  assets,
-}: Ctx): Promise<LoadResult> => {
+const loadKiosk: PageLoader = async ({ three: T }: Ctx): Promise<LoadResult> => {
   const group = new T.Group();
   let cancelled = false;
 
-  // Holographic material (shared)
-  const holoMat = new T.ShaderMaterial({
-    vertexShader: holographicVertexShader,
-    fragmentShader: holographicFragmentShader,
-    uniforms: {
-      uTime:  { value: 0 },
-      uColor: { value: new T.Color("#70c1ff") },
-      uAlpha: { value: 0.35 },
-    },
-    transparent: false,
-    side: T.DoubleSide,
-    depthWrite: false,
-    blending: T.AdditiveBlending,
+  const bodyMat = makeHolo(T);
+  const tileMat = makeHolo(T, HOLO_ACCENT);
+  const rippleMat = makeHolo(T, HOLO_ACCENT, 0.6);
+  const mats = [bodyMat, tileMat, rippleMat];
+
+  // Landscape screen on a pole, standing on a base ring
+  const W = 3.8, H = 2.4;
+  const kiosk = new T.Group();
+  const screen = new T.Group();
+  screen.add(frameMesh(T, bodyMat, W, H, { radius: 0.2, border: 0.12, depth: 0.16 }));
+  screen.position.y = 0.8;
+  kiosk.add(screen);
+
+  const pole = new T.Mesh(new T.CylinderGeometry(0.1, 0.12, 1.6, 24), bodyMat);
+  pole.position.y = 0.8 - H / 2 - 0.8;
+  kiosk.add(pole);
+  // Base as a ring (a solid disc's flat top washes out under additive blending)
+  const base = new T.Mesh(new T.TorusGeometry(0.9, 0.06, 12, 64), bodyMat);
+  base.rotation.x = Math.PI / 2;
+  base.position.y = pole.position.y - 0.8;
+  kiosk.add(base);
+  const foot = new T.Mesh(new T.CylinderGeometry(0.25, 0.3, 0.1, 32), bodyMat);
+  foot.position.y = base.position.y;
+  kiosk.add(foot);
+  kiosk.position.y = 0.25; // centre the whole stand in view rather than the screen
+
+  // Screen content: a header bar and a 3×2 grid of touch tiles
+  screen.add(pill(T, tileMat, 1.4, -W / 2 + 0.3, H / 2 - 0.4, 0.07));
+  const tileGeo = new T.ExtrudeGeometry(roundedRect(T, 1.0, 0.7, 0.1), {
+    depth: 0.06, bevelEnabled: true, bevelSize: 0.02, bevelThickness: 0.02, bevelSegments: 2,
   });
-
-  // Load OBJ (laptop)
-  const laptop = await assets.obj("/laptop/Laptop-2.obj");
-  if (cancelled) return { group };
-
-  laptop.traverse((obj) => {
-    if (obj instanceof T.Mesh) {
-      obj.material = holoMat;
+  tileGeo.translate(0, 0, -0.03);
+  const tiles: InstanceType<typeof T.Mesh>[] = [];
+  for (let row = 0; row < 2; row++) {
+    for (let col = 0; col < 3; col++) {
+      const tile = new T.Mesh(tileGeo, tileMat);
+      tile.position.set((col - 1) * 1.15, 0.2 - row * 0.85, 0);
+      screen.add(tile);
+      tiles.push(tile);
     }
-  });
+  }
 
-  // Match your original transforms
-  laptop.rotation.set(0, 0, 0);
-  laptop.scale.set(0.75,0.75, 0.75);
-  laptop.position.set(0, 0, 0);
-  laptop.position.set( -20, -30, 75);
+  // Tap ripple: expands from a tile, then jumps to the next one
+  const ripple = new T.Mesh(new T.TorusGeometry(0.2, 0.02, 10, 48), rippleMat);
+  ripple.position.z = 0.12;
+  screen.add(ripple);
+  const tapEvery = 1.6;
 
-  group.add(laptop);
+  group.add(kiosk);
+  group.rotation.set(0.15, -0.3, 0);
+  group.scale.set(0.75, 0.75, 0.75);
+  group.position.set(-20, -30, 74);
 
-  //const ui = await mountCaseStudyUI();
   const uiText = await mountTextEffects();
 
-  // Per-frame updates (manager will call this)
   const updater = (_dt: number, t: number) => {
-    holoMat.uniforms.uTime.value = t;
-    laptop.rotation.y = t * 0.2;
-    // No renderer.render() or camera.lookAt() here; manager handles render.
+    if (cancelled) return;
+    for (const m of mats) m.uniforms.uTime.value = t;
+
+    kiosk.rotation.y = Math.sin(t * 0.3) * 0.5;
+
+    const tap = Math.floor(t / tapEvery);
+    const f = (t % tapEvery) / tapEvery;
+    const target = tiles[(tap * 5) % tiles.length];
+    ripple.position.x = target.position.x;
+    ripple.position.y = target.position.y;
+    ripple.scale.setScalar(1 + f * 3);
+    rippleMat.uniforms.uAlpha.value = 0.6 * (1 - f);
+
+    // The tapped tile presses in, then springs back
+    for (const tile of tiles) tile.position.z = tile === target ? -0.08 * Math.max(0, 1 - f * 4) : 0;
   };
 
   const dispose = () => {
     cancelled = true;
-    //ui.dispose();
-     uiText.dispose();
-    // No DOM listeners here. Manager will deep-dispose materials/geo via disposeObject(group).
+    uiText.dispose();
   };
 
   return { group, dispose, updater };

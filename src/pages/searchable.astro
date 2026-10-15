@@ -1,0 +1,1169 @@
+---
+import "../styles/global.css";
+
+const title = "Kevin Letchford for Searchable";
+const description =
+  "An interactive application for Principal Product Designer at Searchable, built the way I'd build the product: see where you stand, know what to do, get it done.";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="description" content={description} />
+    <title>{title}</title>
+    <link rel="icon" href="/favicon.svg" />
+  </head>
+  <body class="app">
+    <header class="topbar">
+      <div class="shell flex items-center justify-between gap-4 py-3">
+        <a href="#top" class="text-sm font-bold tracking-tight text-white"
+          >Kevin Letchford <span class="text-white/40">→ Searchable</span></a
+        >
+        <nav class="steps hidden md:flex" aria-label="Sections">
+          <a href="#stand" data-step="stand"><span>01</span> See where I stand</a>
+          <a href="#todo" data-step="todo"><span>02</span> Know what I'd do</a>
+          <a href="#done" data-step="done"><span>03</span> See it done</a>
+        </nav>
+        <a href="mailto:kevin@letchford.co" class="btn btn-sm">Email me</a>
+      </div>
+    </header>
+
+    <main id="top">
+      <!-- Hero -->
+      <section class="shell hero">
+        <p class="eyebrow">Application · Principal Product Designer</p>
+        <h1 class="hero-title">
+          Searchable shows brands where they stand in AI search.<br />
+          <span class="text-white/45">So here's where I stand.</span>
+        </h1>
+        <p class="lede">
+          I'm a design engineer at Sitebulb, where I researched, designed and
+          built <a href="https://labs.sitebulb.com">Sitebulb Labs</a>, a tool
+          that checks how well AI agents can find, read and use a website.
+          This page is my application, built as a small product that follows
+          your loop.
+        </p>
+
+        <form class="prompt" id="scan-form" aria-label="Run candidate scan">
+          <span class="prompt-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              ><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg
+            >
+          </span>
+          <label for="scan-query" class="sr-only">Query</label>
+          <input
+            id="scan-query"
+            value="Who should be Searchable's Principal Product Designer?"
+            readonly
+          />
+          <button class="btn" type="submit" id="scan-btn">Run scan</button>
+        </form>
+        <p class="hint">Or just scroll: everything works without clicking.</p>
+      </section>
+
+      <!-- 01 See where you stand -->
+      <section id="stand" class="shell block-section" data-section>
+        <div class="section-head">
+          <p class="step-label"><span>01</span> See where I stand</p>
+          <h2>A candidate scan against your brief</h2>
+          <p>
+            Scored the way Labs scores a website. Warn earns half credit, and
+            I've flagged the weak spot instead of hiding it.
+          </p>
+        </div>
+
+        <div class="grid gap-4 lg:grid-cols-[320px_1fr]">
+          <div class="card score-card">
+            <div class="ring-wrap">
+              <svg viewBox="0 0 120 120" class="score-ring" aria-hidden="true">
+                <circle cx="60" cy="60" r="52" class="ring-track"></circle>
+                <circle cx="60" cy="60" r="52" class="ring-fill" id="ring-fill"
+                ></circle>
+              </svg>
+              <div class="ring-label">
+                <span id="score-num" class="text-5xl font-bold text-white">–</span>
+                <span class="text-xs uppercase tracking-widest text-white/50"
+                  >Fit score</span
+                >
+              </div>
+            </div>
+            <ul id="cat-scores" class="mt-6 space-y-3"></ul>
+            <p class="mt-6 text-xs text-white/40" id="scan-status">
+              Waiting to scan
+            </p>
+          </div>
+
+          <div class="card p-0 overflow-hidden">
+            <ul id="checks" class="divide-y divide-white/5"></ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- 02 Know what to do -->
+      <section id="todo" class="shell block-section" data-section>
+        <div class="section-head">
+          <p class="step-label"><span>02</span> Know what I'd do</p>
+          <h2>Priority fixes, from the outside</h2>
+          <p>
+            Ranked the way Labs ranks fixes: by expected impact. I'm looking in
+            from outside, so treat these as hypotheses to test in week one, not
+            a plan handed down.
+          </p>
+        </div>
+        <ol id="fixes" class="space-y-3"></ol>
+      </section>
+
+      <!-- 03 Get it done -->
+      <section id="done" class="shell block-section" data-section>
+        <div class="section-head">
+          <p class="step-label"><span>03</span> See it done</p>
+          <h2>Proof: the scoring model behind Labs</h2>
+          <p>
+            A simplified, working version of how Labs turns a scan into a score
+            and a ranked fix list. Apply fixes and watch the ranking update.
+            This is demo data, not a real site.
+          </p>
+        </div>
+
+        <div class="grid gap-4 lg:grid-cols-[1fr_380px]">
+          <div class="card">
+            <div class="flex items-baseline justify-between gap-4 mb-4">
+              <h3 class="text-white font-bold">example-store.com</h3>
+              <button class="link text-sm" id="demo-reset" type="button">Reset</button>
+            </div>
+            <ul id="demo-checks" class="space-y-2"></ul>
+            <label class="toggle mt-5">
+              <input type="checkbox" id="demo-emerging" />
+              <span>Include emerging checks (bonus only, never lowers the score)</span>
+            </label>
+          </div>
+
+          <div class="card">
+            <div class="flex items-end justify-between">
+              <div>
+                <p class="text-xs uppercase tracking-widest text-white/50">
+                  Agent readiness
+                </p>
+                <p class="text-6xl font-bold text-white tabular-nums" id="demo-score">
+                  0
+                </p>
+              </div>
+              <p class="text-sm text-emerald-400 tabular-nums" id="demo-delta"></p>
+            </div>
+            <div class="bar mt-3"><span id="demo-bar"></span></div>
+
+            <h4 class="mt-8 mb-3 text-sm font-bold text-white">Fix these first</h4>
+            <ol id="demo-fixes" class="space-y-2"></ol>
+          </div>
+        </div>
+
+        <div class="card mt-4 grid gap-6 md:grid-cols-3">
+          <div>
+            <h4 class="decision">Never punish the frontier</h4>
+            <p>
+              New agent protocols only add points. Penalising a site for
+              skipping a draft spec would make the score feel arbitrary.
+            </p>
+          </div>
+          <div>
+            <h4 class="decision">Be honest about uncertainty</h4>
+            <p>
+              Anything that can't be checked is "Unmeasured" and left out of the
+              score, not counted as a fail.
+            </p>
+          </div>
+          <div>
+            <h4 class="decision">Weight what blocks agents</h4>
+            <p>
+              Content accessibility and bot access count for more. If an agent
+              can't get in or can't read the page, nothing else matters.
+            </p>
+          </div>
+        </div>
+        <p class="mt-4 text-white/60">
+          I did all of Labs myself: the research, the scoring, the extension
+          design and build, and the site.
+          <a href="/case-studies/labs/" class="link">Read the case study</a> or
+          <a href="https://labs.sitebulb.com" class="link">try Labs</a>.
+        </p>
+      </section>
+
+      <!-- Hand off -->
+      <section id="handoff" class="shell block-section">
+        <div class="card handoff">
+          <div>
+            <p class="step-label"><span>→</span> Hand it off</p>
+            <h2 class="text-3xl md:text-4xl font-bold text-white tracking-tight">
+              Design and engineering are converging. I already work there.
+            </h2>
+            <p class="mt-4 text-white/60 max-w-2xl">
+              In an AI-first product, the prototype is the spec and often the
+              first version of the code. I design in the browser, build in
+              React and TypeScript, and use Claude and Cursor every day. I'd
+              love to talk about bringing that to Searchable.
+            </p>
+            <div class="mt-6 flex flex-wrap gap-3">
+              <a href="mailto:kevin@letchford.co?subject=Searchable%20%E2%80%94%20Principal%20Product%20Designer" class="btn"
+                >kevin@letchford.co</a
+              >
+              <a href="/" class="btn btn-ghost">letchford.co</a>
+            </div>
+          </div>
+          <div class="export">
+            <p class="text-xs uppercase tracking-widest text-white/50 mb-3">
+              Export this application
+            </p>
+            <div class="flex gap-2">
+              <button class="btn btn-ghost btn-sm" data-export="md" type="button">Markdown</button>
+              <button class="btn btn-ghost btn-sm" data-export="json" type="button">JSON</button>
+            </div>
+            <p class="mt-3 text-xs text-white/40">
+              Same formats as Labs, ready for a ticket or an agent.
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="shell py-10 text-xs text-white/40">
+      Designed and built by Kevin Letchford, with Claude as a pair.
+    </footer>
+  </body>
+</html>
+
+<script>
+  type Status = "pass" | "warn" | "fail" | "unmeasured";
+  const credit: Record<Status, number | null> = {
+    pass: 1,
+    warn: 0.5,
+    fail: 0,
+    unmeasured: null,
+  };
+  const reduceMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)",
+  ).matches;
+  const esc = (s: string) =>
+    s.replace(/[&<>"]/g, (c) => `&${{ "&": "amp", "<": "lt", ">": "gt", '"': "quot" }[c]};`);
+
+  /* ---------- 01 Candidate scan ---------- */
+
+  const candidateChecks: {
+    cat: string;
+    title: string;
+    status: Status;
+    evidence: string;
+  }[] = [
+    {
+      cat: "Domain",
+      title: "Has shipped an AEO / GEO product",
+      status: "pass",
+      evidence:
+        "Sitebulb Labs: 50 checks across six categories for how well AI agents can discover, read and use a site.",
+    },
+    {
+      cat: "Domain",
+      title: "Works inside an SEO company",
+      status: "pass",
+      evidence:
+        "Design Engineer at Sitebulb since 2023, and earlier work on in-house website optimisation tools at Evolution Internet.",
+    },
+    {
+      cat: "Product",
+      title: "Took a product from zero to one",
+      status: "pass",
+      evidence:
+        "Labs went from an open question to a shipped extension and site. I did the research, the scoring model, the design, the build and the docs.",
+    },
+    {
+      cat: "Product",
+      title: "Designs a 'see → know → do' loop",
+      status: "pass",
+      evidence:
+        "Labs follows the same loop as Searchable: scores show where you stand, priority fixes say what to do, exports hand it off.",
+    },
+    {
+      cat: "Craft",
+      title: "Motion and interaction",
+      status: "pass",
+      evidence:
+        "GSAP, Framer Motion and Three.js. My own site lands you on Mars.",
+    },
+    {
+      cat: "Craft",
+      title: "Design systems",
+      status: "pass",
+      evidence:
+        "Built and maintain Sitebulb's shared component library, the patterns and conventions that keep pages consistent and quick to build.",
+    },
+    {
+      cat: "Craft",
+      title: "Accessible by default",
+      status: "pass",
+      evidence: "Build to WCAG 2.1 AA, with Playwright tests as part of delivery.",
+    },
+    {
+      cat: "AI-native",
+      title: "Prototypes with AI every day",
+      status: "pass",
+      evidence:
+        "Cursor, Claude and Copilot are part of my daily workflow. This page was designed and built that way.",
+    },
+    {
+      cat: "AI-native",
+      title: "Prototypes are real code",
+      status: "pass",
+      evidence:
+        "React, Next.js and TypeScript, so a prototype can become the first version, not a throwaway.",
+    },
+    {
+      cat: "Experience",
+      title: "13+ years across design and frontend",
+      status: "pass",
+      evidence:
+        "Frontend designer, frontend developer, full-stack developer, then design engineer, from 2011 to now.",
+    },
+    {
+      cat: "Experience",
+      title: "Mentors others",
+      status: "pass",
+      evidence:
+        "Codebar coach for underrepresented junior developers (2017–2019).",
+    },
+    {
+      cat: "Experience",
+      title: "Has held a 'Principal' title",
+      status: "warn",
+      evidence:
+        "Not yet. My title is Design Engineer. But I owned Labs end to end, and I'm the technical lead the marketing team leans on.",
+    },
+  ];
+
+  const statusLabel: Record<Status, string> = {
+    pass: "Pass",
+    warn: "Warn",
+    fail: "Fail",
+    unmeasured: "Unmeasured",
+  };
+
+  const checksEl = document.getElementById("checks")!;
+  const catEl = document.getElementById("cat-scores")!;
+  const scoreNum = document.getElementById("score-num")!;
+  const ringFill = document.getElementById("ring-fill") as unknown as SVGCircleElement;
+  const scanStatus = document.getElementById("scan-status")!;
+  const CIRC = 2 * Math.PI * 52;
+  ringFill.style.strokeDasharray = `${CIRC}`;
+  ringFill.style.strokeDashoffset = `${CIRC}`;
+
+  checksEl.innerHTML = candidateChecks
+    .map(
+      (c, i) => `
+      <li class="check" data-i="${i}">
+        <button type="button" class="check-row" aria-expanded="false">
+          <span class="pill pending" data-pill>···</span>
+          <span class="flex-1 text-left">
+            <span class="block text-white">${esc(c.title)}</span>
+            <span class="block text-xs text-white/40">${esc(c.cat)}</span>
+          </span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <p class="check-evidence" hidden>${esc(c.evidence)}</p>
+      </li>`,
+    )
+    .join("");
+
+  checksEl.addEventListener("click", (e) => {
+    const row = (e.target as HTMLElement).closest(".check-row");
+    if (!row) return;
+    const ev = row.nextElementSibling as HTMLElement;
+    const open = row.getAttribute("aria-expanded") === "true";
+    row.setAttribute("aria-expanded", String(!open));
+    ev.hidden = open;
+  });
+
+  function scoreOf(list: { status: Status }[]) {
+    const scored = list.filter((c) => credit[c.status] !== null);
+    if (!scored.length) return 0;
+    const sum = scored.reduce((a, c) => a + (credit[c.status] as number), 0);
+    return Math.round((sum / scored.length) * 100);
+  }
+
+  function countUp(el: HTMLElement, to: number, ms = 900) {
+    if (reduceMotion) return void (el.textContent = String(to));
+    const from = Number(el.textContent) || 0;
+    const t0 = performance.now();
+    const tick = (t: number) => {
+      const p = Math.min(1, (t - t0) / ms);
+      const eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = String(Math.round(from + (to - from) * eased));
+      if (p < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }
+
+  let scanned = false;
+  async function runScan() {
+    if (scanned) return;
+    scanned = true;
+    const btn = document.getElementById("scan-btn") as HTMLButtonElement;
+    btn.disabled = true;
+    btn.textContent = "Scanning…";
+    scanStatus.textContent = "Scanning CV, Labs and letchford.co…";
+    const rows = [...checksEl.querySelectorAll<HTMLElement>(".check")];
+    const done: { status: Status }[] = [];
+    for (const [i, row] of rows.entries()) {
+      if (!reduceMotion) await new Promise((r) => setTimeout(r, 140));
+      const c = candidateChecks[i];
+      const pill = row.querySelector<HTMLElement>("[data-pill]")!;
+      pill.className = `pill ${c.status}`;
+      pill.textContent = statusLabel[c.status];
+      row.classList.add("revealed");
+      done.push(c);
+      const s = scoreOf(done);
+      scoreNum.textContent = String(s);
+      ringFill.style.strokeDashoffset = `${CIRC * (1 - s / 100)}`;
+    }
+    const cats = [...new Set(candidateChecks.map((c) => c.cat))];
+    catEl.innerHTML = cats
+      .map((cat) => {
+        const s = scoreOf(candidateChecks.filter((c) => c.cat === cat));
+        return `<li>
+          <div class="flex justify-between text-sm"><span class="text-white/70">${cat}</span><span class="text-white tabular-nums">${s}</span></div>
+          <div class="bar bar-thin"><span style="width:${s}%"></span></div>
+        </li>`;
+      })
+      .join("");
+    const passes = candidateChecks.filter((c) => c.status === "pass").length;
+    const warns = candidateChecks.filter((c) => c.status === "warn").length;
+    scanStatus.textContent = `${candidateChecks.length} checks · ${passes} pass · ${warns} warn`;
+    btn.textContent = "Scanned";
+  }
+
+  document.getElementById("scan-form")!.addEventListener("submit", (e) => {
+    e.preventDefault();
+    runScan();
+    document.getElementById("stand")!.scrollIntoView({
+      behavior: reduceMotion ? "auto" : "smooth",
+    });
+  });
+  new IntersectionObserver(
+    (entries, obs) => {
+      if (entries.some((en) => en.isIntersecting)) {
+        runScan();
+        obs.disconnect();
+      }
+    },
+    { threshold: 0.25 },
+  ).observe(document.getElementById("stand")!);
+
+  /* ---------- 02 Priority fixes ---------- */
+
+  const fixes = [
+    {
+      title: "Make 'get it done' the centre of every screen",
+      impact: "High",
+      when: "Month 1",
+      body: "Insight is easy to copy, action isn't. Every finding should end in a clear agent action, with a preview of exactly what will change and an easy way to approve it, edit it or undo it.",
+    },
+    {
+      title: "Design for noisy AI-visibility data",
+      impact: "High",
+      when: "Month 1",
+      body: "AI answers change from one run to the next. Show confidence and trends rather than single numbers that jump around, and say plainly when something can't be measured. That's what made Labs scores trustworthy.",
+    },
+    {
+      title: "One design system, built in code",
+      impact: "Medium",
+      when: "Months 1–3",
+      body: "A small component library shared by prototypes and production, so AI-built prototypes come out on-brand and the team can ship them, not rebuild them.",
+    },
+    {
+      title: "Weekly prototypes with the Head of Product and CEO",
+      impact: "Medium",
+      when: "Ongoing",
+      body: "Working prototypes in the real stack instead of static mocks, so decisions get made on something people can click, fast.",
+    },
+    {
+      title: "Listen before redesigning",
+      impact: "Foundation",
+      when: "Weeks 1–2",
+      body: "Sit in on customer calls, read support threads and use the product daily. Most of the list above should change after that.",
+    },
+  ];
+
+  document.getElementById("fixes")!.innerHTML = fixes
+    .map(
+      (f, i) => `
+      <li class="card fix">
+        <span class="fix-rank">${i + 1}</span>
+        <div class="flex-1">
+          <div class="flex flex-wrap items-center gap-2">
+            <h3 class="text-white font-bold text-lg">${esc(f.title)}</h3>
+            <span class="tag tag-${f.impact.toLowerCase()}">${f.impact}</span>
+            <span class="tag">${f.when}</span>
+          </div>
+          <p class="mt-2 text-white/60">${esc(f.body)}</p>
+        </div>
+      </li>`,
+    )
+    .join("");
+
+  /* ---------- 03 Labs scoring demo ---------- */
+
+  const weights: Record<string, number> = {
+    "Content accessibility": 1.5,
+    "Bot access control": 1.5,
+    Discoverability: 1,
+    "Agent experience": 1,
+  };
+  type DemoCheck = {
+    id: string;
+    cat: string;
+    label: string;
+    start: Status;
+    status: Status;
+    bonus?: boolean;
+  };
+  const demo: DemoCheck[] = (
+    [
+      { id: "robots", cat: "Bot access control", label: "AI crawlers allowed in robots.txt", start: "fail" },
+      { id: "waf", cat: "Bot access control", label: "AI bots aren't blocked by the firewall", start: "unmeasured" },
+      { id: "ssr", cat: "Content accessibility", label: "Main content is in the HTML, not only after JavaScript", start: "warn" },
+      { id: "md", cat: "Content accessibility", label: "Markdown version of the page", start: "fail" },
+      { id: "schema", cat: "Content accessibility", label: "Organization structured data", start: "pass" },
+      { id: "sitemap", cat: "Discoverability", label: "XML sitemap", start: "pass" },
+      { id: "llms", cat: "Discoverability", label: "llms.txt", start: "fail" },
+      { id: "labels", cat: "Agent experience", label: "Buttons and fields have accessible names", start: "warn" },
+      { id: "mcp", cat: "Protocol discovery", label: "MCP Server Card", start: "fail", bonus: true },
+      { id: "a2a", cat: "Protocol discovery", label: "A2A Agent Card", start: "fail", bonus: true },
+    ] as Omit<DemoCheck, "status">[]
+  ).map((c) => ({ ...c, status: c.start }));
+
+  const emergingEl = document.getElementById("demo-emerging") as HTMLInputElement;
+
+  function demoScore(list: DemoCheck[]) {
+    let earned = 0;
+    let possible = 0;
+    for (const c of list) {
+      if (c.bonus) continue;
+      const cr = credit[c.status];
+      if (cr === null) continue;
+      const w = weights[c.cat] ?? 1;
+      earned += cr * w;
+      possible += w;
+    }
+    const base = possible ? (earned / possible) * 100 : 0;
+    const bonus = emergingEl.checked
+      ? Math.min(10, list.filter((c) => c.bonus && c.status === "pass").length * 5)
+      : 0;
+    return Math.min(100, Math.round(base + bonus));
+  }
+
+  function gainFor(c: DemoCheck) {
+    const before = demoScore(demo);
+    const after = demoScore(demo.map((d) => (d.id === c.id ? { ...d, status: "pass" as Status } : d)));
+    return after - before;
+  }
+
+  const demoChecksEl = document.getElementById("demo-checks")!;
+  const demoFixesEl = document.getElementById("demo-fixes")!;
+  const demoScoreEl = document.getElementById("demo-score")!;
+  const demoBar = document.getElementById("demo-bar")!;
+  const demoDelta = document.getElementById("demo-delta")!;
+  const startScore = demoScore(demo);
+
+  function renderDemo() {
+    const visible = demo.filter((c) => !c.bonus || emergingEl.checked);
+    demoChecksEl.innerHTML = visible
+      .map(
+        (c) => `
+        <li class="demo-row">
+          <span class="pill ${c.status}">${statusLabel[c.status]}</span>
+          <span class="flex-1">
+            <span class="block text-white text-sm">${esc(c.label)}</span>
+            <span class="block text-xs text-white/40">${c.cat}${c.bonus ? " · bonus" : ""}</span>
+          </span>
+          ${
+            c.status === "pass" || c.status === "unmeasured"
+              ? ""
+              : `<button type="button" class="btn btn-ghost btn-sm" data-fix="${c.id}">Fix</button>`
+          }
+        </li>`,
+      )
+      .join("");
+
+    const ranked = visible
+      .filter((c) => c.status !== "pass" && c.status !== "unmeasured")
+      .map((c) => ({ c, gain: gainFor(c) }))
+      .filter((x) => x.gain > 0)
+      .sort((a, b) => b.gain - a.gain)
+      .slice(0, 4);
+    demoFixesEl.innerHTML = ranked.length
+      ? ranked
+          .map(
+            ({ c, gain }) => `
+          <li class="flex items-center justify-between gap-3 text-sm">
+            <button type="button" class="link text-left" data-fix="${c.id}">${esc(c.label)}</button>
+            <span class="text-emerald-400 tabular-nums">+${gain}</span>
+          </li>`,
+          )
+          .join("")
+      : `<li class="text-sm text-white/50">Nothing left that moves the score.</li>`;
+
+    const s = demoScore(demo);
+    countUp(demoScoreEl, s, 500);
+    demoBar.style.width = `${s}%`;
+    const d = s - startScore;
+    demoDelta.textContent = d > 0 ? `+${d} from start` : "";
+  }
+
+  document.getElementById("done")!.addEventListener("click", (e) => {
+    const id = (e.target as HTMLElement).closest<HTMLElement>("[data-fix]")?.dataset.fix;
+    if (!id) return;
+    const c = demo.find((d) => d.id === id);
+    if (c) c.status = "pass";
+    renderDemo();
+  });
+  document.getElementById("demo-reset")!.addEventListener("click", () => {
+    demo.forEach((c) => (c.status = c.start));
+    renderDemo();
+  });
+  emergingEl.addEventListener("change", renderDemo);
+  renderDemo();
+
+  /* ---------- Step tracker ---------- */
+
+  const stepLinks = document.querySelectorAll<HTMLAnchorElement>(".steps a");
+  const tracker = new IntersectionObserver(
+    (entries) => {
+      for (const en of entries) {
+        if (!en.isIntersecting) continue;
+        stepLinks.forEach((a) =>
+          a.classList.toggle("active", a.dataset.step === en.target.id),
+        );
+      }
+    },
+    { rootMargin: "-45% 0px -45% 0px" },
+  );
+  document.querySelectorAll("[data-section]").forEach((s) => tracker.observe(s));
+
+  /* ---------- Export ---------- */
+
+  function download(name: string, body: string, type: string) {
+    const url = URL.createObjectURL(new Blob([body], { type }));
+    const a = Object.assign(document.createElement("a"), { href: url, download: name });
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  const exportData = {
+    candidate: "Kevin Letchford",
+    role: "Principal Product Designer, Searchable",
+    contact: "kevin@letchford.co",
+    site: "https://letchford.co",
+    fitScore: scoreOf(candidateChecks),
+    checks: candidateChecks,
+    priorityFixes: fixes,
+    proof: {
+      product: "Sitebulb Labs",
+      url: "https://labs.sitebulb.com",
+      caseStudy: "https://letchford.co/case-studies/labs/",
+      role: "Research, scoring model, extension design and build, and site. All solo.",
+    },
+  };
+
+  function toMarkdown() {
+    const d = exportData;
+    return [
+      `# ${d.candidate} — ${d.role}`,
+      ``,
+      `Contact: ${d.contact} · ${d.site}`,
+      ``,
+      `## Where I stand (fit score ${d.fitScore})`,
+      ``,
+      `| Status | Check | Evidence |`,
+      `| --- | --- | --- |`,
+      ...d.checks.map((c) => `| ${statusLabel[c.status]} | ${c.title} | ${c.evidence} |`),
+      ``,
+      `## What I'd do first`,
+      ``,
+      ...d.priorityFixes.map((f, i) => `${i + 1}. **${f.title}** (${f.impact}, ${f.when}). ${f.body}`),
+      ``,
+      `## Proof`,
+      ``,
+      `${d.proof.product} (${d.proof.url}): ${d.proof.role}`,
+      `Case study: ${d.proof.caseStudy}`,
+      ``,
+    ].join("\n");
+  }
+
+  document.querySelectorAll<HTMLButtonElement>("[data-export]").forEach((b) =>
+    b.addEventListener("click", () =>
+      b.dataset.export === "md"
+        ? download("kevin-letchford-searchable.md", toMarkdown(), "text/markdown")
+        : download(
+            "kevin-letchford-searchable.json",
+            JSON.stringify(exportData, null, 2),
+            "application/json",
+          ),
+    ),
+  );
+</script>
+
+<style is:global>
+  :root {
+    --bg: #0a0a0c;
+    --surface: #131317;
+    --line: rgb(255 255 255 / 0.08);
+    --accent: #ff6159;
+    --pass: #34d399;
+    --warn: #fbbf24;
+    --fail: #fb7185;
+    --muted: #94a3b8;
+  }
+  /* global.css makes html and body both scroll containers with
+     overscroll-behavior: none, which swallows wheel scrolling here */
+  html:has(body.app),
+  html:has(body.app) body {
+    overflow-x: clip;
+    overflow-y: visible;
+    overscroll-behavior: auto;
+  }
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 72px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+  body.app {
+    margin: 0;
+    background:
+      radial-gradient(60rem 30rem at 85% -10%, rgb(255 97 89 / 0.14), transparent 60%),
+      linear-gradient(var(--bg), var(--bg));
+    color: rgb(255 255 255 / 0.8);
+    -webkit-font-smoothing: antialiased;
+  }
+  .app a:not(.btn) {
+    color: white;
+    text-decoration: underline;
+    text-decoration-color: rgb(255 255 255 / 0.3);
+    text-underline-offset: 4px;
+  }
+  .app a:not(.btn):hover {
+    text-decoration-color: var(--accent);
+  }
+  .shell {
+    width: 100%;
+    max-width: 72rem;
+    margin-inline: auto;
+    padding-inline: 16px;
+  }
+  @media (min-width: 768px) {
+    .shell {
+      padding-inline: 32px;
+    }
+  }
+
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: rgb(10 10 12 / 0.75);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--line);
+  }
+  .app .topbar a:not(.btn) {
+    text-decoration: none;
+  }
+  .steps {
+    gap: 4px;
+  }
+  .app .steps a {
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 13px;
+    color: rgb(255 255 255 / 0.5);
+    transition: color 0.2s, background 0.2s;
+  }
+  .steps a span {
+    color: rgb(255 255 255 / 0.3);
+    margin-right: 4px;
+  }
+  .app .steps a.active {
+    color: white;
+    background: rgb(255 255 255 / 0.07);
+  }
+  .steps a.active span {
+    color: var(--accent);
+  }
+
+  .hero {
+    padding-top: clamp(4rem, 12vh, 9rem);
+    padding-bottom: 4rem;
+  }
+  .eyebrow,
+  .step-label {
+    font-size: 12px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 700;
+  }
+  .step-label span {
+    display: inline-block;
+    min-width: 1.75rem;
+  }
+  .hero-title {
+    margin-top: 1rem;
+    font-size: clamp(2.25rem, 6vw, 4.5rem);
+    line-height: 1.02;
+    letter-spacing: -0.03em;
+    font-weight: 700;
+    color: white;
+    text-wrap: balance;
+    max-width: 18ch;
+  }
+  .lede {
+    margin-top: 1.5rem;
+    max-width: 40rem;
+    font-size: 1.15rem;
+    line-height: 1.6;
+    color: rgb(255 255 255 / 0.65);
+  }
+  .prompt {
+    margin-top: 2.5rem;
+    max-width: 40rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 8px 8px 16px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    box-shadow: 0 20px 60px -20px rgb(255 97 89 / 0.25);
+  }
+  .prompt:focus-within {
+    border-color: rgb(255 97 89 / 0.5);
+  }
+  .prompt-icon svg {
+    width: 18px;
+    height: 18px;
+    color: rgb(255 255 255 / 0.4);
+  }
+  .prompt input {
+    flex: 1;
+    min-width: 0;
+    background: transparent;
+    border: 0;
+    outline: none;
+    color: white;
+    font: inherit;
+    text-overflow: ellipsis;
+  }
+  .hint {
+    margin-top: 0.75rem;
+    font-size: 13px;
+    color: rgb(255 255 255 / 0.35);
+  }
+
+  .block-section {
+    padding-block: clamp(3rem, 10vh, 6rem);
+  }
+  .section-head {
+    max-width: 44rem;
+    margin-bottom: 2rem;
+  }
+  .section-head h2 {
+    margin-top: 0.5rem;
+    font-size: clamp(1.75rem, 4vw, 2.75rem);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    font-weight: 700;
+    color: white;
+  }
+  .section-head p:not(.step-label) {
+    margin-top: 0.75rem;
+    color: rgb(255 255 255 / 0.6);
+    line-height: 1.6;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 24px;
+  }
+  .card p {
+    line-height: 1.6;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 18px;
+    border-radius: 12px;
+    background: var(--accent);
+    color: #1a0605;
+    font-weight: 700;
+    font-size: 14px;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: transform 0.15s, filter 0.15s, opacity 0.15s;
+  }
+  .btn:hover {
+    filter: brightness(1.08);
+  }
+  .btn:active {
+    transform: scale(0.97);
+  }
+  .btn:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+  .btn-sm {
+    padding: 6px 12px;
+    font-size: 13px;
+    border-radius: 10px;
+  }
+  .btn-ghost {
+    background: rgb(255 255 255 / 0.06);
+    color: white;
+    border: 1px solid var(--line);
+  }
+  .btn-ghost:hover {
+    background: rgb(255 255 255 / 0.1);
+  }
+  .link {
+    color: white;
+    cursor: pointer;
+    text-decoration: underline;
+    text-decoration-color: rgb(255 255 255 / 0.3);
+    text-underline-offset: 4px;
+  }
+  .link:hover {
+    text-decoration-color: var(--accent);
+  }
+  :where(.app) :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .score-card {
+    display: flex;
+    flex-direction: column;
+  }
+  .ring-wrap {
+    position: relative;
+    width: 180px;
+    height: 180px;
+    margin-inline: auto;
+  }
+  .score-ring {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+  }
+  .ring-track,
+  .ring-fill {
+    fill: none;
+    stroke-width: 10;
+  }
+  .ring-track {
+    stroke: rgb(255 255 255 / 0.06);
+  }
+  .ring-fill {
+    stroke: var(--accent);
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .ring-label {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+  }
+
+  .bar {
+    height: 8px;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.06);
+    overflow: hidden;
+  }
+  .bar-thin {
+    height: 4px;
+    margin-top: 6px;
+  }
+  .bar span {
+    display: block;
+    height: 100%;
+    width: 0;
+    border-radius: inherit;
+    background: var(--accent);
+    transition: width 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .check-row {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 20px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .check-row:hover {
+    background: rgb(255 255 255 / 0.03);
+  }
+  .check {
+    opacity: 0.35;
+    transition: opacity 0.3s;
+  }
+  .check.revealed {
+    opacity: 1;
+  }
+  .chev {
+    width: 16px;
+    height: 16px;
+    color: rgb(255 255 255 / 0.3);
+    transition: transform 0.2s;
+  }
+  .check-row[aria-expanded="true"] .chev {
+    transform: rotate(180deg);
+  }
+  .check-evidence {
+    padding: 0 20px 16px 98px;
+    color: rgb(255 255 255 / 0.6);
+    line-height: 1.6;
+    font-size: 15px;
+  }
+  @media (max-width: 640px) {
+    .check-evidence {
+      padding-left: 20px;
+    }
+  }
+
+  .pill {
+    flex: none;
+    width: 64px;
+    text-align: center;
+    padding: 3px 0;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    border: 1px solid currentColor;
+  }
+  .pill.pending {
+    color: rgb(255 255 255 / 0.3);
+  }
+  .pill.pass {
+    color: var(--pass);
+    background: rgb(52 211 153 / 0.08);
+  }
+  .pill.warn {
+    color: var(--warn);
+    background: rgb(251 191 36 / 0.08);
+  }
+  .pill.fail {
+    color: var(--fail);
+    background: rgb(251 113 133 / 0.08);
+  }
+  .pill.unmeasured {
+    color: var(--muted);
+    width: auto;
+    padding-inline: 8px;
+    letter-spacing: 0.02em;
+  }
+
+  .fix {
+    display: flex;
+    gap: 18px;
+    align-items: flex-start;
+  }
+  .fix-rank {
+    flex: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+    font-weight: 700;
+    color: var(--accent);
+    background: rgb(255 97 89 / 0.1);
+  }
+  .tag {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    color: rgb(255 255 255 / 0.55);
+  }
+  .tag-high {
+    color: var(--accent);
+    border-color: rgb(255 97 89 / 0.4);
+  }
+  .tag-medium {
+    color: var(--warn);
+    border-color: rgb(251 191 36 / 0.35);
+  }
+
+  .demo-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: rgb(255 255 255 / 0.02);
+  }
+  .toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: rgb(255 255 255 / 0.65);
+    cursor: pointer;
+  }
+  .toggle input {
+    accent-color: var(--accent);
+    width: 16px;
+    height: 16px;
+  }
+  .decision {
+    color: white;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .decision + p {
+    color: rgb(255 255 255 / 0.6);
+    font-size: 15px;
+  }
+
+  .handoff {
+    display: grid;
+    gap: 2rem;
+    padding: clamp(24px, 4vw, 48px);
+    background:
+      radial-gradient(40rem 20rem at 0% 0%, rgb(255 97 89 / 0.12), transparent 70%),
+      var(--surface);
+  }
+  @media (min-width: 1024px) {
+    .handoff {
+      grid-template-columns: 1fr auto;
+      align-items: end;
+    }
+  }
+  .handoff .step-label {
+    margin-bottom: 0.75rem;
+  }
+</style>

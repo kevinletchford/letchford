@@ -106,12 +106,12 @@ import { PROJECTS } from "@src/data/projects";
         data-portal-main
         href={PROJECTS[0].href}
         aria-label={`Enter ${PROJECTS[0].title}`}
-        class="group absolute left-0 top-0 pointer-events-auto rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-cyan-200/80 will-change-transform"
+        class="group absolute left-0 top-0 pointer-events-auto rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-red-300/80 will-change-transform"
       >
         <span class="absolute left-1/2 top-full mt-4 -translate-x-1/2 w-max max-w-[80vw] text-center">
           <span
             data-portal-title
-            class="block font-space text-sm md:text-lg font-bold uppercase tracking-widest text-cyan-50 [text-shadow:0_0_14px_rgb(34_211_238/0.9)]"
+            class="block font-space text-base md:text-xl font-bold tracking-wide text-red-50 [text-shadow:0_0_14px_rgb(248_113_113/0.9)]"
             >{PROJECTS[0].title}</span
           >
           <span
@@ -133,7 +133,7 @@ import { PROJECTS } from "@src/data/projects";
         <p
           class="mt-1 mb-3 lg:mb-4 text-sm lg:text-base text-white/90 text-center lg:text-left [text-shadow:0_1px_8px_rgb(0_0_0/0.6)]"
         >
-          Choose a project, then step through the portal.
+          Scroll or pick a project, then step through the portal.
         </p>
         <div
           role="group"
@@ -148,7 +148,7 @@ import { PROJECTS } from "@src/data/projects";
               data-portal-pick={p.key}
               aria-pressed={i === 0 ? "true" : "false"}
               title={p.title}
-              class="flex items-center gap-3 p-1 lg:pr-4 lg:w-72 text-left rounded-xl cursor-pointer border border-cyan-200/20 bg-cyan-950/40 md:backdrop-blur opacity-60 transition hover:opacity-100 hover:border-cyan-200/50 outline-none focus-visible:ring-2 focus-visible:ring-white/80 aria-pressed:opacity-100 aria-pressed:border-cyan-200 aria-pressed:bg-cyan-500/15 aria-pressed:shadow-[0_0_18px_rgb(34_211_238/0.6)]"
+              class="flex items-center gap-3 p-1 lg:pr-4 lg:w-72 text-left rounded-xl cursor-pointer border border-red-300/20 bg-red-950/40 md:backdrop-blur opacity-60 transition hover:opacity-100 hover:border-red-300/50 outline-none focus-visible:ring-2 focus-visible:ring-white/80 aria-pressed:opacity-100 aria-pressed:border-red-300 aria-pressed:bg-red-500/15 aria-pressed:shadow-[0_0_18px_rgb(248_113_113/0.6)]"
             >
               <span class="relative block size-10 md:size-12 shrink-0 rounded-lg overflow-hidden bg-black/40">
                 <img
@@ -159,7 +159,7 @@ import { PROJECTS } from "@src/data/projects";
                 />
               </span>
               <span class="sr-only lg:not-sr-only lg:block lg:min-w-0">
-                <span class="block font-space text-xs font-bold uppercase tracking-widest text-cyan-50 truncate">
+                <span class="block font-space text-sm font-bold text-red-50 truncate">
                   {p.title}
                 </span>
                 <span class="hidden lg:block mt-0.5 text-xs text-white/70 truncate">
@@ -420,7 +420,13 @@ import { PROJECTS } from "@src/data/projects";
         </section>
 
         <!-- The visible title and controls live in #portal-layer, over the Mars surface -->
-        <section class="min-h-[100svh] scroll-m-20" id="projects">
+        <!-- Tall, so the surface lingers and scrolling steps through each project (a
+             long stay on the last one before climbing out) -->
+        <section
+          class="scroll-m-20"
+          id="projects"
+          style={`min-height: calc(100svh + ${PROJECTS.length * 70 + 50}svh)`}
+        >
           <h2 class="sr-only">Projects</h2>
         </section>
 
@@ -584,6 +590,14 @@ import { PROJECTS } from "@src/data/projects";
       uiCleanup?.();
       uiCleanup = null;
 
+      // Back from a project entered through the hologram: land on the surface again,
+      // scrolled to that project
+      let returnKey = null;
+      try {
+        returnKey = sessionStorage.getItem("portal:return");
+        sessionStorage.removeItem("portal:return");
+      } catch {}
+
       let disposed = false;
       let tickerFn = null;
       let resetScrollerDefault = false;
@@ -733,8 +747,9 @@ import { PROJECTS } from "@src/data/projects";
                 }
               });
             },
-            { threshold: 0.5 },
-          ); // 50% visibility triggers change
+            // Active while crossing the middle of the screen (#projects is taller than the viewport)
+            { rootMargin: "-50% 0px -50% 0px" },
+          );
 
           sectionDefs.forEach(({ sel }) => {
             const el = document.querySelector(sel);
@@ -872,8 +887,71 @@ import { PROJECTS } from "@src/data/projects";
             invalidateOnRefresh: true,
           });
 
+          // Projects: scrolling through the section steps the hologram through each one
+          // (space/portals.ts listens for "portal:scroll"); the last one holds a little longer.
+          const portalLayer = document.querySelector("#portal-layer");
+          const picks = gsap.utils.toArray("[data-portal-pick]");
+          const HOLD_LAST = 0.7; // extra steps on the last project before climbing out
+          let portalIndex = -1;
+          let pickScroll = null;
+          const setPortal = (i) => {
+            if (i === portalIndex) return;
+            portalIndex = i;
+            if (portalLayer) portalLayer.dataset.scrollIndex = String(i);
+            window.dispatchEvent(new CustomEvent("portal:scroll", { detail: i }));
+          };
+          const projectsST = ScrollTrigger.create({
+            trigger: "#projects",
+            start: "top top",
+            end: "bottom bottom",
+            onUpdate: (self) => {
+              if (pickScroll) return; // don't flick through the ones in between
+              const i = Math.floor(self.progress * (picks.length + HOLD_LAST));
+              setPortal(clamp(i, 0, picks.length - 1));
+            },
+          });
+          const projectScroll = (i) =>
+            projectsST.start +
+            ((i + 0.5) / (picks.length + HOLD_LAST)) *
+              (projectsST.end - projectsST.start);
+          // Hovering, focusing or picking one in the list scrolls to it, so scrolling
+          // carries on from there
+          const scrollToProject = (i) => {
+            pickScroll?.kill();
+            pickScroll = gsap.to(window.Smoother, {
+              duration: 0.8,
+              ease: "power2.out",
+              scrollTop: projectScroll(i),
+              onComplete: () => {
+                pickScroll = null;
+                setPortal(i);
+              },
+            });
+          };
+          let hoverTimer = 0;
+          signal.addEventListener("abort", () => clearTimeout(hoverTimer));
+          picks.forEach((b, i) => {
+            b.addEventListener("click", () => scrollToProject(i), { signal });
+            b.addEventListener("focus", () => scrollToProject(i), { signal });
+            // A short delay, so sweeping down the list doesn't chase every item
+            b.addEventListener(
+              "pointerenter",
+              (e) => {
+                if (e.pointerType !== "mouse") return;
+                clearTimeout(hoverTimer);
+                hoverTimer = setTimeout(() => scrollToProject(i), 120);
+              },
+              { signal },
+            );
+            b.addEventListener("pointerleave", () => clearTimeout(hoverTimer), {
+              signal,
+            });
+          });
+
           requestAnimationFrame(() => {
             ScrollTrigger.refresh();
+            const back = picks.findIndex((b) => b.dataset.portalPick === returnKey);
+            if (back !== -1) window.Smoother.scrollTop(projectScroll(back));
           });
 
           const moveTarget = scroller || window;

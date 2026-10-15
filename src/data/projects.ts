@@ -12,6 +12,22 @@ export type Project = {
 
 export const PROJECTS: Project[] = [
   {
+    key: "labs-sitebulb",
+    title: "Sitebulb Labs",
+    blurb: "Browser extension: can AI agents read your site?",
+    href: "/case-studies/labs/",
+    image: "/portals/labs-sitebulb.jpg",
+    screen: "/portals/wide/labs-sitebulb.jpg",
+  },
+  {
+    key: "open-crawl",
+    title: "OpenCrawl",
+    blurb: "The open web crawler built for AI agents",
+    href: "/case-studies/open-crawl/",
+    image: "/portals/open-crawl.jpg",
+    screen: "/portals/wide/open-crawl.jpg",
+  },
+  {
     key: "kiosk",
     title: "Interactive Kiosk",
     blurb: "Multi-platform kiosk for demos and conferences",
@@ -34,22 +50,6 @@ export const PROJECTS: Project[] = [
     href: "/case-studies/product-tour/",
     image: "/portals/product-tour.jpg",
     screen: "/portals/wide/product-tour.jpg",
-  },
-  {
-    key: "demos",
-    title: "GSAP Demos",
-    blurb: "2D motion experiments with GSAP",
-    href: "/demos/",
-    image: "/portals/demos.jpg",
-    screen: "/portals/wide/demos.jpg",
-  },
-  {
-    key: "snatcher",
-    title: "Snatcher",
-    blurb: "Save tracks from the radio to Spotify",
-    href: "https://snatcher.ultr.dev/",
-    image: "/portals/snatcher.jpg",
-    screen: "/portals/wide/snatcher.jpg",
   },
   {
     key: "sitebulb",

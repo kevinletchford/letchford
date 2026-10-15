@@ -1,0 +1,666 @@
+---
+import CaseStudiesScripts from "@components/CaseStudiesScripts.astro";
+import CaseStudyHero from "@components/CaseStudyHero.astro";
+import CaseStudyPager from "@components/CaseStudyPager.astro";
+import Layout from "@layouts/FullPage.astro";
+---
+
+<Layout title="OpenCrawl: An Open Crawler for AI Agents | Kevin Letchford">
+  <div
+    id="wrapper"
+    class="h-dvh overflow-y-auto absolute inset-0 bg-gradient-to-r from-cyan-700/70 to-red-900/10"
+  >
+    <div
+      class="section-nav bottom-2 fixed z-30 -translate-1/2 left-1/2 flex gap-4"
+    >
+      <button
+        class="previous-section size-7 rounded-full flex items-center justify-center border-white/20 border md:backdrop-blur-3xl text-white/70 cursor-pointer"
+        aria-label="Previous slide"
+      >
+        <svg
+          viewBox="0 0 640 640"
+          fill="currentColor"
+          data-slot="icon"
+          aria-hidden="true"
+          class="size-4 text-white/70"
+        >
+          <path
+            d="M308.7 212.7C314.9 206.5 325.1 206.5 331.3 212.7L491.3 372.7C497.5 378.9 497.5 389.1 491.3 395.3C485.1 401.5 474.9 401.5 468.7 395.3L320 246.6L171.3 395.3C165.1 401.5 154.9 401.5 148.7 395.3C142.5 389.1 142.5 378.9 148.7 372.7L308.7 212.7z"
+          ></path>
+        </svg>
+      </button>
+      <nav class="gap-4 items-center flex">
+        <a
+          href="#title"
+          data-nav-item="title"
+          class="dot dot_active min-w-3 min-h-3 rounded-full bg-white/30 block"
+          ><span class="hidden">Title</span></a
+        >
+        <a
+          href="#gallery"
+          data-nav-item="gallery"
+          class="dot min-w-3 min-h-3 rounded-full bg-white/30 block"
+          ><span class="hidden">Gallery</span></a
+        >
+        <a
+          href="#problem"
+          data-nav-item="problem"
+          class="dot min-w-3 min-h-3 rounded-full bg-white/30 block"
+          ><span class="hidden">Problem</span></a
+        >
+        <a
+          href="#approach"
+          data-nav-item="approach"
+          class="dot min-w-3 min-h-3 rounded-full bg-white/30 block"
+          ><span class="hidden">Approach</span></a
+        >
+        <a
+          href="#solution"
+          data-nav-item="solution"
+          class="dot min-w-3 min-h-3 rounded-full bg-white/30 block"
+          ><span class="hidden">Solution</span></a
+        >
+        <a
+          href="#decisions"
+          data-nav-item="decisions"
+          class="dot min-w-3 min-h-3 rounded-full bg-white/30 block"
+          ><span class="hidden">Design decisions</span></a
+        >
+        <a
+          href="#benchmarks"
+          data-nav-item="benchmarks"
+          class="dot min-w-3 min-h-3 rounded-full bg-white/30 block"
+          ><span class="hidden">Benchmarks</span></a
+        >
+        <a
+          href="#site"
+          data-nav-item="site"
+          class="dot min-w-3 min-h-3 rounded-full bg-white/30 block"
+          ><span class="hidden">The site</span></a
+        >
+        <a
+          href="#tech"
+          data-nav-item="tech"
+          class="dot min-w-3 min-h-3 rounded-full bg-white/30 block"
+          ><span class="hidden">Tech</span></a
+        >
+        <a
+          href="#impact"
+          data-nav-item="impact"
+          class="dot min-w-3 min-h-3 rounded-full bg-white/30 block"
+          ><span class="hidden">Outcome</span></a
+        >
+      </nav>
+      <button
+        class="next-section size-7 rounded-full flex items-center justify-center border-white/20 border md:backdrop-blur-3xl text-white/70 cursor-pointer"
+        aria-label="Next slide"
+      >
+        <svg
+          viewBox="0 0 640 640"
+          fill="currentColor"
+          data-slot="icon"
+          aria-hidden="true"
+          class="size-4 text-text/70"
+        >
+          <path
+            d="M308.7 427.3C314.9 433.5 325.1 433.5 331.3 427.3L491.3 267.3C497.5 261.1 497.5 250.9 491.3 244.7C485.1 238.5 474.9 238.5 468.7 244.7L320 393.4L171.3 244.7C165.1 238.5 154.9 238.5 148.7 244.7C142.5 250.9 142.5 261.1 148.7 267.3L308.7 427.3z"
+          ></path>
+        </svg>
+      </button>
+    </div>
+    <CaseStudyPager />
+    <div id="content">
+      <article class="w-full">
+        <CaseStudyHero
+          name="OpenCrawl"
+          headline="A web crawler built for AI agents."
+          subline="It crawls politely, shows what each AI bot can actually read, and lets your assistant query the results over MCP."
+          liveHref="https://open-crawl.com"
+        />
+        <section id="gallery" class="horizontal">
+          <div class="pin-wrap">
+            <div class="animation-wrap px-10 gap-10 to-right">
+              <div class="w-3xl md:w-[60vw] gallery__item" id="gallery-item-1">
+                <div
+                  class="w-full rounded-2xl bg-gradient-to-t from-amber-500/40 to-red-900/10 overflow-hidden"
+                >
+                  <img
+                    src="/case-studies/open-crawl/1.jpg"
+                    alt="OpenCrawl home page hero"
+                    width="1600"
+                    height="1000"
+                    loading="lazy"
+                    class="drop-shadow-2xl"
+                  />
+                </div>
+                <p
+                  class="mt-5 text-center md:text-lg m-auto text-balance max-w-[30ch]"
+                >
+                  The open crawler built for agents, with a live crawl log on the home page.
+                </p>
+              </div>
+              <div class="w-3xl md:w-[60vw] gallery__item" id="gallery-item-2">
+                <div
+                  class="w-full rounded-2xl bg-gradient-to-t from-blue-500/40 to-red-900/10 overflow-hidden"
+                >
+                  <img
+                    src="/case-studies/open-crawl/2.jpg"
+                    alt="Feature cards for crawling models, data collection and reporting"
+                    width="1600"
+                    height="1000"
+                    loading="lazy"
+                    class="drop-shadow-2xl"
+                  />
+                </div>
+                <p
+                  class="mt-5 text-center md:text-lg m-auto text-balance max-w-[30ch]"
+                >
+                  One crawler from the first rule to the last report.
+                </p>
+              </div>
+              <div class="w-3xl md:w-[60vw] gallery__item" id="gallery-item-3">
+                <div
+                  class="w-full rounded-2xl bg-gradient-to-t from-pink-500/40 to-purple-900/10 overflow-hidden"
+                >
+                  <img
+                    src="/case-studies/open-crawl/3.jpg"
+                    alt="Diagram of inputs and outputs around OpenCrawl"
+                    width="1600"
+                    height="1000"
+                    loading="lazy"
+                    class="drop-shadow-2xl"
+                  />
+                </div>
+                <p
+                  class="mt-5 text-center md:text-lg m-auto text-balance max-w-[30ch]"
+                >
+                  Drive it from anything, and send results anywhere.
+                </p>
+              </div>
+              <div class="w-3xl md:w-[60vw] gallery__item" id="gallery-item-4">
+                <div
+                  class="w-full rounded-2xl bg-gradient-to-t from-orange-500/40 to-yellow-900/10 overflow-hidden"
+                >
+                  <img
+                    src="/case-studies/open-crawl/4.jpg"
+                    alt="OpenCrawl product page hero"
+                    width="1600"
+                    height="1000"
+                    loading="lazy"
+                    class="drop-shadow-2xl"
+                  />
+                </div>
+                <p
+                  class="mt-5 text-center md:text-lg m-auto text-balance max-w-[30ch]"
+                >
+                  The product page leads with the MCP server: a crawler your agents can drive.
+                </p>
+              </div>
+              <div class="w-3xl md:w-[60vw] gallery__item" id="gallery-item-5">
+                <div
+                  class="w-full rounded-2xl bg-gradient-to-t from-rose-500/40 to-slate-900/10 overflow-hidden"
+                >
+                  <img
+                    src="/case-studies/open-crawl/5.jpg"
+                    alt="MCP tool call example and plugin hooks"
+                    width="1600"
+                    height="1000"
+                    loading="lazy"
+                    class="drop-shadow-2xl"
+                  />
+                </div>
+                <p
+                  class="mt-5 text-center md:text-lg m-auto text-balance max-w-[30ch]"
+                >
+                  Crawling as a tool call, with plugin hooks at every step.
+                </p>
+              </div>
+              <div class="w-3xl md:w-[60vw] gallery__item" id="gallery-item-6">
+                <div
+                  class="w-full rounded-2xl bg-gradient-to-t from-cyan-500/40 to-blue-900/10 overflow-hidden"
+                >
+                  <img
+                    src="/case-studies/open-crawl/6.jpg"
+                    alt="Chart of where pages dropped out of a crawl"
+                    width="1600"
+                    height="1000"
+                    loading="lazy"
+                    class="drop-shadow-2xl"
+                  />
+                </div>
+                <p
+                  class="mt-5 text-center md:text-lg m-auto text-balance max-w-[30ch]"
+                >
+                  Every URL is accounted for, from discovery to the report.
+                </p>
+              </div>
+              <div class="w-3xl md:w-[60vw] gallery__item" id="gallery-item-7">
+                <div
+                  class="w-full rounded-2xl bg-gradient-to-t from-emerald-500/40 to-teal-900/10 overflow-hidden"
+                >
+                  <img
+                    src="/case-studies/open-crawl/7.jpg"
+                    alt="Benchmark results for the synthetic site"
+                    width="1600"
+                    height="1000"
+                    loading="lazy"
+                    class="drop-shadow-2xl"
+                  />
+                </div>
+                <p
+                  class="mt-5 text-center md:text-lg m-auto text-balance max-w-[30ch]"
+                >
+                  Published benchmarks across the Go, Rust and TypeScript engines.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section
+          class="min-h-[100svh] flex flex-col justify-center items-center w-full p-5 md:p-10"
+          aria-labelledby="problem-heading"
+          id="problem"
+        >
+          <div
+            class="max-w-5xl prose prose-invert prose-h2:mt-0 prose-h2:md:text-5xl"
+          >
+            <h2 id="problem-heading" class="mt-0">The Problem</h2>
+            <div
+              class="text-slate-300 mb-0 text-lg/10 md:text-2xl/10 bg-black/50 md:backdrop-blur-2xl rounded-2xl p-4 md:p-8"
+            >
+              <p class="mt-0">
+                Site owners now have two audiences: people, and the AI crawlers
+                and agents that read pages on their behalf. GPTBot, ClaudeBot,
+                PerplexityBot and a dozen others each follow their own rules,
+                and a firewall or CDN can quietly block one while letting
+                another through.
+              </p>
+              <p class="text-slate-300 mb-0">
+                Most crawlers were built for search engines and spreadsheets,
+                not for answering
+                <strong class="text-white"
+                  >"which of my pages can ClaudeBot actually read?"</strong
+                >
+                And the ones that exist are usually closed tools that decide
+                for you what and how you can crawl.
+              </p>
+            </div>
+          </div>
+        </section>
+        <section
+          class="min-h-[100svh] flex flex-col justify-center items-center w-full p-5 md:p-10"
+          aria-labelledby="approach-heading"
+          id="approach"
+        >
+          <div
+            class="max-w-5xl prose prose-invert prose-h2:mt-0 prose-h2:md:text-5xl"
+          >
+            <h2 id="approach-heading" class="mt-0">The Approach</h2>
+            <div
+              class="text-slate-300 mb-0 text-lg/10 md:text-2xl/10 bg-black/50 md:backdrop-blur-2xl rounded-2xl p-4 md:p-8"
+            >
+              <p class="mt-0">
+                I designed OpenCrawl around three steps, so it works whether a
+                person, a pipeline or an agent is driving:
+              </p>
+              <ol
+                class="list-decimal text-slate-300 space-y-2 text-lg/7 md:text-2xl/10 my-5 md:my-8"
+              >
+                <li>
+                  <strong class="text-white">Point it at a site</strong> from the
+                  CLI, from code, or from an AI assistant. It reads robots.txt,
+                  llms.txt and sitemaps before anything else.
+                </li>
+                <li>
+                  <strong class="text-white">Add your logic</strong> with plugin
+                  hooks before the crawl, before and after each page, and inside
+                  the renderer.
+                </li>
+                <li>
+                  <strong class="text-white">Hand results on</strong> by
+                  streaming pages as they're captured, or letting an agent query
+                  the finished crawl over MCP.
+                </li>
+              </ol>
+              <p class="text-slate-300 mb-0">
+                Every page is checked against
+                <strong class="text-white">19 AI crawlers, fetchers and robots.txt tokens</strong>,
+                from a registry that records each agent's user agent, operator,
+                purpose and documented stance on robots rules.
+              </p>
+            </div>
+          </div>
+        </section>
+        <section
+          class="min-h-[100svh] flex flex-col justify-center items-center w-full p-5 md:p-10"
+          aria-labelledby="solution-heading"
+          id="solution"
+        >
+          <div
+            class="max-w-5xl prose prose-invert prose-h2:mt-0 prose-h2:md:text-5xl"
+          >
+            <h2 id="solution-heading" class="">The Solution</h2>
+            <p
+              class="text-slate-300 text-lg/10 md:text-2xl/10 bg-black/50 md:backdrop-blur-2xl rounded-2xl p-4 md:p-8 mb-8"
+            >
+              A single <strong class="text-white">Go binary</strong> with a
+              built-in MCP server. Run <code>opencrawl audit</code> for an
+              HTML report, or <code>opencrawl mcp install</code> and ask Claude
+              Code, Claude Desktop or Cursor about your site directly.
+            </p>
+
+            <div
+              class="bg-black/50 md:backdrop-blur-2xl rounded-2xl p-4 md:p-8"
+            >
+              <div class="not-prose">
+                <h3 class="m-0 py-2 text-md md:text-2xl">
+                  <strong class="font-bold">Key Features</strong>
+                </h3>
+              </div>
+              <details class="details">
+                <summary class="not-prose"
+                  ><h4 class="m-0 p-0 text-md md:text-xl">
+                    Per-Agent Access
+                  </h4></summary
+                >
+                <p>
+                  For every page and every agent: allowed, blocked by
+                  robots.txt, blocked by meta robots or
+                  <code>X-Robots-Tag</code>, or turned away by the server.
+                  An agent can ask "which pricing pages can't GPTBot read?"
+                  and get an answer from real crawl data.
+                </p>
+              </details>
+              <details class="details">
+                <summary class="not-prose"
+                  ><h4 class="m-0 p-0 text-md md:text-xl">
+                    Render Diff
+                  </h4></summary
+                >
+                <p>
+                  Raw HTML by default, headless Chrome on demand. A side-by-side
+                  diff shows which blocks only appear with JavaScript, and the
+                  script responsible, since most AI crawlers never run it.
+                </p>
+              </details>
+              <details class="details">
+                <summary class="not-prose"
+                  ><h4 class="m-0 p-0 text-md md:text-xl">
+                    MCP Tools
+                  </h4></summary
+                >
+                <p>
+                  Start, monitor and cancel crawls, query saved audits by agent,
+                  state or path, and compare two runs. Long crawls run as
+                  background jobs, so the assistant never sits waiting.
+                </p>
+              </details>
+              <details class="details">
+                <summary class="not-prose"
+                  ><h4 class="m-0 p-0 text-md md:text-xl">
+                    Real Agent Logs
+                  </h4></summary
+                >
+                <p>
+                  <code>opencrawl logs</code> reads nginx, Apache or Cloudflare
+                  logs and checks each AI bot request against the operator's
+                  published IP ranges, so spoofed bots are reported separately
+                  instead of skewing the numbers.
+                </p>
+              </details>
+              <details class="details">
+                <summary class="not-prose"
+                  ><h4 class="m-0 p-0 text-md md:text-xl">
+                    Saved Runs
+                  </h4></summary
+                >
+                <p>
+                  Every audit is stored in SQLite. Each new crawl of a host
+                  prints what changed since the last one.
+                </p>
+              </details>
+            </div>
+          </div>
+        </section>
+        <section
+          class="min-h-[100svh] flex flex-col justify-center items-center w-full p-5 md:p-10"
+          aria-labelledby="decisions-heading"
+          id="decisions"
+        >
+          <div
+            class="max-w-5xl prose prose-invert prose-h2:mt-0 prose-h2:md:text-5xl"
+          >
+            <h2 id="decisions-heading" class="mt-0">Design Decisions</h2>
+            <div
+              class="text-slate-300 mb-0 text-lg/10 md:text-2xl/10 bg-black/50 md:backdrop-blur-2xl rounded-2xl p-4 md:p-8"
+            >
+              <ul
+                class="list-disc text-slate-300 space-y-2 text-lg/7 md:text-2xl/10 mt-0 mb-0"
+              >
+                <li>
+                  <strong class="text-white">Label how far to trust it.</strong>
+                  Every finding is marked <em>exact</em> (robots rules, raw
+                  HTML), <em>simulated</em> (a request sent with an agent's user
+                  agent) or <em>heuristic</em> (an inference). The MCP server
+                  tells the model to pass that on, and never to claim anything
+                  about training, ranking or citations.
+                </li>
+                <li>
+                  <strong class="text-white">Polite by default.</strong>
+                  robots.txt is read first and matched per RFC 9309. At most four
+                  requests are in flight, 250ms apart, and an agent's user agent
+                  is never sent to a URL robots.txt disallows for it.
+                </li>
+                <li>
+                  <strong class="text-white">Runs on your machine.</strong>
+                  One self-contained binary with no account and no cloud. Chrome
+                  is only needed for render diffs.
+                </li>
+                <li>
+                  <strong class="text-white">Measure, don't guess.</strong>
+                  Before settling on Go, I built the same crawler in Go, Rust and
+                  TypeScript and benchmarked all three.
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
+        <section
+          class="min-h-[100svh] flex flex-col justify-center items-center w-full p-5 md:p-10"
+          aria-labelledby="benchmarks-heading"
+          id="benchmarks"
+        >
+          <div
+            class="max-w-5xl w-full prose prose-invert prose-h2:mt-0 prose-h2:md:text-5xl"
+          >
+            <h2 id="benchmarks-heading" class="mt-0">Benchmarks</h2>
+            <div
+              class="text-slate-300 mb-0 text-lg/10 md:text-2xl/10 bg-black/50 md:backdrop-blur-2xl rounded-2xl p-4 md:p-8"
+            >
+              <p class="mt-0">
+                Same crawl, three runtimes: a breadth-first, same-domain crawl
+                against a local synthetic site, where the crawler itself is the
+                bottleneck, and against a live site, averaged over 20 passes.
+              </p>
+              <div class="overflow-x-auto w-full">
+                <table
+                  class="border-collapse w-full text-left text-slate-300 not-prose text-base md:text-xl"
+                >
+                  <thead>
+                    <tr>
+                      <th scope="col" class="px-4 py-2 font-semibold text-white"
+                        >Runtime</th
+                      >
+                      <th scope="col" class="px-4 py-2 font-semibold text-white"
+                        >Synthetic req/s</th
+                      >
+                      <th scope="col" class="px-4 py-2 font-semibold text-white"
+                        >Live req/s</th
+                      >
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <th scope="row" class="px-4 py-2 text-white font-medium"
+                        >Go</th
+                      >
+                      <td class="px-4 py-2">33,450</td>
+                      <td class="px-4 py-2">285.7</td>
+                    </tr>
+                    <tr>
+                      <th scope="row" class="px-4 py-2 text-slate-200 font-medium"
+                        >Rust</th
+                      >
+                      <td class="px-4 py-2">32,405</td>
+                      <td class="px-4 py-2">277.8</td>
+                    </tr>
+                    <tr>
+                      <th scope="row" class="px-4 py-2 text-slate-200 font-medium"
+                        >TypeScript</th
+                      >
+                      <td class="px-4 py-2">14,230</td>
+                      <td class="px-4 py-2">283.8</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <p class="mb-0">
+                Go and Rust were neck and neck, and on a real network all three
+                land within 3% of each other. Go won on speed, a single static
+                binary and an official MCP SDK. Raw HTML crawling also came out
+                <strong class="text-white">2,587× faster</strong> than rendering
+                every page in Chrome, which is why rendering is opt-in.
+              </p>
+            </div>
+          </div>
+        </section>
+        <section
+          class="min-h-[100svh] flex flex-col justify-center items-center w-full p-5 md:p-10"
+          aria-labelledby="site-heading"
+          id="site"
+        >
+          <div
+            class="max-w-5xl prose prose-invert prose-h2:mt-0 prose-h2:md:text-5xl"
+          >
+            <h2 id="site-heading" class="mt-0">The Site</h2>
+            <div
+              class="text-slate-300 mb-0 text-lg/10 md:text-2xl/10 bg-black/50 md:backdrop-blur-2xl rounded-2xl p-4 md:p-8"
+            >
+              <p class="mt-0">
+                I designed open-crawl.com around one image:
+                <strong class="text-white">a crawler finding its way through a maze</strong>.
+              </p>
+              <ul
+                class="list-disc text-slate-300 space-y-2 text-lg/7 md:text-2xl/10 my-5 md:my-8"
+              >
+                <li>
+                  The hero is an infinite maze zooming toward its centre in
+                  WebGL. A build-time SVG of the same maze renders first, and
+                  stays for visitors without WebGL or who prefer reduced motion.
+                  Three.js only downloads when the animation will actually run.
+                </li>
+                <li>
+                  Product features are shown as working UI: live crawl stats,
+                  a drop-off funnel from discovered to delivered URLs, and a
+                  render diff with a draggable divider.
+                </li>
+                <li>
+                  The benchmarks page races the three runtimes through the maze
+                  using the published results.
+                </li>
+                <li>
+                  The invite form is styled as a terminal command and asks for
+                  just a work email.
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
+        <section
+          class="min-h-[100svh] flex flex-col justify-center items-center w-full p-5 md:p-10"
+          aria-labelledby="tech-heading"
+          id="tech"
+        >
+          <div
+            class="max-w-5xl w-full prose prose-invert prose-h2:mt-0 prose-h2:md:text-5xl"
+          >
+            <h2 id="tech-heading">Technologies Used</h2>
+            <div
+              class="overflow-x-auto w-full text-slate-300 mb-0 text-lg/10 md:text-2xl/10 bg-black/50 md:backdrop-blur-2xl rounded-2xl p-4 md:p-8"
+            >
+              <table
+                class="table-fixed border-collapse w-full text-left text-slate-300 not-prose"
+              >
+                <thead>
+                  <tr class="">
+                    <th scope="col" class="px-4 py-2 font-semibold text-white"
+                      >Stack Area</th
+                    >
+                    <th scope="col" class="px-4 py-2 font-semibold text-white"
+                      >Tools &amp; Frameworks</th
+                    >
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row" class="px-4 py-2 text-slate-200 font-medium"
+                      >Engine</th
+                    >
+                    <td class="px-4 py-2">Go, SQLite, chromedp (headless Chrome)</td>
+                  </tr>
+                  <tr>
+                    <th scope="row" class="px-4 py-2 text-slate-200 font-medium"
+                      >Agents</th
+                    >
+                    <td class="px-4 py-2">MCP Go SDK, stdio server</td>
+                  </tr>
+                  <tr>
+                    <th scope="row" class="px-4 py-2 text-slate-200 font-medium"
+                      >Benchmarks</th
+                    >
+                    <td class="px-4 py-2">Go, Rust and TypeScript crawlers; Bubble Tea TUI</td>
+                  </tr>
+                  <tr>
+                    <th scope="row" class="px-4 py-2 text-slate-200 font-medium"
+                      >Site</th
+                    >
+                    <td class="px-4 py-2">Astro, Tailwind CSS, Three.js, Storybook</td>
+                  </tr>
+                  <tr>
+                    <th scope="row" class="px-4 py-2 text-slate-200 font-medium"
+                      >Hosting</th
+                    >
+                    <td class="px-4 py-2">Cloudflare Workers + D1 for invites</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+        <section
+          class="min-h-[100svh] flex flex-col justify-center items-center w-full p-5 md:p-10"
+          aria-labelledby="impact-heading"
+          id="impact"
+        >
+          <div
+            class="max-w-5xl prose prose-invert prose-h2:mt-0 prose-h2:md:text-5xl"
+          >
+            <h2 id="impact-heading" class="mt-0">Outcome</h2>
+            <p
+              class="text-slate-300 mb-0 text-lg/10 md:text-2xl/10 bg-black/50 md:backdrop-blur-2xl rounded-2xl p-4 md:p-8"
+            >
+              OpenCrawl is now invite-only. I took it from an idea to a working
+              product: the crawler and its MCP server, the benchmarks behind the
+              choice of language, and the site that explains it. Where
+              <a href="/case-studies/labs/">Sitebulb Labs</a> checks one page in
+              the browser, OpenCrawl covers a whole site and lets an agent ask
+              the questions.
+            </p>
+          </div>
+        </section>
+      </article>
+    </div>
+  </div>
+</Layout>
+
+<CaseStudiesScripts />

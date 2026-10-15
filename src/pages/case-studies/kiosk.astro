@@ -1,5 +1,7 @@
 ---
 import CaseStudiesScripts from "@components/CaseStudiesScripts.astro";
+import CaseStudyHero from "@components/CaseStudyHero.astro";
+import CaseStudyPager from "@components/CaseStudyPager.astro";
 import Layout from "@layouts/FullPage.astro";
 ---
 
@@ -90,33 +92,14 @@ import Layout from "@layouts/FullPage.astro";
         </svg>
       </button>
     </div>
+    <CaseStudyPager />
     <div id="content">
       <article class="w-full">
-        <section
-          class="p-10 min-h-[100svh] flex flex-col justify-center max-w-5xl m-auto w-full"
-          aria-labelledby="title"
-          id="title"
-        >
-          <div
-            class="uppercase tracking-widest font-semibold text-red-400 text-sm"
-          >
-            Case Study
-          </div>
-          <h1
-            id="title"
-            class="mt-2 text-4xl md:text-6xl font-bold text-white mb-3 font-space tracking-tight text-balance load-effect"
-          >
-            Promotional Kiosk PWA for Sitebulb
-          </h1>
-          <p class="mt-0 text-slate-300 mb-3 text-xl md:text-2xl">
-            An offline-first, touch-optimized experience for conference demos.
-          </p>
-          <div
-            class="mr-auto inline-flex items-center gap-2 px-3 py-1 border border-slate-600 rounded-full text-sm text-slate-300 bg-slate-800/40"
-          >
-            PWA • Offline • Touchscreen
-          </div>
-        </section>
+        <CaseStudyHero
+          name="Promotional Kiosk"
+          headline="Conference demos that work offline."
+          subline="An offline-first, touch-optimised PWA for showing Sitebulb at conferences."
+        />
         <section id="gallery" class="horizontal">
           <div class="pin-wrap">
             <div class="animation-wrap px-10 gap-10 to-right">

@@ -277,14 +277,17 @@ async init({ canvasId }: { canvasId: string }): Promise<void> {
     if (p.startsWith("/case-studies/kiosk/")) return "case-kiosk";
     if (p.startsWith("/case-studies/automation/")) return "case-automation";
     if (p.startsWith("/case-studies/product-tour/")) return "case-product-tour";
+    if (p.startsWith("/case-studies/labs/")) return "case-labs";
+    if (p.startsWith("/case-studies/open-crawl/")) return "case-open-crawl";
     if (p.startsWith("/projects/")) return "projects";
     if (p.startsWith("/contact/")) return "contact";
     return "";
   }
 
-  async loadForPath(path: string) {
+  /** `force` remounts the current page too, e.g. after a navigation that swapped in the same page's DOM. */
+  async loadForPath(path: string, { force = false }: { force?: boolean } = {}) {
     const key = this.routeToKey(path);
-    if (key === this.currentKey) return;
+    if (key === this.currentKey && !force) return;
 
     // Cancel anything the previous navigation was still loading, so a slow page
     // can't add its objects on top of the page we've moved to.
@@ -439,7 +442,7 @@ async init({ canvasId }: { canvasId: string }): Promise<void> {
 // (B) A small facade that’s easy to expose globally
 export const SpaceManagerAPI = {
   init: (o: { canvasId: string }) => Manager.I().init(o), // now returns Promise<void>
-  loadForPath: (p: string) => Manager.I().loadForPath(p),
+  loadForPath: (p: string, o?: { force?: boolean }) => Manager.I().loadForPath(p, o),
   zoomTo: (pos: THREE.Vector3Like, d?: number, delay?: number) => Manager.I().zoomTo(pos, d, delay),
   getCamera: () => Manager.I().getCamera(),
   getScene: () => Manager.I().getScene(),

@@ -80,6 +80,65 @@ body {
   scale: 0.9;
 }
 
+/* Case studies menu preview: a light take on the Mars hologram (HOLO_COLOR in space/beacon.ts) */
+@media (min-width: 64rem) {
+  .holo-preview {
+    --holo: 200 87 76;
+    box-shadow: 0 0 24px rgb(var(--holo) / 0.18), inset 0 0 0 1px rgb(var(--holo) / 0.35);
+    animation: holo-flicker 4s steps(1) infinite;
+  }
+  .holo-preview img {
+    filter: saturate(0.85) contrast(1.05);
+  }
+  /* Tint + scanlines */
+  .holo-preview::before,
+  .holo-preview::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+  }
+  .holo-preview::before {
+    background:
+      repeating-linear-gradient(to bottom, rgb(0 0 0 / 0.16) 0 1px, transparent 1px 3px),
+      linear-gradient(to bottom, rgb(var(--holo) / 0.06), rgb(var(--holo) / 0.16));
+    mix-blend-mode: multiply;
+    animation: holo-scan 6s linear infinite;
+  }
+  /* Bright band sweeping down the frame */
+  .holo-preview::after {
+    background: linear-gradient(to bottom, transparent 0%, rgb(var(--holo) / 0.16) 48%, rgb(255 255 255 / 0.1) 50%, transparent 54%);
+    background-size: 100% 300%;
+    background-repeat: no-repeat;
+    mix-blend-mode: screen;
+    animation: holo-sweep 7s linear infinite;
+  }
+}
+
+@keyframes holo-scan {
+  to { background-position: 0 30px, 0 0; }
+}
+@keyframes holo-sweep {
+  from { background-position: 0 100%; }
+  to { background-position: 0 -200%; }
+}
+@keyframes holo-flicker {
+  0%, 100% { opacity: 1; }
+  41% { opacity: 0.92; }
+  42% { opacity: 1; }
+  77% { opacity: 0.95; }
+  78% { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .holo-preview,
+  .holo-preview::before,
+  .holo-preview::after {
+    animation: none;
+  }
+}
+
 /* 
 section h2{
       transition:opacity cubic-bezier(0.83, 0, 0.17, 1) 600ms, translate cubic-bezier(0.83, 0, 0.17, 1) 600ms;

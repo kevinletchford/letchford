@@ -1,0 +1,122 @@
+---
+// Left/right arrows for flicking between case studies, in PROJECTS order (wraps around).
+// Each starts as a circle; on hover/focus a clip-path reveals a fixed-size preview card,
+// so nothing reflows while it opens.
+import { PROJECTS } from "@src/data/projects";
+
+const CASE_STUDIES = PROJECTS.filter((p) => p.href.startsWith("/case-studies/"));
+const trim = (path: string) => path.replace(/\/+$/, "");
+const index = CASE_STUDIES.findIndex((p) => trim(p.href) === trim(Astro.url.pathname));
+
+const at = (offset: number) =>
+  CASE_STUDIES[(index + offset + CASE_STUDIES.length) % CASE_STUDIES.length];
+
+const links =
+  index === -1
+    ? []
+    : [
+        { dir: "previous", label: "Previous", project: at(-1) },
+        { dir: "next", label: "Next", project: at(1) },
+      ];
+
+const paths = {
+  previous:
+    "M212.7 308.7C206.5 314.9 206.5 325.1 212.7 331.3L372.7 491.3C378.9 497.5 389.1 497.5 395.3 491.3C401.5 485.1 401.5 474.9 395.3 468.7L246.6 320L395.3 171.3C401.5 165.1 401.5 154.9 395.3 148.7C389.1 142.5 378.9 142.5 372.7 148.7L212.7 308.7z",
+  next: "M427.3 308.7C433.5 314.9 433.5 325.1 427.3 331.3L267.3 491.3C261.1 497.5 250.9 497.5 244.7 491.3C238.5 485.1 238.5 474.9 244.7 468.7L393.4 320L244.7 171.3C238.5 165.1 238.5 154.9 244.7 148.7C250.9 142.5 261.1 142.5 267.3 148.7L427.3 308.7z",
+};
+---
+
+{
+  links.map(({ dir, label, project }) => {
+    const isNext = dir === "next";
+    return (
+      <a
+        href={project.href}
+        aria-label={`${label} case study: ${project.title}`}
+        data-dir={dir}
+        class:list={[
+          "pager group fixed top-1/2 -translate-y-1/2 z-30 size-10 md:size-12 rounded-full text-white/70 hover:text-white focus-visible:text-white outline-none",
+          isNext ? "right-2 md:right-6" : "left-2 md:left-6",
+        ]}
+      >
+        <span
+          aria-hidden="true"
+          class:list={[
+            "pager__card hidden md:flex absolute top-1/2 h-24 w-[22rem] items-center gap-3 rounded-[1.5rem] border border-white/20 backdrop-blur-3xl",
+            isNext ? "right-0 flex-row-reverse pr-14 pl-4" : "left-0 pl-14 pr-4",
+          ]}
+        >
+          <img
+            src={project.image}
+            alt=""
+            loading="lazy"
+            decoding="async"
+            draggable="false"
+            class="pager__content h-20 w-16 shrink-0 rounded-xl object-cover select-none"
+          />
+          <span
+            class:list={[
+              "pager__content flex min-w-0 flex-1 flex-col gap-0.5",
+              isNext && "items-end text-right",
+            ]}
+          >
+            <span class="text-xs uppercase tracking-widest font-semibold text-red-400">{label}</span>
+            <span class="font-space font-semibold text-white leading-tight">{project.title}</span>
+            <span class="text-xs text-white/60 leading-snug">{project.blurb}</span>
+          </span>
+        </span>
+        <span class="pager__circle absolute inset-0 grid place-items-center rounded-full border border-white/20 bg-black/50 md:bg-transparent group-hover:border-white/50 group-focus-visible:border-white/50">
+          <svg viewBox="0 0 640 640" fill="currentColor" aria-hidden="true" class="size-4 md:size-5">
+            <path d={paths[dir]} />
+          </svg>
+        </span>
+      </a>
+    );
+  })
+}
+
+<style>
+  /* The card is always laid out at full size; only its clip changes. Collapsed, the clip
+     is the 3rem circle under the arrow, so the reveal grows out of the button. */
+  .pager__card {
+    --r: 1.5rem;
+    translate: 0 -50%;
+    pointer-events: none;
+    clip-path: inset(var(--r) calc(100% - 2 * var(--r)) var(--r) 0 round var(--r));
+    border-color: transparent;
+    transition:
+      clip-path 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 0.2s ease-out;
+  }
+  .pager[data-dir="next"] .pager__card {
+    clip-path: inset(var(--r) 0 var(--r) calc(100% - 2 * var(--r)) round var(--r));
+  }
+  .pager__content {
+    opacity: 0;
+    transition: opacity 0.2s ease-out;
+  }
+  .pager__circle {
+    transition: border-color 0.2s ease-out;
+  }
+
+  @media (hover: hover) {
+    .pager:hover .pager__card,
+    .pager:focus-visible .pager__card,
+    .pager[data-dir="next"]:hover .pager__card,
+    .pager[data-dir="next"]:focus-visible .pager__card {
+      clip-path: inset(0 round var(--r));
+      border-color: rgb(255 255 255 / 0.2);
+      pointer-events: auto;
+    }
+    .pager:hover .pager__content,
+    .pager:focus-visible .pager__content {
+      opacity: 1;
+      transition-delay: 0.08s;
+    }
+    /* The card's own border takes over once it's open. */
+    .pager:hover .pager__circle,
+    .pager:focus-visible .pager__circle {
+      border-color: transparent;
+    }
+  }
+</style>

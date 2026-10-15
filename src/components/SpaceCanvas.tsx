@@ -28,6 +28,8 @@ export default function SpaceCanvas({
     let onPopState: (() => void) | undefined;
     let onHashChange: (() => void) | undefined;
     let onBeforeSwap: (() => void) | undefined;
+    let onBeforePreparation: (() => void) | undefined;
+    let swappedFrom = "";
 
     (async () => {
 
@@ -51,13 +53,15 @@ export default function SpaceCanvas({
         return p.replace(/\/+/, "/");
       };
 
-      const sync = async (tag = "") => {
+      // `force`: the page's DOM was swapped for a fresh copy of itself (e.g. the logo
+      // clicked on the home page), so its scene has to be rebuilt against the new DOM.
+      const sync = async (tag = "", force = false) => {
         const p = path();
-        if (p === lastPathRef.current) return;
+        if (p === lastPathRef.current && !force) return;
         lastPathRef.current = p; // prevent concurrent syncs for the same path
         try {
           window.dispatchEvent(new CustomEvent("space:page-loading", { detail: { path: p } }));
-          await window.SpaceManager.loadForPath(p);
+          await window.SpaceManager.loadForPath(p, { force });
           window.dispatchEvent(new CustomEvent("space:page-loaded", { detail: { path: p } }));
         } catch (e) {
           console.error("Failed to load path", p, e);
@@ -68,11 +72,17 @@ export default function SpaceCanvas({
       queueMicrotask(() => sync("microtask"));
       requestAnimationFrame(() => sync("raf"));
 
-      onAfterSwap  = () => requestAnimationFrame(() => { sync("after-swap"); });
+      onAfterSwap  = () => {
+        const force = location.pathname === swappedFrom;
+        requestAnimationFrame(() => { sync("after-swap", force); });
+      };
       onPageLoad   = () => requestAnimationFrame(() => { sync("page-load");  });
       onPopState   = () => requestAnimationFrame(() => { sync("popstate");   });
       onHashChange = () => requestAnimationFrame(() => { sync("hashchange"); });
 
+      onBeforePreparation = () => { swappedFrom = location.pathname; };
+
+      document.addEventListener("astro:before-preparation", onBeforePreparation);
       document.addEventListener("astro:after-swap", onAfterSwap);
       document.addEventListener("astro:page-load",  onPageLoad);
       window.addEventListener("popstate", onPopState);
@@ -84,6 +94,7 @@ export default function SpaceCanvas({
     return () => {
       mounted = false;
       // listeners
+      if (onBeforePreparation) document.removeEventListener("astro:before-preparation", onBeforePreparation);
       if (onAfterSwap)  document.removeEventListener("astro:after-swap", onAfterSwap);
       if (onPageLoad)   document.removeEventListener("astro:page-load",  onPageLoad);
       if (onPopState)   window.removeEventListener("popstate", onPopState);

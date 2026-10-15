@@ -1,6 +1,7 @@
 // src/space/portals.ts
 // The project hologram on the Mars surface: one large hologram rising from the beacon, switched
-// by hovering or picking a project in the list. Picking the hologram flies the camera through it
+// by scrolling, hovering or picking a project in the list (index.astro turns scroll through
+// #projects into "portal:scroll" events). Picking the hologram flies the camera through it
 // to the project. The icons and the hologram's hit area/title are real elements in #portal-layer
 // (index.astro); the hit area is positioned over the hologram every frame.
 import * as THREE from "three";
@@ -8,8 +9,9 @@ import gsap from "gsap";
 import { navigate } from "astro:transitions/client";
 import { BEACON } from "./mars-surface";
 import type { Project } from "@src/data/projects";
+import { rememberPortal } from "../portal-return";
+import { HOLO_COLOR } from "./beacon";
 
-const COLOR = 0x6ff3ff;
 const CARD = { w: 2.4, h: 3 }; // hologram size on narrower screens (4:5)
 const CINEMA = 1.85; // aspect ratio of the wide hologram on large desktops
 const MARGIN = 0.35; // extra plane around the content, for the glow (world units)
@@ -64,7 +66,7 @@ const holoFrag = /* glsl */ `
     vec3 img = texture2D(uMap, clamp(cuv, 0.0, 1.0)).rgb;
     float lum = dot(img, vec3(0.299, 0.587, 0.114));
     // Dark glass backing so the hologram reads against the bright sky
-    vec3 holo = vec3(0.01, 0.06, 0.08) + uColor * lum * 1.6;
+    vec3 holo = vec3(0.05, 0.02, 0.02) + uColor * lum * 1.3;
     vec3 col = mix(holo, img * 1.15 + uColor * 0.05, 0.4 + 0.5 * uHover);
 
     float scan = 0.8 + 0.2 * sin(p.y * 130.0 - uTime * 5.0);
@@ -138,7 +140,7 @@ export function createPortals(opts: {
   const picks = projects.map((p) => layer?.querySelector<HTMLButtonElement>(`[data-portal-pick="${p.key}"]`) ?? null);
 
   // --- Hologram + the light beam feeding it from the beacon ---
-  const color = new THREE.Color(COLOR);
+  const color = new THREE.Color(HOLO_COLOR);
   const ground = heightAt(BEACON.x, BEACON.z);
   const eyeY = heightAt(0, 0) + EYE;
   const distance = Math.abs(BEACON.z); // landing spot to hologram
@@ -154,10 +156,13 @@ export function createPortals(opts: {
     return img?.width && img.height ? img.width / img.height : 16 / 9;
   };
 
+  // Start on the project the page is scrolled to (it may have scrolled before this was built)
+  const start = THREE.MathUtils.clamp(Number(layer?.dataset.scrollIndex) || 0, 0, projects.length - 1);
+
   const holoGeo = new THREE.PlaneGeometry(1, 1);
   const holoMat = new THREE.ShaderMaterial({
     uniforms: {
-      uMap: { value: maps[0] },
+      uMap: { value: maps[start] },
       uColor: { value: color },
       uTime: { value: 0 },
       uHover: { value: 0 },
@@ -166,7 +171,7 @@ export function createPortals(opts: {
       uSeed: { value: 0 },
       uSize: { value: holoSize },
       uPlane: { value: planeSize },
-      uImgAspect: { value: aspectOf(maps[0]) },
+      uImgAspect: { value: aspectOf(maps[start]) },
     },
     vertexShader: holoVert,
     fragmentShader: holoFrag,
@@ -196,7 +201,7 @@ export function createPortals(opts: {
   group.add(beam, holo);
 
   // --- Selection: the hologram scans out, swaps project, and builds back up ---
-  let current = 0;
+  let current = start;
   let switching: gsap.core.Timeline | null = null;
   let reveal = 0; // the landing reveal; the switch transition multiplies into it
   const swap = { v: 1 };
@@ -249,14 +254,15 @@ export function createPortals(opts: {
     const href = projects[current].href;
     flash = document.createElement("div");
     flash.style.cssText = "position:fixed;inset:0;z-index:60;pointer-events:none;opacity:0;" +
-      "background:radial-gradient(circle at 50% 50%, #e8fdff 0%, #6ff3ff 45%, #0b3a44 100%)";
+      "background:radial-gradient(circle at 50% 50%, #f6e2de 0%, #c8574c 45%, #3a1411 100%)";
     document.body.appendChild(flash);
     gsap.timeline()
       .to(enterState, { e: 1, duration: 1.3, ease: "power2.in" })
       .to(flash, { opacity: 1, duration: 0.35, ease: "power1.in" }, 0.95)
       .add(() => {
-        if (/^https?:\/\//.test(href)) window.location.assign(href);
-        else navigate(href);
+        if (/^https?:\/\//.test(href)) return window.location.assign(href);
+        rememberPortal(projects[current].key);
+        navigate(href);
       });
   };
 
@@ -296,6 +302,7 @@ export function createPortals(opts: {
       picks[next]?.focus(); // focusing selects it
     }, { signal });
   });
+  window.addEventListener("portal:scroll", (e) => select((e as CustomEvent<number>).detail), { signal });
   showDetails(current);
 
   // Coming back with the browser's back button can restore this page from the bfcache

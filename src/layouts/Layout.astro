@@ -4,6 +4,7 @@ import Header from "../components/Header.tsx";
 import "@fontsource-variable/space-grotesk";
 
 import PersistedSpace from "@components/PersistedSpace.astro";
+import PortalReturn from "@components/PortalReturn.astro";
 import { fade } from "astro:transitions";
 
 interface Props {
@@ -44,6 +45,7 @@ const { title = "Kevin Letchford" } = Astro.props;
     <Header client:load transition:persist />
 
     <slot />
+    <PortalReturn />
 
   </body>
 </html>

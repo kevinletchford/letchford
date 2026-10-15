@@ -4,6 +4,8 @@
 import * as THREE from "three";
 
 export const BEACON_COLOR = 0x6ff3ff;
+// The project holograms (and the beacon feeding them) on the Mars surface
+export const HOLO_COLOR = 0xc8574c;
 
 export function createBeaconMaterial(color = BEACON_COLOR) {
   return new THREE.ShaderMaterial({
