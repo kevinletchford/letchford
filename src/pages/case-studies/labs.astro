@@ -1,0 +1,514 @@
+---
+import CaseStudiesScripts from "@components/CaseStudiesScripts.astro";
+import CaseStudyHero from "@components/CaseStudyHero.astro";
+import CaseStudyPager from "@components/CaseStudyPager.astro";
+import Layout from "@layouts/FullPage.astro";
+---
+
+<Layout title="Sitebulb Labs: AI Agent Readiness | Kevin Letchford">
+  <div
+    id="wrapper"
+    class="h-dvh overflow-y-auto absolute inset-0 bg-gradient-to-r from-cyan-700/70 to-red-900/10"
+  >
+    <div
+      class="section-nav bottom-2 fixed z-30 -translate-1/2 left-1/2 flex gap-4"
+    >
+      <button
+        class="previous-section size-7 rounded-full flex items-center justify-center border-white/20 border md:backdrop-blur-3xl text-white/70 cursor-pointer"
+        aria-label="Previous slide"
+      >
+        <svg
+          viewBox="0 0 640 640"
+          fill="currentColor"
+          data-slot="icon"
+          aria-hidden="true"
+          class="size-4 text-white/70"
+        >
+          <path
+            d="M308.7 212.7C314.9 206.5 325.1 206.5 331.3 212.7L491.3 372.7C497.5 378.9 497.5 389.1 491.3 395.3C485.1 401.5 474.9 401.5 468.7 395.3L320 246.6L171.3 395.3C165.1 401.5 154.9 401.5 148.7 395.3C142.5 389.1 142.5 378.9 148.7 372.7L308.7 212.7z"
+          ></path>
+        </svg>
+      </button>
+      <nav class="gap-4 items-center flex">
+        <a
+          href="#title"
+          data-nav-item="title"
+          class="dot dot_active min-w-3 min-h-3 rounded-full bg-white/30 block"
+          ><span class="hidden">Title</span></a
+        >
+        <a
+          href="#gallery"
+          data-nav-item="gallery"
+          class="dot min-w-3 min-h-3 rounded-full bg-white/30 block"
+          ><span class="hidden">Gallery</span></a
+        >
+        <a
+          href="#problem"
+          data-nav-item="problem"
+          class="dot min-w-3 min-h-3 rounded-full bg-white/30 block"
+          ><span class="hidden">Problem</span></a
+        >
+        <a
+          href="#research"
+          data-nav-item="research"
+          class="dot min-w-3 min-h-3 rounded-full bg-white/30 block"
+          ><span class="hidden">Research</span></a
+        >
+        <a
+          href="#solution"
+          data-nav-item="solution"
+          class="dot min-w-3 min-h-3 rounded-full bg-white/30 block"
+          ><span class="hidden">Solution</span></a
+        >
+        <a
+          href="#decisions"
+          data-nav-item="decisions"
+          class="dot min-w-3 min-h-3 rounded-full bg-white/30 block"
+          ><span class="hidden">Design decisions</span></a
+        >
+        <a
+          href="#tech"
+          data-nav-item="tech"
+          class="dot min-w-3 min-h-3 rounded-full bg-white/30 block"
+          ><span class="hidden">Tech</span></a
+        >
+        <a
+          href="#impact"
+          data-nav-item="impact"
+          class="dot min-w-3 min-h-3 rounded-full bg-white/30 block"
+          ><span class="hidden">Impact</span></a
+        >
+      </nav>
+      <button
+        class="next-section size-7 rounded-full flex items-center justify-center border-white/20 border md:backdrop-blur-3xl text-white/70 cursor-pointer"
+        aria-label="Next slide"
+      >
+        <svg
+          viewBox="0 0 640 640"
+          fill="currentColor"
+          data-slot="icon"
+          aria-hidden="true"
+          class="size-4 text-text/70"
+        >
+          <path
+            d="M308.7 427.3C314.9 433.5 325.1 433.5 331.3 427.3L491.3 267.3C497.5 261.1 497.5 250.9 491.3 244.7C485.1 238.5 474.9 238.5 468.7 244.7L320 393.4L171.3 244.7C165.1 238.5 154.9 238.5 148.7 244.7C142.5 250.9 142.5 261.1 148.7 267.3L308.7 427.3z"
+          ></path>
+        </svg>
+      </button>
+    </div>
+    <CaseStudyPager />
+    <div id="content">
+      <article class="w-full">
+        <CaseStudyHero
+          name="Sitebulb Labs"
+          headline="Can AI agents read your site?"
+          subline="A Chrome extension that scores any page for AI agents and tells you what to fix first."
+          liveHref="https://labs.sitebulb.com"
+        />
+        <section id="gallery" class="horizontal">
+          <div class="pin-wrap">
+            <div class="animation-wrap px-10 gap-10 to-right">
+              <div class="w-3xl md:w-[60vw] gallery__item" id="gallery-item-1">
+                <div
+                  class="w-full rounded-2xl bg-gradient-to-t from-amber-500/40 to-red-900/10 overflow-hidden"
+                >
+                  <img
+                    src="/case-studies/labs/1.jpg"
+                    alt="Sitebulb Labs home page hero"
+                    width="1600"
+                    height="1000"
+                    loading="lazy"
+                    class="drop-shadow-2xl"
+                  />
+                </div>
+                <p
+                  class="mt-5 text-center md:text-lg m-auto text-balance max-w-[30ch]"
+                >
+                  The home page asks the question directly: can AI agents read your site?
+                </p>
+              </div>
+              <div class="w-3xl md:w-[60vw] gallery__item" id="gallery-item-2">
+                <div
+                  class="w-full rounded-2xl bg-gradient-to-t from-blue-500/40 to-red-900/10 overflow-hidden"
+                >
+                  <img
+                    src="/case-studies/labs/2.jpg"
+                    alt="Extension side panel scanning the current page"
+                    width="1600"
+                    height="1000"
+                    loading="lazy"
+                    class="drop-shadow-2xl"
+                  />
+                </div>
+                <p
+                  class="mt-5 text-center md:text-lg m-auto text-balance max-w-[30ch]"
+                >
+                  Open the extension on any page and it scores it as you browse.
+                </p>
+              </div>
+              <div class="w-3xl md:w-[60vw] gallery__item" id="gallery-item-3">
+                <div
+                  class="w-full rounded-2xl bg-gradient-to-t from-pink-500/40 to-purple-900/10 overflow-hidden"
+                >
+                  <img
+                    src="/case-studies/labs/3.jpg"
+                    alt="Extension results with the top things to fix"
+                    width="1600"
+                    height="1000"
+                    loading="lazy"
+                    class="drop-shadow-2xl"
+                  />
+                </div>
+                <p
+                  class="mt-5 text-center md:text-lg m-auto text-balance max-w-[30ch]"
+                >
+                  Each result explains what was found, how to fix it, and why it matters.
+                </p>
+              </div>
+              <div class="w-3xl md:w-[60vw] gallery__item" id="gallery-item-4">
+                <div
+                  class="w-full rounded-2xl bg-gradient-to-t from-orange-500/40 to-yellow-900/10 overflow-hidden"
+                >
+                  <img
+                    src="/case-studies/labs/4.jpg"
+                    alt="Check reference docs page"
+                    width="1600"
+                    height="1000"
+                    loading="lazy"
+                    class="drop-shadow-2xl"
+                  />
+                </div>
+                <p
+                  class="mt-5 text-center md:text-lg m-auto text-balance max-w-[30ch]"
+                >
+                  The check reference documents every check, grouped by category.
+                </p>
+              </div>
+              <div class="w-3xl md:w-[60vw] gallery__item" id="gallery-item-5">
+                <div
+                  class="w-full rounded-2xl bg-gradient-to-t from-rose-500/40 to-slate-900/10 overflow-hidden"
+                >
+                  <img
+                    src="/case-studies/labs/5.jpg"
+                    alt="About page with project principles"
+                    width="1600"
+                    height="1000"
+                    loading="lazy"
+                    class="drop-shadow-2xl"
+                  />
+                </div>
+                <p
+                  class="mt-5 text-center md:text-lg m-auto text-balance max-w-[30ch]"
+                >
+                  The about page sets out what every Labs project should be able to say about itself.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section
+          class="min-h-[100svh] flex flex-col justify-center items-center w-full p-5 md:p-10"
+          aria-labelledby="problem-heading"
+          id="problem"
+        >
+          <div
+            class="max-w-5xl prose prose-invert prose-h2:mt-0 prose-h2:md:text-5xl"
+          >
+            <h2 id="problem-heading" class="mt-0">The Problem</h2>
+            <div
+              class="text-slate-300 mb-0 text-lg/10 md:text-2xl/10 bg-black/50 md:backdrop-blur-2xl rounded-2xl p-4 md:p-8"
+            >
+              <p class="mt-0">
+                People increasingly find things through ChatGPT, Claude,
+                Perplexity and AI agents, not just a list of blue links. SEOs
+                know how to audit a site for Google. Almost nobody could answer
+                the newer question:
+                <strong class="text-white"
+                  >can an AI agent actually find, read and use this site?</strong
+                >
+              </p>
+              <p class="text-slate-300 mb-0">
+                The signals that answer it are scattered across a fast-moving
+                mix of conventions and draft specs: llms.txt, AI bot rules,
+                structured data, Markdown versions of pages, and new agent
+                protocols appearing almost monthly. The goal was to turn that
+                noise into a tool an SEO could run on any page and
+                <strong class="text-white">act on in minutes</strong>.
+              </p>
+            </div>
+          </div>
+        </section>
+        <section
+          class="min-h-[100svh] flex flex-col justify-center items-center w-full p-5 md:p-10"
+          aria-labelledby="research-heading"
+          id="research"
+        >
+          <div
+            class="max-w-5xl prose prose-invert prose-h2:mt-0 prose-h2:md:text-5xl"
+          >
+            <h2 id="research-heading" class="mt-0">The Research</h2>
+            <div
+              class="text-slate-300 mb-0 text-lg/10 md:text-2xl/10 bg-black/50 md:backdrop-blur-2xl rounded-2xl p-4 md:p-8"
+            >
+              <p class="mt-0">
+                Before designing anything, I mapped what agents rely on today
+                and what is still speculative. That split became
+                <strong class="text-white">50 checks in six categories</strong>,
+                each framed as a question an agent would ask:
+              </p>
+              <ul
+                class="list-disc text-slate-300 space-y-2 text-lg/7 md:text-2xl/10 my-5 md:my-8"
+              >
+                <li>
+                  <strong class="text-white">Discoverability:</strong> can an agent
+                  find the pages, files and services?
+                </li>
+                <li>
+                  <strong class="text-white">Content accessibility:</strong> can it
+                  read and understand what it finds?
+                </li>
+                <li>
+                  <strong class="text-white">Bot access control:</strong> what do the
+                  crawl rules say about AI bots?
+                </li>
+                <li>
+                  <strong class="text-white">Agent experience:</strong> can it make
+                  sense of the page and use its controls?
+                </li>
+                <li>
+                  <strong class="text-white">Protocol discovery:</strong> can it find
+                  an API, tool or service it can use?
+                </li>
+                <li>
+                  <strong class="text-white">Commerce:</strong> can it transact with
+                  the site?
+                </li>
+              </ul>
+              <p class="text-slate-300 mb-0">
+                The checks run from proven signals like robots.txt and
+                Organization schema to emerging ones like MCP Server Cards,
+                WebMCP, A2A Agent Cards and x402 payments.
+              </p>
+            </div>
+          </div>
+        </section>
+        <section
+          class="min-h-[100svh] flex flex-col justify-center items-center w-full p-5 md:p-10"
+          aria-labelledby="solution-heading"
+          id="solution"
+        >
+          <div
+            class="max-w-5xl prose prose-invert prose-h2:mt-0 prose-h2:md:text-5xl"
+          >
+            <h2 id="solution-heading" class="">The Solution</h2>
+            <p
+              class="text-slate-300 text-lg/10 md:text-2xl/10 bg-black/50 md:backdrop-blur-2xl rounded-2xl p-4 md:p-8 mb-8"
+            >
+              A <strong class="text-white">Chrome extension</strong> that checks the
+              page you're on and answers three questions in order: where do I stand,
+              what should I fix first, and how do I hand it off?
+            </p>
+
+            <div
+              class="bg-black/50 md:backdrop-blur-2xl rounded-2xl p-4 md:p-8"
+            >
+              <div class="not-prose">
+                <h3 class="m-0 py-2 text-md md:text-2xl">
+                  <strong class="font-bold">Key Features</strong>
+                </h3>
+              </div>
+              <details class="details">
+                <summary class="not-prose"
+                  ><h4 class="m-0 p-0 text-md md:text-xl">
+                    Scores at a Glance
+                  </h4></summary
+                >
+                <p>
+                  An overall score plus a score per category, so you can see in
+                  one look whether the problem is access, content or discovery.
+                </p>
+              </details>
+              <details class="details">
+                <summary class="not-prose"
+                  ><h4 class="m-0 p-0 text-md md:text-xl">
+                    Priority Fixes
+                  </h4></summary
+                >
+                <p>
+                  Instead of a list of 50 results, a short panel of fixes ranked
+                  by how many points each one could add. The estimates come from
+                  the current scan, not a generic list of quick wins.
+                </p>
+              </details>
+              <details class="details">
+                <summary class="not-prose"
+                  ><h4 class="m-0 p-0 text-md md:text-xl">
+                    Toolbar and Side Panel
+                  </h4></summary
+                >
+                <p>
+                  Run a quick check from the toolbar, or keep results open in
+                  the side panel while you browse a site page by page.
+                </p>
+              </details>
+              <details class="details">
+                <summary class="not-prose"
+                  ><h4 class="m-0 p-0 text-md md:text-xl">
+                    Exports
+                  </h4></summary
+                >
+                <p>
+                  Results export as <strong class="text-white">Markdown</strong>,
+                  <strong class="text-white">CSV</strong> or
+                  <strong class="text-white">JSON</strong>, ready for a ticket, a
+                  spreadsheet or another tool.
+                </p>
+              </details>
+              <details class="details">
+                <summary class="not-prose"
+                  ><h4 class="m-0 p-0 text-md md:text-xl">
+                    Docs Site
+                  </h4></summary
+                >
+                <p>
+                  A reference for every check at
+                  <a href="https://labs.sitebulb.com/docs/checks"
+                    >labs.sitebulb.com</a
+                  >, explaining what each one looks for and why it matters.
+                </p>
+              </details>
+            </div>
+          </div>
+        </section>
+        <section
+          class="min-h-[100svh] flex flex-col justify-center items-center w-full p-5 md:p-10"
+          aria-labelledby="decisions-heading"
+          id="decisions"
+        >
+          <div
+            class="max-w-5xl prose prose-invert prose-h2:mt-0 prose-h2:md:text-5xl"
+          >
+            <h2 id="decisions-heading" class="mt-0">Design Decisions</h2>
+            <div
+              class="text-slate-300 mb-0 text-lg/10 md:text-2xl/10 bg-black/50 md:backdrop-blur-2xl rounded-2xl p-4 md:p-8"
+            >
+              <p class="mt-0">
+                The hard part was making a score people would trust in a field
+                where the standards are still being written.
+              </p>
+              <ul
+                class="list-disc text-slate-300 space-y-2 text-lg/7 md:text-2xl/10 my-5 md:my-8"
+              >
+                <li>
+                  <strong class="text-white">Never punish the frontier.</strong>
+                  Emerging protocols are bonus checks. They add up to 10 points when
+                  present, but missing them never lowers a score. Most are off by
+                  default.
+                </li>
+                <li>
+                  <strong class="text-white">Be honest about uncertainty.</strong>
+                  Checks can return Pass, Warn, Fail, N/A, Info or Unmeasured. Anything
+                  that couldn't be checked is left out of the score, not marked as a
+                  fail.
+                </li>
+                <li>
+                  <strong class="text-white">Weight what matters most.</strong>
+                  Content accessibility and bot access control count for more in the
+                  overall score. If an agent can't get in or can't read the page,
+                  nothing else matters.
+                </li>
+                <li>
+                  <strong class="text-white">Private by default.</strong>
+                  Checks run locally in the browser and requests go straight to the
+                  site, so it works on staging sites behind a VPN.
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
+        <section
+          class="min-h-[100svh] flex flex-col justify-center items-center w-full p-5 md:p-10"
+          aria-labelledby="tech-heading"
+          id="tech"
+        >
+          <div
+            class="max-w-5xl prose prose-invert prose-h2:mt-0 prose-h2:md:text-5xl"
+          >
+            <h2 id="tech-heading">Technologies Used</h2>
+            <!-- TODO: add the frameworks used for the extension and site -->
+            <div
+              class="overflow-x-auto w-full text-slate-300 mb-0 text-lg/10 md:text-2xl/10 bg-black/50 md:backdrop-blur-2xl rounded-2xl p-4 md:p-8"
+            >
+              <table
+                class="table-fixed border-collapse w-full text-left text-slate-300 not-prose"
+              >
+                <thead>
+                  <tr class="">
+                    <th scope="col" class="px-4 py-2 font-semibold text-white"
+                      >Stack Area</th
+                    >
+                    <th scope="col" class="px-4 py-2 font-semibold text-white"
+                      >Tools &amp; Frameworks</th
+                    >
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row" class="px-4 py-2 text-slate-200 font-medium"
+                      >Extension</th
+                    >
+                    <td class="px-4 py-2">Chrome extension, toolbar + side panel</td>
+                  </tr>
+                  <tr>
+                    <th scope="row" class="px-4 py-2 text-slate-200 font-medium"
+                      >Checks</th
+                    >
+                    <td class="px-4 py-2"
+                      >50 checks run locally; optional DNS lookup via Cloudflare</td
+                    >
+                  </tr>
+                  <tr>
+                    <th scope="row" class="px-4 py-2 text-slate-200 font-medium"
+                      >Exports</th
+                    >
+                    <td class="px-4 py-2">Markdown, CSV, JSON</td>
+                  </tr>
+                  <tr>
+                    <th scope="row" class="px-4 py-2 text-slate-200 font-medium"
+                      >Site</th
+                    >
+                    <td class="px-4 py-2">labs.sitebulb.com, with docs for every check</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+        <section
+          class="min-h-[100svh] flex flex-col justify-center items-center w-full p-5 md:p-10"
+          aria-labelledby="impact-heading"
+          id="impact"
+        >
+          <div
+            class="max-w-5xl prose prose-invert prose-h2:mt-0 prose-h2:md:text-5xl"
+          >
+            <h2 id="impact-heading" class="mt-0">Impact</h2>
+            <!-- TODO: add numbers (installs, pages checked, feedback) -->
+            <p
+              class="text-slate-300 mb-0 text-lg/10 md:text-2xl/10 bg-black/50 md:backdrop-blur-2xl rounded-2xl p-4 md:p-8"
+            >
+              Labs gave Sitebulb an early position in <strong class="text-white"
+                >AI agent readiness</strong
+              >, a space most SEO tools hadn't touched. I took it from an open
+              question to a shipped product: researching the field, deciding what
+              to measure and how to score it, then designing and building the
+              extension and its site.
+            </p>
+          </div>
+        </section>
+      </article>
+    </div>
+  </div>
+</Layout>
+
+<CaseStudiesScripts />

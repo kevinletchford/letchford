@@ -1,0 +1,80 @@
+---
+// Opening section of a case study: project name as the eyebrow, a headline
+// and subline, then the actions pill, all centred.
+interface Props {
+  name: string;
+  headline: string;
+  subline: string;
+  readHref?: string;
+  liveHref?: string;
+}
+
+const { name, headline, subline, readHref = "#gallery", liveHref } = Astro.props;
+---
+
+<section
+  class="px-6 md:px-24 py-28 min-h-[100svh] flex flex-col justify-center max-w-6xl m-auto w-full"
+  aria-labelledby="title-heading"
+  id="title"
+>
+  <div
+    class="relative isolate flex flex-col items-center text-center gap-10"
+  >
+    <!-- Soft dark scrim that feathers out, so the text reads over the space backdrop -->
+    <div
+      aria-hidden="true"
+      class="absolute -inset-x-64 -inset-y-56 -z-10 pointer-events-none bg-[radial-gradient(closest-side,rgb(0_0_0/0.5),rgb(0_0_0/0.42)_25%,rgb(0_0_0/0.26)_50%,rgb(0_0_0/0.1)_75%,transparent)]"
+    >
+    </div>
+    <div>
+      <p class="text-white text-xl md:text-2xl font-bold font-space [text-shadow:0_1px_2px_rgb(0_0_0/0.4)]">{name}</p>
+      <h1
+        id="title-heading"
+        class="mt-2 text-5xl md:text-6xl/[1.05] lg:text-7xl/[1.05] font-bold font-space tracking-tight text-balance max-w-[16ch] mx-auto text-red-400 [text-shadow:0_2px_4px_rgb(0_0_0/0.3),0_2px_24px_rgb(0_0_0/0.35)]"
+      >
+        {headline}
+      </h1>
+      <p
+        class="mt-5 mx-auto max-w-[40ch] [text-shadow:0_1px_2px_rgb(0_0_0/0.4),0_1px_12px_rgb(0_0_0/0.5)] text-white/90 text-lg md:text-2xl/9 text-pretty"
+      >
+        {subline}
+      </p>
+    </div>
+
+    <div
+      class="inline-flex items-center gap-1 p-1.5 rounded-full bg-white/10 border border-white/10 backdrop-blur-xl"
+    >
+      <a
+        href={readHref}
+        data-scroll-to={readHref.slice(1)}
+        class="px-4 py-2 rounded-full text-white/90 hover:text-white hover:bg-white/10 transition-colors"
+      >
+        Read case study
+      </a>
+      {
+        liveHref && (
+          <a
+            href={liveHref}
+            target="_blank"
+            rel="noopener"
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white text-slate-900 font-bold hover:bg-red-50 transition-colors"
+          >
+            Live site
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.75"
+              stroke-linecap="round"
+              aria-hidden="true"
+              class="size-4"
+            >
+              <circle cx="12" cy="12" r="9" />
+              <path d="M3 12h18M12 3c2.5 2.6 3.75 5.6 3.75 9S14.5 18.4 12 21c-2.5-2.6-3.75-5.6-3.75-9S9.5 5.6 12 3z" />
+            </svg>
+          </a>
+        )
+      }
+    </div>
+  </div>
+</section>

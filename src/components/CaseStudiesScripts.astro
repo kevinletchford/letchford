@@ -122,6 +122,16 @@
       });
     });
 
+    // In-page links (e.g. the hero's "Read case study") scroll through the smoother
+    document.querySelectorAll("[data-scroll-to]").forEach((link) => {
+      link.addEventListener("click", (e) => {
+        const idx = sections.findIndex((s) => s.id === link.dataset.scrollTo);
+        if (idx === -1) return;
+        e.preventDefault();
+        scrollToIndex(idx);
+      });
+    });
+
     // ---- Per-section watchers (replaces global onUpdate + getNearestIndex) ----
     const sectionTriggers = sections.map((sec, i) =>
       ScrollTrigger.create({

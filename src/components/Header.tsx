@@ -1,5 +1,11 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type PointerEvent } from "react";
 import AudioPlayer from "./AudioPlayer";
+import { PROJECTS } from "../data/projects";
+
+// Every on-site case study, in the same order as the Mars portals.
+const CASE_STUDIES = PROJECTS.filter((p) => p.href.startsWith("/case-studies/"));
+// Grace period so the pointer can cross the gap between the button and the panel.
+const CLOSE_DELAY = 180;
 
 function cx(...parts: Array<string | false | null | undefined>) {
   return parts.filter(Boolean).join(" ");
@@ -16,6 +22,14 @@ export default function Header() {
 
   const caseStudiesButtonRef = useRef<HTMLButtonElement | null>(null);
   const caseStudiesMenuRef = useRef<HTMLDivElement | null>(null);
+  const closeTimer = useRef<number | undefined>(undefined);
+  // Hover opens the menu without stealing focus; click and keyboard move focus in.
+  const focusOnOpen = useRef(false);
+  const [activeKey, setActiveKey] = useState(CASE_STUDIES[0]?.key);
+  const active = CASE_STUDIES.find((p) => p.key === activeKey) ?? CASE_STUDIES[0];
+  // The preview is sized from the list's height so a 16:9 screenshot fills it top to bottom.
+  const caseStudiesListRef = useRef<HTMLUListElement | null>(null);
+  const [previewWidth, setPreviewWidth] = useState<number>();
 
   // --- Shared helpers
   const closeAll = () => {
@@ -81,7 +95,7 @@ export default function Header() {
 
   // Focus management when opening menus
   useEffect(() => {
-    if (submenuOpen) {
+    if (submenuOpen && focusOnOpen.current) {
       const firstLink = caseStudiesMenuRef.current?.querySelector<HTMLElement>(
         "a,button,[tabindex]:not([tabindex='-1'])"
       );
@@ -105,7 +119,36 @@ export default function Header() {
     }
   }, [mobileOpen]);
 
-  const toggleSubmenu = () => setSubmenuOpen((v) => !v);
+  useEffect(() => () => window.clearTimeout(closeTimer.current), []);
+
+  useEffect(() => {
+    const list = caseStudiesListRef.current;
+    if (!list) return;
+    const PREVIEW_INSET = 24; // m-3 above and below the preview
+    const ro = new ResizeObserver(() => {
+      const h = list.offsetHeight - PREVIEW_INSET;
+      if (h > 0) setPreviewWidth(Math.round((h * 16) / 9));
+    });
+    ro.observe(list);
+    return () => ro.disconnect();
+  }, []);
+
+  const toggleSubmenu = () => {
+    window.clearTimeout(closeTimer.current);
+    focusOnOpen.current = true;
+    setSubmenuOpen((v) => !v);
+  };
+  const openOnHover = (e: PointerEvent) => {
+    if (e.pointerType !== "mouse") return; // touch taps go through onClick
+    window.clearTimeout(closeTimer.current);
+    focusOnOpen.current = false;
+    setSubmenuOpen(true);
+  };
+  const closeOnLeave = (e: PointerEvent) => {
+    if (e.pointerType !== "mouse") return;
+    window.clearTimeout(closeTimer.current);
+    closeTimer.current = window.setTimeout(() => setSubmenuOpen(false), CLOSE_DELAY);
+  };
   const toggleMobile = () => setMobileOpen((v) => !v);
 
   return (
@@ -133,6 +176,8 @@ export default function Header() {
               type="button"
               data-nav="case-studies"
               onClick={toggleSubmenu}
+              onPointerEnter={openOnHover}
+              onPointerLeave={closeOnLeave}
               aria-expanded={submenuOpen}
               aria-controls="menu-case-studies"
               className="nav-link inline-flex cursor-pointer items-center gap-x-1 py-2 text-white/70 "
@@ -206,73 +251,77 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Desktop Submenu (Case Studies) */}
+      {/* Desktop Submenu (Case Studies): list on the left, preview of the hovered item on the right */}
       <div
         id="menu-case-studies"
         ref={caseStudiesMenuRef}
         role="region"
         aria-label="Case Studies"
+        onPointerEnter={openOnHover}
+        onPointerLeave={closeOnLeave}
         className={cx(
-          "menu-section col-start-2 col-end-5 transition-all duration-500 ease-in-out md:mx-auto md:block left-4 right-4",
+          "menu-section transition-all duration-500 ease-in-out left-4 right-4",
           submenuOpen ? "" : "menu-section_closed",
           // ensure hidden on small screens (submenu is only for desktop)
           "hidden md:block"
         )}
       >
-        <div
-          id="desktop-menu-solutions"
-          className="backdrop:bg-transparent duration-200 ease-in-out pt-4"
-        >
-          <div className="-outline-offset-1 flex-auto overflow-hidden rounded-3xl bg-gradient-to-b from-blue-900/10 to-cyan-500/10 text-sm/6 outline outline-1 outline-white/10 drop-shadow-2xl md:backdrop-blur-3xl max-w-5xl m-auto">
-            <div className="grid grid-cols-1 gap-x-2 gap-y-1 p-4 lg:grid-cols-3 bg-gradient-to-b">
-              {/* --- item 1 --- */}
-              <div className="group relative flex gap-x-6 rounded-lg p-4 hover:bg-white/5">
-                <div className="mt-1 flex size-11 flex-none items-center justify-center rounded-lg bg-white/20 group-hover:bg-white/40">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" fill="currentColor" strokeWidth="1.5" aria-hidden="true" className="size-6 text-white/40 group-hover:text-white">
-                    <path d="M224 160L224 224L544 224L544 192C544 174.3 529.7 160 512 160L224 160zM192 160L128 160C110.3 160 96 174.3 96 192L96 224L192 224L192 160zM96 256L96 448C96 465.7 110.3 480 128 480L512 480C529.7 480 544 465.7 544 448L544 256L96 256zM64 192C64 156.7 92.7 128 128 128L512 128C547.3 128 576 156.7 576 192L576 448C576 483.3 547.3 512 512 512L128 512C92.7 512 64 483.3 64 448L64 192z"/>
-                  </svg>
-                </div>
-                <div>
-                  <a href="/case-studies/kiosk/" className="font-semibold text-white">
-                    Interactive Kiosk
-                    <span className="absolute inset-0" />
+        <div className="pt-4">
+          <div className="-outline-offset-1 mx-auto grid max-w-5xl overflow-hidden rounded-3xl bg-gradient-to-b from-blue-900/10 to-cyan-500/10 text-sm/6 outline outline-1 outline-white/10 drop-shadow-2xl md:backdrop-blur-3xl lg:grid-cols-[minmax(0,1fr)_auto]">
+            <ul ref={caseStudiesListRef} className="grid max-h-[70vh] grid-cols-2 content-start gap-1 overflow-y-auto p-3 lg:grid-cols-1">
+              {CASE_STUDIES.map((p) => (
+                <li key={p.key}>
+                  <a
+                    href={p.href}
+                    onPointerEnter={() => setActiveKey(p.key)}
+                    onFocus={() => setActiveKey(p.key)}
+                    className={cx(
+                      "group flex items-center gap-x-3 rounded-xl p-2 outline-none transition-colors hover:bg-white/10 focus-visible:bg-white/10 focus-visible:ring-1 focus-visible:ring-white/40",
+                      active?.key === p.key && "lg:bg-white/10"
+                    )}
+                  >
+                    <img
+                      src={p.screen}
+                      alt=""
+                      width={80}
+                      height={45}
+                      loading="lazy"
+                      className="aspect-video w-20 flex-none rounded-md object-cover object-top opacity-70 outline outline-1 -outline-offset-1 outline-white/10 transition-opacity group-hover:opacity-100"
+                    />
+                    <span className="min-w-0">
+                      <span className="block font-semibold text-white">{p.title}</span>
+                      <span className="block truncate text-white/60">{p.blurb}</span>
+                    </span>
                   </a>
-                  <p className="mt-1 text-white/80">Multi platform kiosk for demos and conferences</p>
-                </div>
-              </div>
+                </li>
+              ))}
+            </ul>
 
-              {/* --- item 2 --- */}
-              <div className="group relative flex gap-x-6 rounded-lg p-4 hover:bg-white/5">
-                <div className="mt-1 flex size-11 flex-none items-center justify-center rounded-lg bg-white/20 group-hover:bg-white/40">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" fill="currentColor" strokeWidth="1.5" aria-hidden="true" className="size-6 text-white/40 group-hover:text-white">
-                    <path d="M227.9 81.1C235.4 89.5 241.3 98.8 245.6 108.7C268.9 100.5 293.9 96.1 320 96.1C443.7 96.1 544 196.4 544 320.1C544 363.3 531.8 403.6 510.6 437.8C490.4 429.7 466.5 433.8 450.1 450.2C428.2 472.1 428.2 507.5 450.1 529.4C472 551.3 507.4 551.3 529.3 529.4C548.7 510 550.9 479.8 535.8 457.9C561.3 418.1 576 370.8 576 320.1C576 178.7 461.4 64.1 320 64.1C287.5 64.1 256.5 70.1 227.9 81.2zM394.4 531.4C371.1 539.6 346.1 544 320 544C196.3 544 96 443.7 96 320C96 276.8 108.2 236.5 129.4 202.3C149.6 210.4 173.5 206.3 189.9 189.9C211.8 168 211.8 132.6 189.9 110.7C168 88.8 132.6 88.8 110.7 110.7C91.3 130.1 89.1 160.3 104.2 182.2C78.7 222 64 269.3 64 320C64 461.4 178.6 576 320 576C352.5 576 383.5 570 412.1 558.9C404.6 550.5 398.7 541.2 394.4 531.3zM448 320C448 390.7 390.7 448 320 448C249.3 448 192 390.7 192 320C192 249.3 249.3 192 320 192C342.9 192 364.4 198 383 208.5C379.8 221.7 383.3 236.1 393.5 246.4C403.7 256.7 418.3 260.2 431.4 256.9C442 275.6 448 297.1 448 320zM457 237.3C465.2 222.1 463 202.7 450.1 189.9C437.2 177.1 417.9 174.8 402.7 183C378.6 168.4 350.2 160 320 160C231.6 160 160 231.6 160 320C160 408.4 231.6 480 320 480C408.4 480 480 408.4 480 320C480 289.7 471.6 261.4 457 237.3zM288 320C288 302.3 302.3 288 320 288C337.7 288 352 302.3 352 320C352 337.7 337.7 352 320 352C302.3 352 288 337.7 288 320zM384 320C384 284.7 355.3 256 320 256C284.7 256 256 284.7 256 320C256 355.3 284.7 384 320 384C355.3 384 384 355.3 384 320zM167.3 133.3C173.9 139.2 176.6 148.3 174.5 156.9C172.3 165.5 165.6 172.2 157 174.4C148.4 176.5 139.3 173.8 133.4 167.2C126.8 161.3 124.1 152.2 126.2 143.6C128.4 135 135.1 128.3 143.7 126.1C152.3 124 161.4 126.7 167.3 133.3zM472.7 472.7C478.6 466.1 487.7 463.4 496.3 465.5C504.9 467.7 511.6 474.4 513.8 483C515.9 491.6 513.2 500.7 506.6 506.6C500.7 513.2 491.6 515.9 483 513.8C474.4 511.6 467.7 504.9 465.5 496.3C463.4 487.7 466.1 478.6 472.7 472.7z"/>
-                  </svg>
-                </div>
-                <div>
-                  <a href="/case-studies/automation/" className="font-semibold text-white">
-                    Article Automation
-                    <span className="absolute inset-0" />
-                  </a>
-                  <p className="mt-1 text-white/80">Automating processing Google Docs to Umbraco</p>
-                </div>
-              </div>
-
-              {/* --- item 3 --- */}
-              <div className="group relative flex gap-x-6 rounded-lg p-4 hover:bg-white/5">
-                <div className="mt-1 flex size-11 flex-none items-center justify-center rounded-lg bg-white/20 group-hover:bg-white/40">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" fill="currentColor" strokeWidth="1.5" aria-hidden="true" className="size-6 text-white/40 group-hover:text-white">
-                    <path d="M121 352L224.5 352C259.8 352 288.5 380.7 288.5 416L288.5 519.5C288.5 544.4 315.6 559.7 337 546.9L425.2 494C439.7 485.3 448.5 469.7 448.5 452.8L448.5 357.8C577.4 281.8 583.9 168.3 572.8 92.4C570.9 79.6 560.9 69.6 548.1 67.7C472.2 56.6 358.7 63.1 282.6 192L187.6 192C170.7 192 155.1 200.8 146.4 215.3L93.6 303.5C80.8 324.9 96.1 352 121 352zM448.5 144C475 144 496.5 165.5 496.5 192C496.5 218.5 475 240 448.5 240C422 240 400.5 218.5 400.5 192C400.5 165.5 422 144 448.5 144zM216.9 537.6C248.4 506.1 248.4 455.1 216.9 423.6C185.4 392.1 134.4 392.1 102.9 423.6C71.6 454.9 65.4 515.6 64.6 550C64.2 564.6 75.8 576.2 90.5 575.9C125 575.1 185.6 568.9 216.9 537.6zM176.3 505.6C166.2 515.7 147.8 518.6 135 519.3C127 519.8 120.7 513.4 121.1 505.4C121.8 492.6 124.8 474.2 134.8 464.1C146.2 452.7 164.8 452.7 176.2 464.1C187.6 475.5 187.6 494.1 176.2 505.5z"/>
-                  </svg>
-                </div>
-                <div>
-                  <a href="/case-studies/product-tour/" className="font-semibold text-white">
-                    Product Tour
-                    <span className="absolute inset-0" />
-                  </a>
-                  <p className="mt-1 text-white/80">An animated introduction to Sitebulb</p>
-                </div>
-              </div>
-            </div>
+            {active && (
+              <a
+                href={active.href}
+                tabIndex={-1}
+                aria-hidden="true"
+                style={{ width: previewWidth }}
+                className="m-3 ml-0 hidden aspect-video max-w-[60vw] self-start lg:block"
+              >
+                {/* 16:9 frame matching the screenshots, so nothing gets cropped */}
+                <span className="holo-preview relative block h-full overflow-hidden rounded-2xl outline outline-1 -outline-offset-1 outline-white/10">
+                  {CASE_STUDIES.map((p) => (
+                    <img
+                      key={p.key}
+                      src={p.screen}
+                      alt=""
+                      loading="lazy"
+                      className={cx(
+                        "absolute inset-0 h-full w-full object-cover transition-opacity duration-300",
+                        p.key === active.key ? "opacity-100" : "opacity-0"
+                      )}
+                    />
+                  ))}
+                </span>
+              </a>
+            )}
           </div>
         </div>
       </div>
@@ -318,9 +367,11 @@ export default function Header() {
                 </svg>
               </summary>
               <div className="ml-2 flex flex-col gap-1 pl-2">
-                <a href="/case-studies/kiosk/" className="rounded-lg px-3 py-2 text-white/80 hover:bg-white/10">Interactive Kiosk</a>
-                <a href="/case-studies/automation/" className="rounded-lg px-3 py-2 text-white/80 hover:bg-white/10">Article Automation</a>
-                <a href="/case-studies/product-tour/" className="rounded-lg px-3 py-2 text-white/80 hover:bg-white/10">Product Tour</a>
+                {CASE_STUDIES.map((p) => (
+                  <a key={p.key} href={p.href} className="rounded-lg px-3 py-2 text-white/80 hover:bg-white/10">
+                    {p.title}
+                  </a>
+                ))}
               </div>
             </details>
 
