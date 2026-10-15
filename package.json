@@ -9,11 +9,10 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/cloudflare": "^12.6.12",
-    "@astrojs/react": "^4.4.2",
+    "@astrojs/react": "^7.0.1",
     "@fontsource-variable/space-grotesk": "^5.2.8",
     "@tailwindcss/vite": "^4.1.11",
-    "astro": "^5.17.3",
+    "astro": "^7.3.8",
     "gsap": "^3.13.0",
     "install": "^0.13.0",
     "npm": "^11.5.2",
@@ -28,7 +27,6 @@
     "@tailwindcss/typography": "^0.5.16",
     "@types/react": "^19.1.14",
     "@types/react-dom": "^19.1.9",
-    "@types/three": "^0.179.0",
-    "wrangler": "^4.40.2"
+    "@types/three": "^0.179.0"
   }
 }
