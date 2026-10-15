@@ -4,6 +4,9 @@ dist/
 # generated types
 .astro/
 
+# wrangler state; deploy/config.json redirects Cloudflare's build to a missing config
+.wrangler/
+
 # dependencies
 node_modules/
 
