@@ -1,6 +1,7 @@
 // Projects shown as hologram portals on the Mars surface (home page).
 // `image` is a 4:5 thumbnail (the list icon, and the hologram on smaller screens);
 // `screen` is a 16:9 capture for the wide hologram on large desktops.
+// Each image has a depth map in a `depth/` folder beside it (scripts/depth-maps.py).
 export type Project = {
   key: string;
   title: string;
@@ -60,3 +61,6 @@ export const PROJECTS: Project[] = [
     screen: "/portals/wide/sitebulb.jpg",
   },
 ];
+
+/** The depth map for a project image, e.g. /portals/wide/kiosk.jpg → /portals/wide/depth/kiosk.png */
+export const depthMapOf = (src: string) => src.replace(/([^/]+)\.\w+$/, "depth/$1.png");

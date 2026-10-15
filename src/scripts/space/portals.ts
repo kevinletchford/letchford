@@ -18,12 +18,49 @@ const MARGIN = 0.35; // extra plane around the content, for the glow (world unit
 const HOVER_Y = 0.7; // gap between the beacon and the bottom of the hologram
 const EYE = 1.7; // surface camera height once landed
 const FOV_TAN = Math.tan(THREE.MathUtils.degToRad(25)); // surface camera: 50° vertical fov
+const RELIEF = 0.045; // how far the nearest parts of the depth map stand out, as a fraction of the height
+const TILT = { x: 0.08, y: 0.14 }; // how far the hologram turns towards the pointer (radians)
 
+// Shared by both shaders: map plane uv to content uv, cover-fitting the image
+// (cropping the sides, or the bottom so the top of the screenshot stays)
+const coverUv = /* glsl */ `
+  uniform vec2 uSize;      // content size (world units)
+  uniform vec2 uPlane;     // plane size, content + margin
+  uniform float uImgAspect;
+  uniform sampler2D uDepth;
+  vec2 contentUv(vec2 p) {
+    vec2 cuv = p / uSize + 0.5;
+    float r = (uSize.x / uSize.y) / uImgAspect;
+    if (r > 1.0) cuv.y = 1.0 - (1.0 - cuv.y) / r;
+    else cuv.x = (cuv.x - 0.5) * r + 0.5;
+    return cuv;
+  }
+  float sdBox(vec2 p, vec2 b, float r) {
+    vec2 q = abs(p) - b + r;
+    return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - r;
+  }
+`;
+
+// The plane is pushed towards the viewer by the project's depth map (Depth Anything V2, see
+// scripts/depth-maps.py), flat at the border so the frame stays crisp. Desktop only (DEPTH)
 const holoVert = /* glsl */ `
+  uniform float uRelief;
+  ${coverUv}
   varying vec2 vUv;
+  varying float vDepth;
   void main() {
     vUv = uv;
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    vec3 pos = position;
+  #ifdef DEPTH
+    vec2 p = (uv - 0.5) * uPlane;
+    float depth = texture2D(uDepth, clamp(contentUv(p), 0.0, 1.0)).r;
+    float inner = 1.0 - smoothstep(-0.25, 0.0, sdBox(p, uSize * 0.5, 0.07));
+    vDepth = depth;
+    pos.z += depth * inner * uRelief;
+  #else
+    vDepth = 0.0;
+  #endif
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
   }
 `;
 const holoFrag = /* glsl */ `
@@ -34,24 +71,15 @@ const holoFrag = /* glsl */ `
   uniform float uReveal;
   uniform float uOpacity;
   uniform float uSeed;
-  uniform vec2 uSize;      // content size (world units)
-  uniform vec2 uPlane;     // plane size, content + margin
-  uniform float uImgAspect;
+  ${coverUv}
   varying vec2 vUv;
+  varying float vDepth;
 
-  float sdBox(vec2 p, vec2 b, float r) {
-    vec2 q = abs(p) - b + r;
-    return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - r;
-  }
   float hash(float n) { return fract(sin(n) * 43758.5453); }
 
   void main() {
     vec2 p = (vUv - 0.5) * uPlane;
-    vec2 cuv = p / uSize + 0.5;
-    // Cover-fit the image: crop the sides, or the bottom (keeping the top of the screenshot)
-    float r = (uSize.x / uSize.y) / uImgAspect;
-    if (r > 1.0) cuv.y = 1.0 - (1.0 - cuv.y) / r;
-    else cuv.x = (cuv.x - 0.5) * r + 0.5;
+    vec2 cuv = contentUv(p);
 
     // Materialise bottom-up behind a bright scan line
     float front = uReveal * 1.3 - 0.15;
@@ -68,6 +96,12 @@ const holoFrag = /* glsl */ `
     // Dark glass backing so the hologram reads against the bright sky
     vec3 holo = vec3(0.05, 0.02, 0.02) + uColor * lum * 1.3;
     vec3 col = mix(holo, img * 1.15 + uColor * 0.05, 0.4 + 0.5 * uHover);
+  #ifdef DEPTH
+    // Raised layers glow brighter than the page behind them, and their edges catch the light
+    col *= mix(0.8, 1.15, vDepth);
+    float ledge = fwidth(texture2D(uDepth, clamp(cuv, 0.0, 1.0)).r);
+    col += uColor * smoothstep(0.02, 0.12, ledge) * 0.5;
+  #endif
 
     float scan = 0.8 + 0.2 * sin(p.y * 130.0 - uTime * 5.0);
     float band = exp(-pow((fract(uTime * 0.11 + uSeed) * 1.6 - 0.3 - cuv.y) * 10.0, 2.0));
@@ -126,9 +160,11 @@ export type Portals = {
 export function createPortals(opts: {
   projects: Project[];
   maps: THREE.Texture[];
+  /** Depth maps matching `maps` (near = bright); without them the hologram stays flat and still. */
+  depths?: THREE.Texture[];
   heightAt: (x: number, z: number) => number;
 }): Portals {
-  const { projects, maps, heightAt } = opts;
+  const { projects, maps, depths, heightAt } = opts;
   const group = new THREE.Group();
   const controller = new AbortController();
   const { signal } = controller;
@@ -159,10 +195,13 @@ export function createPortals(opts: {
   // Start on the project the page is scrolled to (it may have scrolled before this was built)
   const start = THREE.MathUtils.clamp(Number(layer?.dataset.scrollIndex) || 0, 0, projects.length - 1);
 
-  const holoGeo = new THREE.PlaneGeometry(1, 1);
+  // With depth, fine enough for the steps between UI layers to stay sharp
+  const holoGeo = depths ? new THREE.PlaneGeometry(1, 1, 320, 200) : new THREE.PlaneGeometry(1, 1);
   const holoMat = new THREE.ShaderMaterial({
     uniforms: {
       uMap: { value: maps[start] },
+      uDepth: { value: depths?.[start] ?? null },
+      uRelief: { value: 0 },
       uColor: { value: color },
       uTime: { value: 0 },
       uHover: { value: 0 },
@@ -173,6 +212,7 @@ export function createPortals(opts: {
       uPlane: { value: planeSize },
       uImgAspect: { value: aspectOf(maps[start]) },
     },
+    defines: depths ? { DEPTH: "" } : {},
     vertexShader: holoVert,
     fragmentShader: holoFrag,
     transparent: true,
@@ -183,6 +223,7 @@ export function createPortals(opts: {
   holo.renderOrder = 3;
   holo.position.set(BEACON.x, baseY, BEACON.z);
   holo.lookAt(0, baseY, 0);
+  const facing = holo.quaternion.clone();
 
   const beamGeo = new THREE.CylinderGeometry(CARD.w * 0.45, BEACON.size * 0.18, 1, 40, 1, true).translate(0, 0.5, 0);
   const beamMat = new THREE.ShaderMaterial({
@@ -226,6 +267,7 @@ export function createPortals(opts: {
       .to(swap, { v: 0, duration: 0.22, ease: "power1.in" })
       .add(() => {
         holoMat.uniforms.uMap.value = maps[i];
+        if (depths) holoMat.uniforms.uDepth.value = depths[i];
         holoMat.uniforms.uImgAspect.value = aspectOf(maps[i]);
       })
       .to(swap, { v: 1, duration: 0.7, ease: "power2.out" });
@@ -267,9 +309,18 @@ export function createPortals(opts: {
   };
 
   let hovered = false;
+  const pointer = new THREE.Vector2(); // over the hologram, -1..1 from its centre
   if (link) {
     const on = () => (hovered = true);
-    const off = () => (hovered = false);
+    const off = () => {
+      hovered = false;
+      pointer.set(0, 0);
+    };
+    link.addEventListener("pointermove", (e) => {
+      if (!depths || e.pointerType !== "mouse") return;
+      const r = link.getBoundingClientRect();
+      pointer.set(((e.clientX - r.left) / r.width) * 2 - 1, 1 - ((e.clientY - r.top) / r.height) * 2);
+    }, { signal });
     link.addEventListener("pointerenter", on, { signal });
     link.addEventListener("pointerleave", off, { signal });
     link.addEventListener("focus", on, { signal });
@@ -319,6 +370,10 @@ export function createPortals(opts: {
   const through = new THREE.Vector3();
   const lookM = new THREE.Matrix4();
   const up = new THREE.Vector3(0, 1, 0);
+  const tilt = new THREE.Vector2();
+  const tiltTarget = new THREE.Vector2();
+  const tiltEuler = new THREE.Euler();
+  const tiltQuat = new THREE.Quaternion();
 
   const setLayerVisible = (v: boolean) => {
     if (!layer) return;
@@ -385,10 +440,19 @@ export function createPortals(opts: {
     u.uTime.value = t;
     u.uHover.value = hover;
     u.uReveal.value = reveal * swap.v;
+    // The relief rises once the scan line has passed, and deepens a little on hover
+    u.uRelief.value = holoSize.y * RELIEF * THREE.MathUtils.smoothstep(reveal * swap.v, 0.7, 1) * (1 + hover * 0.35);
     beamMat.uniforms.uTime.value = t;
     beamMat.uniforms.uOpacity.value = reveal * (0.6 + 0.4 * swap.v) * (0.8 + 0.4 * hover);
 
     holo.position.y = baseY + Math.sin(t * 0.8) * 0.05;
+    // A slow sway shows off the depth; the pointer takes over while hovering
+    const sway = !depths || entering ? 0 : 1 - hover;
+    if (entering) tiltTarget.set(0, 0);
+    else tiltTarget.set(-pointer.y * TILT.x, pointer.x * TILT.y);
+    tilt.lerp(tiltTarget, 1 - Math.exp(-5 * dt));
+    tiltEuler.set(tilt.x, tilt.y + Math.sin(t * 0.35) * 0.06 * sway, 0);
+    holo.quaternion.copy(facing).multiply(tiltQuat.setFromEuler(tiltEuler));
     holo.scale.set(planeSize.x, planeSize.y, 1).multiplyScalar(1 + hover * 0.04);
     holo.updateMatrixWorld();
 
@@ -419,6 +483,7 @@ export function createPortals(opts: {
     beamGeo.dispose();
     beamMat.dispose();
     maps.forEach((m) => m.dispose());
+    depths?.forEach((m) => m.dispose());
   };
 
   return { group, update, dispose };

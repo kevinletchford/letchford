@@ -11,7 +11,7 @@ import { createHaze, createMarsSurface, type MarsSurface } from "../mars-surface
 import { createMoon } from "../moon";
 import { createBeaconMaterial } from "../beacon";
 import { createPortals, type Portals } from "../portals";
-import { PROJECTS } from "@src/data/projects";
+import { PROJECTS, depthMapOf } from "@src/data/projects";
 
 function upgradeToStandard(T: typeof THREE, mesh: THREE.Mesh, map: THREE.Texture) {
   const oldMat = mesh.material as THREE.Material | THREE.Material[] | undefined;
@@ -217,13 +217,16 @@ const loadHome: PageLoader = async ({ three: T, renderer, camera, tier, signal, 
   let surface: MarsSurface | null = null;
   let portals: Portals | null = null;
   defer(async (deferredAssets) => {
-    const [built, maps] = await Promise.all([
+    // Large desktops show the wide hologram; everything else the 4:5 card
+    const images = PROJECTS.map((p) => (matchMedia("(min-width: 1024px)").matches ? p.screen : p.image));
+    const [built, maps, depths] = await Promise.all([
       createMarsSurface({ tier, pixelRatio: renderer.getPixelRatio(), signal }),
-      // Large desktops show the wide hologram; everything else the 4:5 card
-      Promise.all(PROJECTS.map((p) => deferredAssets.texture(matchMedia("(min-width: 1024px)").matches ? p.screen : p.image))),
+      Promise.all(images.map((src) => deferredAssets.texture(src))),
+      // The depth relief is desktop only
+      tier === "high" ? Promise.all(images.map((src) => deferredAssets.texture(depthMapOf(src)))) : undefined,
     ]);
     maps.forEach((m) => (m.colorSpace = T.SRGBColorSpace));
-    const builtPortals = createPortals({ projects: PROJECTS, maps, heightAt: built.heightAt });
+    const builtPortals = createPortals({ projects: PROJECTS, maps, depths, heightAt: built.heightAt });
     built.scene.add(builtPortals.group);
     try {
       await renderer.compileAsync(built.scene, built.camera);
