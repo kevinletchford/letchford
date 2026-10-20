@@ -1,0 +1,398 @@
+---
+// The closing slide: the starfield jumps to warp as it arrives, the headline
+// slams in word by word behind a shockwave, and the call to action glows with a spinning border.
+// The entrance is a timeline in scripts/slide-scroll.ts (`[data-finale]`),
+// which fires `finale:warp` on the section to kick the starfield below.
+
+interface Props {
+  id: string;
+  title: string;
+  /** The last word of the title is picked out in a shimmering gradient. */
+  email: string;
+}
+
+const { id, title, email } = Astro.props;
+const words = title.split(" ");
+---
+
+<section
+  id={id}
+  data-slide
+  data-finale
+  aria-labelledby={`${id}-heading`}
+  class="finale relative isolate overflow-x-clip min-h-[100svh] flex items-center px-6 md:px-16 xl:px-24 pt-20 pb-20"
+>
+  <!-- Feathered at the top so the stars have no hard edge as the slide scrolls in -->
+  <canvas
+    data-finale-warp
+    aria-hidden="true"
+    class="absolute inset-0 -z-10 size-full pointer-events-none [mask-image:linear-gradient(to_bottom,transparent,black_30%)]"
+  ></canvas>
+
+  <div data-slide-inner class="relative mx-auto w-full max-w-5xl flex flex-col items-center text-center">
+    <!-- Feathered scrim so the text reads over the stars -->
+    <div
+      aria-hidden="true"
+      class="absolute -inset-x-32 -inset-y-24 -z-10 pointer-events-none bg-[radial-gradient(closest-side,rgb(0_0_0/0.5),rgb(0_0_0/0.3)_55%,transparent)]"
+    >
+    </div>
+    <!-- Shockwave rings that burst out from behind the headline -->
+    <div aria-hidden="true" class="absolute left-1/2 top-[18%] -z-10 pointer-events-none">
+      <span data-finale-ring class="finale-ring"></span>
+      <span data-finale-ring class="finale-ring finale-ring--red"></span>
+    </div>
+
+    <h2
+      id={`${id}-heading`}
+      class="font-space font-bold tracking-tight text-balance text-red-400 text-[clamp(2.5rem,min(8vw,8.5svh),5.5rem)]/[1] [perspective:800px] [text-shadow:0_2px_24px_rgb(0_0_0/0.35)]"
+    >
+      {
+        words.map((word, i) => (
+          <>
+            <span data-finale-word class:list={["inline-block", i === words.length - 1 && "finale-shimmer"]}>
+              {word}
+            </span>{" "}
+          </>
+        ))
+      }
+    </h2>
+
+    <div
+      data-finale-body
+      class="mt-[clamp(1rem,3svh,2rem)] max-w-3xl space-y-[clamp(0.5rem,1.5svh,1rem)] text-base/7 sm:text-lg/8 xl:text-xl/9 text-white/80 text-pretty [text-shadow:0_1px_12px_rgb(0_0_0/0.5)] [&_strong]:text-white"
+    >
+      <slot />
+    </div>
+
+    <div data-finale-cta class="mt-[clamp(1.25rem,4.5svh,3rem)] flex flex-col items-center gap-[clamp(0.75rem,2svh,1.25rem)]">
+      <a href={`mailto:${email}`} class="finale-cta group">
+        <span class="finale-cta__glow" aria-hidden="true"></span>
+        <span class="finale-cta__face">
+          Let's talk
+          <!-- The Thunderbird 3 rocket from the badges (Badge.astro), idling
+               on its flames and lifting off on hover -->
+          <svg viewBox="0 0 24 24" aria-hidden="true" class="cta-rocket" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <defs>
+          <linearGradient id="cta-rocket-hull" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#ffb3bd" />
+            <stop offset="0.35" stop-color="#ff4d5e" />
+            <stop offset="0.75" stop-color="#d1142d" />
+            <stop offset="1" stop-color="#6b0f1f" />
+          </linearGradient>
+          <linearGradient id="cta-rocket-silver" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#d7dee8" />
+            <stop offset="0.55" stop-color="#7c8797" />
+            <stop offset="1" stop-color="#2b3340" />
+          </linearGradient>
+          <filter id="cta-rocket-glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="0.5" result="b" />
+            <feMerge>
+              <feMergeNode in="b" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
+        <!-- A Thunderbird 3 style rocket: a slim glossy red hull with a
+             white band, two outrigger engine pods on struts, silver
+             nozzles and a cyan plasma flame from each engine, all on a
+             dark rim. Drawn upright, then tilted for take-off. -->
+        <g class="rocket">
+          <g transform="rotate(45 12 12)">
+            <g class="flame" stroke="none" filter="url(#cta-rocket-glow)">
+              <path d="M10.2 18.2Q12 24.6 13.8 18.2z" fill="#ff5f7a" opacity="0.9" />
+              <path d="M10.9 18.2Q12 22.4 13.1 18.2z" fill="#5ff4ff" />
+              <path d="M11.5 18.2Q12 20.4 12.5 18.2z" fill="#fff" />
+              <path d="M5.6 18.6Q6.9 23 8.2 18.6z" fill="#ff5f7a" opacity="0.9" />
+              <path d="M6.2 18.6Q6.9 21.2 7.6 18.6z" fill="#5ff4ff" />
+              <path d="M15.8 18.6Q17.1 23 18.4 18.6z" fill="#ff5f7a" opacity="0.9" />
+              <path d="M16.4 18.6Q17.1 21.2 17.8 18.6z" fill="#5ff4ff" />
+            </g>
+            <!-- Struts -->
+            <path d="M8 13.4h2M8 15.8h2M14 13.4h2M14 15.8h2" stroke="#1b2230" stroke-width="1.6" />
+            <path d="M8 13.4h2M8 15.8h2M14 13.4h2M14 15.8h2" stroke="#7c8797" stroke-width="0.6" />
+            <!-- Nozzles -->
+            <g fill="url(#cta-rocket-silver)" stroke="#1b2230" stroke-width="0.9">
+              <path d="M10.3 16.8h3.4l.4 1.6h-4.2z" />
+              <path d="M5.8 17.2h2.2l.3 1.4H5.5z" />
+              <path d="M16 17.2h2.2l.3 1.4h-2.8z" />
+            </g>
+            <!-- Outrigger pods -->
+            <g fill="url(#cta-rocket-hull)" stroke="#1b2230" stroke-width="1.1" stroke-linejoin="round">
+              <path d="M6.9 8.6C7.9 9.8 8.3 11.2 8.3 12.4v4.9H5.5v-4.9C5.5 11.2 5.9 9.8 6.9 8.6z" />
+              <path d="M17.1 8.6c-1 1.2-1.4 2.6-1.4 3.8v4.9h2.8v-4.9c0-1.2-.4-2.6-1.4-3.8z" />
+            </g>
+            <!-- Hull -->
+            <path d="M12 1.4c2.1 2.4 2.6 5.6 2.6 8.8V17H9.4v-6.8c0-3.2.5-6.4 2.6-8.8z" fill="url(#cta-rocket-hull)" stroke="#1b2230" stroke-width="1.2" stroke-linejoin="round" />
+            <!-- White band, nose tip and window -->
+            <path d="M9.9 8.4h4.2" stroke="#f1f5f9" stroke-width="1.2" />
+            <path d="M12 1.4c.6.7 1 1.4 1.3 2.2h-2.6c.3-.8.7-1.5 1.3-2.2z" fill="#1b2230" stroke="none" />
+            <circle cx="12" cy="5.8" r="0.9" fill="#0a1a33" stroke="#5ff4ff" stroke-width="0.5" filter="url(#cta-rocket-glow)" />
+            <!-- Gloss -->
+            <path d="M10.8 4.4Q10.2 7 10.2 10M6.3 11v4" stroke="#fff" stroke-width="0.5" opacity="0.7" fill="none" />
+          </g>
+        </g>
+          </svg>
+        </span>
+      </a>
+      <p class="text-sm md:text-base text-white/60">
+        <span class="whitespace-nowrap">or email <a href={`mailto:${email}`} class="text-white underline underline-offset-4 hover:text-red-300">{email}</a></span>
+      </p>
+    </div>
+  </div>
+</section>
+
+<style>
+  @property --finale-angle {
+    syntax: "<angle>";
+    inherits: false;
+    initial-value: 0deg;
+  }
+
+  .finale-shimmer {
+    background: linear-gradient(100deg, #f87171 0%, #c084fc 18%, #60a5fa 34%, #5ff4ff 50%, #60a5fa 66%, #c084fc 82%, #f87171 100%);
+    background-size: 250% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: none;
+    filter: drop-shadow(0 0 14px rgb(37 99 235 / 0.3));
+    animation: finale-shimmer 6s linear infinite;
+  }
+  @keyframes finale-shimmer {
+    from { background-position: 100% 0; }
+    to { background-position: -150% 0; }
+  }
+
+  .finale-ring {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 22rem;
+    height: 22rem;
+    margin: -11rem 0 0 -11rem;
+    border-radius: 9999px;
+    border: 2px solid rgb(95 244 255 / 0.8);
+    box-shadow: 0 0 40px rgb(95 244 255 / 0.5), inset 0 0 40px rgb(95 244 255 / 0.3);
+    opacity: 0;
+  }
+  .finale-ring--red {
+    border-color: rgb(248 113 113 / 0.8);
+    box-shadow: 0 0 40px rgb(248 113 113 / 0.5), inset 0 0 40px rgb(248 113 113 / 0.3);
+  }
+
+  /* A pill with a fine spinning cyan-to-red border, a soft coloured glow
+     and a deep glass face with a hairline highlight */
+  .finale-cta {
+    position: relative;
+    display: inline-flex;
+    padding: 1.5px;
+    border-radius: 9999px;
+    background: conic-gradient(
+      from var(--finale-angle),
+      #5ff4ff,
+      #2563eb 25%,
+      #f87171 50%,
+      #9f1239 75%,
+      #5ff4ff
+    );
+    animation: finale-spin 4s linear infinite;
+    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+    text-decoration: none;
+  }
+  .finale-cta:hover {
+    transform: translateY(-2px) scale(1.03);
+  }
+  .finale-cta:focus-visible {
+    outline: 2px solid rgb(95 244 255 / 0.8);
+    outline-offset: 4px;
+  }
+  .finale-cta__glow {
+    position: absolute;
+    inset: 2px;
+    z-index: -1;
+    border-radius: inherit;
+    background: inherit;
+    filter: blur(20px);
+    opacity: 0.4;
+    transition: opacity 0.4s ease;
+    animation: finale-breathe 3.2s ease-in-out infinite;
+  }
+  .finale-cta:hover .finale-cta__glow {
+    opacity: 0.65;
+  }
+  .finale-cta__face {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: clamp(0.8rem, 1.8svh, 1.1rem) 2.25rem;
+    border-radius: inherit;
+    background: linear-gradient(180deg, rgb(22 30 50), rgb(6 10 22));
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.1),
+      inset 0 -8px 20px rgb(0 0 0 / 0.35);
+    color: white;
+    font-family: var(--font-space, inherit);
+    font-weight: 700;
+    font-size: clamp(1.15rem, min(2.4vw, 3svh), 1.6rem);
+    letter-spacing: 0.01em;
+    transition: background 0.4s ease;
+  }
+  .finale-cta:hover .finale-cta__face {
+    background: linear-gradient(180deg, rgb(28 38 62), rgb(8 14 30));
+  }
+  .cta-rocket {
+    width: 1.6em;
+    height: 1.6em;
+    margin: -0.3em -0.4em -0.3em 0;
+    overflow: visible;
+  }
+  .cta-rocket .rocket {
+    transform-box: view-box;
+    transform-origin: 12px 12px;
+    animation: cta-idle 1.2s ease-in-out infinite;
+    transition: translate 0.5s cubic-bezier(0.3, 0, 0.2, 1);
+  }
+  .cta-rocket .flame {
+    transform-box: fill-box;
+    transform-origin: 50% 0;
+    animation: cta-flicker 0.15s ease-in-out infinite alternate;
+  }
+  .finale-cta:hover .cta-rocket .rocket {
+    translate: 3px -3px;
+  }
+  .finale-cta:hover .cta-rocket .flame {
+    animation-duration: 0.08s;
+    scale: 1.2 1.5;
+  }
+  @keyframes cta-idle {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(0.6px, -0.6px); }
+  }
+  @keyframes cta-flicker {
+    from { transform: scale(1, 0.85); }
+    to { transform: scale(1.1, 1.3); }
+  }
+  @keyframes finale-spin {
+    to { --finale-angle: 360deg; }
+  }
+  @keyframes finale-breathe {
+    50% { opacity: 0.55; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .finale-shimmer,
+    .finale-cta,
+    .finale-cta__glow,
+    .cta-rocket * {
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  // A starfield seen head on. `finale:warp` throws it into hyperspace, with
+  // the stars stretching into streaks, then it eases back to a slow drift.
+  // It only runs while the slide is on screen.
+  type Star = { x: number; y: number; z: number; pz: number; hue: string };
+
+  const COLOURS = ["255,255,255", "255,255,255", "95,244,255", "248,113,113"];
+  const CRUISE = 0.0025;
+  const WARP = 0.05;
+
+  function initWarp(section: HTMLElement) {
+    const canvas = section.querySelector<HTMLCanvasElement>("[data-finale-warp]");
+    const ctx = canvas?.getContext("2d");
+    if (!canvas || !ctx) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    let w = 0;
+    let h = 0;
+    let stars: Star[] = [];
+    let speed = CRUISE;
+    let boost = 0; // 1 at the moment of the jump, easing to 0
+    let raf = 0;
+    let visible = false;
+
+    const spawn = (star?: Star): Star => {
+      const s = star ?? ({} as Star);
+      s.x = (Math.random() - 0.5) * 2;
+      s.y = (Math.random() - 0.5) * 2;
+      s.z = s.pz = Math.random() * 0.9 + 0.1;
+      s.hue = COLOURS[Math.floor(Math.random() * COLOURS.length)];
+      return s;
+    };
+
+    const resize = () => {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      w = section.clientWidth;
+      h = section.clientHeight;
+      canvas.width = w * dpr;
+      canvas.height = h * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const count = Math.round(Math.min(500, (w * h) / 3000));
+      stars = Array.from({ length: count }, () => spawn());
+    };
+
+    const frame = () => {
+      raf = visible ? requestAnimationFrame(frame) : 0;
+      boost *= 0.975;
+      speed = CRUISE + (WARP - CRUISE) * boost;
+      const cx = w / 2;
+      const cy = h * 0.42;
+      const scale = Math.max(w, h) * 0.5;
+
+      // Long streaks leave trails at warp; at cruise the frame clears fully.
+      ctx.fillStyle = `rgba(0,0,0,${0.35 + 0.5 * (1 - boost)})`;
+      ctx.globalCompositeOperation = "destination-out";
+      ctx.fillRect(0, 0, w, h);
+      ctx.globalCompositeOperation = "lighter";
+
+      for (const s of stars) {
+        s.pz = s.z;
+        s.z -= speed;
+        if (s.z <= 0.01) {
+          spawn(s);
+          continue;
+        }
+        const x = cx + (s.x / s.z) * scale;
+        const y = cy + (s.y / s.z) * scale;
+        const px = cx + (s.x / s.pz) * scale;
+        const py = cy + (s.y / s.pz) * scale;
+        if (x < -50 || x > w + 50 || y < -50 || y > h + 50) {
+          spawn(s);
+          continue;
+        }
+        const near = 1 - s.z;
+        ctx.strokeStyle = `rgba(${s.hue},${Math.min(1, near * 1.2)})`;
+        ctx.lineWidth = 0.4 + near * 2.2;
+        ctx.beginPath();
+        ctx.moveTo(px, py);
+        ctx.lineTo(x + 0.01, y + 0.01);
+        ctx.stroke();
+      }
+    };
+
+    const start = () => {
+      if (!raf && visible) raf = requestAnimationFrame(frame);
+    };
+
+    resize();
+    new ResizeObserver(resize).observe(section);
+    new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+      start();
+    }).observe(section);
+    section.addEventListener("finale:warp", () => {
+      boost = 1;
+      start();
+    });
+  }
+
+  document.addEventListener("astro:page-load", () => {
+    document.querySelectorAll<HTMLElement>("[data-finale]").forEach((section) => {
+      if (section.dataset.warpReady) return;
+      section.dataset.warpReady = "true";
+      initWarp(section);
+    });
+  });
+</script>

@@ -1,0 +1,32 @@
+---
+// Waving hologram hand that sits behind the intro slide (see scripts/hologram-hand.ts).
+interface Props {
+  class?: string;
+}
+const { class: className = "" } = Astro.props;
+---
+
+<div
+  data-hologram-hand
+  aria-hidden="true"
+  class:list={["pointer-events-none opacity-0 transition-opacity duration-1000", className]}
+>
+</div>
+
+<script>
+  import initHologramHand from "../scripts/hologram-hand";
+
+  const cleanups: Array<() => void> = [];
+
+  document.addEventListener("astro:page-load", () => {
+    document.querySelectorAll<HTMLElement>("[data-hologram-hand]").forEach((el) => {
+      if (el.hasAttribute("data-inited")) return;
+      el.setAttribute("data-inited", "");
+      cleanups.push(initHologramHand(el));
+    });
+  });
+
+  document.addEventListener("astro:before-swap", () => {
+    while (cleanups.length) cleanups.pop()?.();
+  });
+</script>

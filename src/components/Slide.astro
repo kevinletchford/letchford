@@ -1,0 +1,90 @@
+---
+// A full-screen slide: headline and body, with an optional framed
+// screenshot (or any `aside` slot content) beside them. Without either it
+// becomes a centred statement.
+// `data-slide-inner` is what scripts/slide-scroll.ts animates as the slide
+// enters and leaves.
+export type SlideMedia = {
+  image: string;
+  alt: string;
+  caption?: string;
+  href?: string;
+  linkLabel?: string;
+};
+
+interface Props {
+  id: string;
+  title: string;
+  media?: SlideMedia;
+}
+
+const { id, title, media } = Astro.props;
+const split = media || Astro.slots.has("aside");
+---
+
+<section
+  id={id}
+  data-slide
+  aria-labelledby={`${id}-heading`}
+  class="min-h-[100svh] flex items-center px-6 md:px-16 xl:px-24 pt-24 pb-20"
+>
+  <div
+    data-slide-inner
+    class:list={[
+      "mx-auto w-full grid items-center gap-8 md:gap-14",
+      split ? "max-w-7xl lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]" : "max-w-4xl text-center",
+    ]}
+  >
+    <div class="relative isolate">
+      <!-- Feathered scrim so the text reads over the space backdrop, as on the hero -->
+      <div
+        aria-hidden="true"
+        class="absolute -inset-x-32 -inset-y-24 -z-10 pointer-events-none bg-[radial-gradient(closest-side,rgb(0_0_0/0.45),rgb(0_0_0/0.3)_50%,transparent)]"
+      >
+      </div>
+      <h2
+        id={`${id}-heading`}
+        class:list={[
+          "font-space font-bold tracking-tight text-balance text-red-400 [text-shadow:0_2px_24px_rgb(0_0_0/0.35)]",
+          split ? "text-3xl md:text-5xl/[1.08]" : "text-4xl md:text-6xl/[1.05] lg:text-7xl/[1.05]",
+        ]}
+      >
+        {title}
+      </h2>
+      <div
+        class:list={[
+          "mt-6 space-y-4 text-white/80 text-pretty [text-shadow:0_1px_12px_rgb(0_0_0/0.5)] [&_strong]:text-white [&_a]:text-white [&_a]:underline [&_a]:underline-offset-4",
+          split ? "text-base/7 md:text-lg/8 xl:text-xl/9" : "text-lg/8 md:text-2xl/10 max-w-3xl mx-auto",
+        ]}
+      >
+        <slot />
+      </div>
+    </div>
+
+    {
+      media && (
+        <figure class="min-w-0">
+          <div class="aspect-[16/10] rounded-2xl overflow-hidden border border-white/15 bg-black/40 shadow-[0_0_60px_rgb(112_193_255/0.15)]">
+            <img
+              src={media.image}
+              alt={media.alt}
+              loading="lazy"
+              class="size-full object-cover object-top"
+            />
+          </div>
+          {media.caption && (
+            <figcaption class="mt-4 text-sm md:text-base text-white/75 text-balance">
+              {media.caption}
+              {media.href && (
+                <a href={media.href} class="ml-1 whitespace-nowrap text-red-400 hover:text-red-300">
+                  {media.linkLabel ?? "See the project"} →
+                </a>
+              )}
+            </figcaption>
+          )}
+        </figure>
+      )
+    }
+    <slot name="aside" />
+  </div>
+</section>

@@ -1,0 +1,88 @@
+---
+// Three overlapping glowing circles with a label in each and a pulsing point
+// where they all meet. scripts/slide-scroll.ts pulls the circles in from
+// `data-venn-from` (x,y in % of the circle) as the slide arrives.
+export type VennSet = {
+  label: string;
+  detail?: string;
+  /** Any CSS colour; used for the ring, fill and glow. */
+  color: string;
+};
+
+interface Props {
+  sets: [VennSet, VennSet, VennSet];
+  centre: string;
+}
+
+const { sets, centre } = Astro.props;
+
+// Circle centres on an equilateral triangle, as % of the square, with where
+// each label sits inside its circle and which way the circle flies in from.
+const layout = [
+  { x: 50, y: 35, label: "top-[16%] inset-x-0 text-center", from: "0,-45" },
+  { x: 34, y: 63, label: "bottom-[18%] left-[12%] text-left", from: "-45,30" },
+  { x: 66, y: 63, label: "bottom-[18%] right-[12%] text-right", from: "45,30" },
+];
+---
+
+<figure class="relative w-full max-w-[34rem] mx-auto aspect-square select-none" aria-label={`${sets.map((s) => s.label).join(", ")}, meeting at ${centre}`}>
+  {
+    sets.map((set, i) => (
+      <div
+        data-venn-circle
+        data-venn-from={layout[i].from}
+        class="venn-circle absolute size-[58%] -translate-1/2 rounded-full mix-blend-screen"
+        style={`left:${layout[i].x}%;top:${layout[i].y}%;--c:${set.color}`}
+      >
+        <div class={`absolute ${layout[i].label} px-[10%]`}>
+          <p class="font-space font-bold text-white text-lg md:text-2xl tracking-tight [text-shadow:0_1px_12px_rgb(0_0_0/0.5)]">
+            {set.label}
+          </p>
+          {set.detail && <p class="mt-0.5 text-xs md:text-sm text-white/70 leading-snug">{set.detail}</p>}
+        </div>
+      </div>
+    ))
+  }
+
+  <figcaption
+    data-venn-centre
+    class="absolute left-1/2 top-[53.5%] -translate-1/2 flex flex-col items-center gap-2"
+  >
+    <span class="venn-pulse relative block size-3 rounded-full bg-white shadow-[0_0_20px_4px_rgb(255_255_255/0.7)]"></span>
+    <span class="px-2.5 py-1 rounded-full bg-black/40 border border-white/20 backdrop-blur-md text-xs md:text-sm font-bold text-white whitespace-nowrap">
+      {centre}
+    </span>
+  </figcaption>
+</figure>
+
+<style>
+  .venn-circle {
+    border: 1.5px solid color-mix(in oklab, var(--c) 80%, white);
+    background: radial-gradient(
+      circle at 50% 50%,
+      color-mix(in oklab, var(--c) 10%, transparent) 40%,
+      color-mix(in oklab, var(--c) 35%, transparent) 100%
+    );
+    box-shadow:
+      0 0 40px color-mix(in oklab, var(--c) 45%, transparent),
+      inset 0 0 50px color-mix(in oklab, var(--c) 40%, transparent);
+  }
+
+  .venn-pulse::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    border: 2px solid white;
+    animation: venn-pulse 2.4s ease-out infinite;
+  }
+
+  @keyframes venn-pulse {
+    from { transform: scale(1); opacity: 0.9; }
+    to { transform: scale(4.5); opacity: 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .venn-pulse::after { animation: none; }
+  }
+</style>

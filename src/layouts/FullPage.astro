@@ -10,8 +10,10 @@ import { fade } from "astro:transitions";
 
 interface Props {
   title?: string;
+  description?: string;
+  noindex?: boolean;
 }
-const { title = "Kevin Letchford" } = Astro.props;
+const { title = "Kevin Letchford", description, noindex = false } = Astro.props;
 ---
 
 <!doctype html>
@@ -21,6 +23,8 @@ const { title = "Kevin Letchford" } = Astro.props;
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
+    {description && <meta name="description" content={description} />}
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
     <style>
       html,
       body {

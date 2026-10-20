@@ -1,0 +1,786 @@
+---
+// Bold phrase set inside a white pill, led by an icon that animates on a loop
+// while the badge is in view (the hand waves, the rocket lifts off...).
+// Hovering pops the icon and lights up the pill.
+//   <Badge icon="search">design, engineering and search</Badge>
+export type BadgeIcon = "wave" | "search" | "chart" | "sparkles" | "beaker" | "robot" | "rocket" | "wormhole";
+
+interface Props {
+  icon: BadgeIcon;
+  class?: string;
+}
+
+const { icon, class: className } = Astro.props;
+
+// The icon stays on the same line as the first word, so it never sits alone
+// at the end of a line with the phrase starting on the next.
+const html = (await Astro.slots.render("default")).trim();
+const split = html.match(/^(\S+)\s+([\s\S]*)$/);
+const [lead, rest] = split ? [split[1], split[2]] : [html, ""];
+---
+
+<strong class:list={["badge-group", className]} data-icon={icon}>
+  <span class="badge-lead"><span class="badge" aria-hidden="true">
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      {
+        icon === "wave" && (
+          <>
+            <defs>
+              <linearGradient id="badge-wave-skin" x1="4" y1="3" x2="19" y2="22" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#ffe48a" />
+                <stop offset="0.55" stop-color="#ffc233" />
+                <stop offset="1" stop-color="#e8860f" />
+              </linearGradient>
+            </defs>
+            <g class="hand">
+              <!-- Emoji-style hand: the shapes drawn twice, an outline pass
+                   underneath (which also draws the gaps between fingers) and
+                   a gradient fill on top, plus highlights for the 3D sheen. -->
+              <g transform="translate(24 1.2) scale(-1 1) rotate(6 12 21)">
+                <g fill="#b9690c" stroke="#b9690c" stroke-width="1.1">
+                <rect x="6.4" y="10" width="11.8" height="11" rx="4.8" />
+                <rect x="6.4" y="3.6" width="2.4" height="10" rx="1.2" />
+                <rect x="9.6" y="2.4" width="2.4" height="11" rx="1.2" />
+                <rect x="12.8" y="3.2" width="2.4" height="10" rx="1.2" />
+                <rect x="16" y="5.6" width="2.2" height="8" rx="1.1" />
+                <rect x="6.2" y="10.2" width="2.8" height="8" rx="1.4" transform="rotate(-40 7.6 18)" />
+                </g>
+                <g fill="url(#badge-wave-skin)" stroke="none">
+                <rect x="6.4" y="10" width="11.8" height="11" rx="4.8" />
+                <rect x="6.4" y="3.6" width="2.4" height="10" rx="1.2" />
+                <rect x="9.6" y="2.4" width="2.4" height="11" rx="1.2" />
+                <rect x="12.8" y="3.2" width="2.4" height="10" rx="1.2" />
+                <rect x="16" y="5.6" width="2.2" height="8" rx="1.1" />
+                <rect x="6.2" y="10.2" width="2.8" height="8" rx="1.4" transform="rotate(-40 7.6 18)" />
+                </g>
+                <g fill="#fff" stroke="none" opacity="0.65">
+                  <ellipse cx="7.4" cy="5.4" rx="0.45" ry="1" />
+                  <ellipse cx="10.6" cy="4.2" rx="0.45" ry="1" />
+                  <ellipse cx="13.8" cy="5" rx="0.45" ry="1" />
+                  <ellipse cx="16.9" cy="7.2" rx="0.4" ry="0.85" />
+                  <ellipse cx="10" cy="14.5" rx="2.2" ry="1.4" opacity="0.35" />
+                </g>
+              </g>
+            </g>
+            <g class="motion" stroke="#70c1ff" stroke-width="1.1">
+              <g transform="translate(22.6 0.2) scale(-1 1)">
+                <path d="M19.6 3.2a5 5 0 0 1 2.2 3.6" />
+                <path d="M19.4 6.2a2.6 2.6 0 0 1 1 1.6" />
+              </g>
+            </g>
+          </>
+        )
+      }
+      {
+        icon === "search" && (
+          <>
+            <defs>
+              <radialGradient id="badge-search-glass" cx="10" cy="10" r="6" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#123a66" />
+                <stop offset="0.7" stop-color="#0a1a33" />
+                <stop offset="1" stop-color="#050b18" />
+              </radialGradient>
+              <linearGradient id="badge-search-metal" x1="14" y1="14" x2="22" y2="22" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#d7dee8" />
+                <stop offset="0.5" stop-color="#7c8797" />
+                <stop offset="1" stop-color="#2b3340" />
+              </linearGradient>
+              <clipPath id="badge-search-clip">
+                <circle cx="10" cy="10" r="5.4" />
+              </clipPath>
+              <filter id="badge-search-glow" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="0.6" result="b" />
+                <feMerge>
+                  <feMergeNode in="b" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
+            <g class="lens">
+              <!-- Sci-fi scanner: a gunmetal handle with a light strip, a
+                   dark glass with a HUD reticle, a scan line sweeping down
+                   it and a dashed ring orbiting the rim. -->
+              <path d="M15 15l5.8 5.8" stroke="#1b2230" stroke-width="4.4" />
+              <path d="M15 15l5.8 5.8" stroke="url(#badge-search-metal)" stroke-width="2.8" />
+              <path class="strip" d="M16.4 16.4l3.4 3.4" stroke="#5ff4ff" stroke-width="0.8" filter="url(#badge-search-glow)" />
+              <circle cx="10" cy="10" r="6.4" stroke="#1b2230" stroke-width="3" />
+              <circle cx="10" cy="10" r="5.6" fill="url(#badge-search-glass)" stroke="#5ff4ff" stroke-width="0.9" filter="url(#badge-search-glow)" />
+              <g clip-path="url(#badge-search-clip)" stroke="#5ff4ff" stroke-linecap="round">
+                <g stroke-width="0.35" opacity="0.55">
+                  <circle cx="10" cy="10" r="2.6" />
+                  <path d="M10 5.4v2.4M10 12.2v2.4M5.4 10h2.4M12.2 10h2.4" />
+                </g>
+                <rect class="scanline" x="4" y="4.6" width="12" height="0.7" fill="#5ff4ff" stroke="none" opacity="0.85" filter="url(#badge-search-glow)" />
+              </g>
+              <circle class="ping" cx="10" cy="10" r="0.7" fill="#ff5f7a" stroke="none" filter="url(#badge-search-glow)" />
+              <path d="M6.9 8.2a3.6 3.6 0 0 1 1.8-1.9" stroke="#fff" stroke-width="0.6" opacity="0.6" />
+              <circle class="orbit" cx="10" cy="10" r="8.2" stroke="#5ff4ff" stroke-width="0.5" stroke-dasharray="1.6 2.2" opacity="0.8" />
+            </g>
+          </>
+        )
+      }
+      {
+        icon === "chart" && (
+          <>
+            <defs>
+              <linearGradient id="badge-chart-bar" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#f87171" />
+                <stop offset="1" stop-color="#f87171" stop-opacity="0.35" />
+              </linearGradient>
+              <filter id="badge-chart-glow" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="0.5" result="b" />
+                <feMerge>
+                  <feMergeNode in="b" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
+            <!-- Holo readout: a soft slate screen with a faint grid inside HUD
+                 corner brackets, red bars rebuilding from the axis, a trend line
+                 tracing over them to a pinging data point, and a sweep. -->
+            <rect x="2.6" y="4" width="18.8" height="15.6" rx="2.2" fill="#1e293b" stroke="none" />
+            <path d="M2.6 8.5h18.8M2.6 12.5h18.8M9 4v13.5M15 4v13.5" stroke="#fff" stroke-width="0.3" stroke-linecap="butt" opacity="0.12" />
+            <g fill="url(#badge-chart-bar)" stroke="none">
+              <rect class="bar bar-1" x="5.4" y="13" width="2.8" height="4.5" rx="0.4" />
+              <rect class="bar bar-2" x="10.6" y="8.2" width="2.8" height="9.3" rx="0.4" />
+              <rect class="bar bar-3" x="15.8" y="10.6" width="2.8" height="6.9" rx="0.4" />
+            </g>
+            <path d="M4 17.5h16" stroke="#fff" stroke-width="0.6" opacity="0.7" />
+            <path class="trace" d="M4.2 14.4L6.8 11.2L12 6.6L17.2 9.2L19.4 6.6" pathLength="1" stroke="#fff" stroke-width="0.8" stroke-dasharray="1" filter="url(#badge-chart-glow)" />
+            <rect class="sweep" x="3" y="4.5" width="1.4" height="13" fill="#fff" stroke="none" opacity="0.3" />
+            <circle class="ping" cx="19.4" cy="6.6" r="1" fill="#f87171" stroke="#fff" stroke-width="0.35" filter="url(#badge-chart-glow)" />
+            <path d="M1.2 7V3.9a1 1 0 0 1 1-1h3.1M22.8 16.6v3.1a1 1 0 0 1-1 1h-3.1" stroke="#0f172a" stroke-width="0.6" opacity="0.6" />
+          </>
+        )
+      }
+      {
+        icon === "sparkles" && (
+          <>
+            <defs>
+              <!-- Radial from the centre the star turns around, so it looks
+                   the same at every angle and never jumps as the turn loops -->
+              <radialGradient id="badge-sparkles-star" cx="11" cy="11.5" r="8" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#fff" />
+                <stop offset="0.3" stop-color="#ffb4bf" />
+                <stop offset="1" stop-color="#ef4444" />
+              </radialGradient>
+              <radialGradient id="badge-sparkles-halo" cx="11" cy="11.5" r="7" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#ff5f7a" stop-opacity="0.45" />
+                <stop offset="1" stop-color="#ff5f7a" stop-opacity="0" />
+              </radialGradient>
+              <filter id="badge-sparkles-glow" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="0.6" result="b" />
+                <feMerge>
+                  <feMergeNode in="b" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
+            <!-- Energy star: a dark rim pass under a star glowing white at
+                 the core and red at the tips, a soft halo, two cyan glints and a spark
+                 orbiting on a dashed ring, as on the scanner. -->
+            <circle cx="11" cy="11.5" r="7" fill="url(#badge-sparkles-halo)" stroke="none" />
+            <circle class="orbit" cx="11" cy="11.5" r="8.6" stroke="#0891b2" stroke-width="0.5" stroke-dasharray="1.4 2.4" opacity="0.8" />
+            <g class="star">
+              <path d="M11 3.5l2.1 5.9 5.9 2.1-5.9 2.1L11 19.5l-2.1-5.9L3 11.5l5.9-2.1z" fill="#1b2230" stroke="#1b2230" stroke-width="1.6" />
+              <path d="M11 3.5l2.1 5.9 5.9 2.1-5.9 2.1L11 19.5l-2.1-5.9L3 11.5l5.9-2.1z" fill="url(#badge-sparkles-star)" stroke="none" filter="url(#badge-sparkles-glow)" />
+            </g>
+            <!-- Cyan on a dark rim, so the glints still read on the white pill -->
+            <g class="twinkle twinkle-1">
+              <path d="M19.5 2.2v3.6M17.7 4h3.6" stroke="#1b2230" stroke-width="2.1" />
+              <path d="M19.5 2.2v3.6M17.7 4h3.6" stroke="#5ff4ff" stroke-width="0.9" filter="url(#badge-sparkles-glow)" />
+            </g>
+            <g class="twinkle twinkle-2">
+              <path d="M4.5 17.7v3M3 19.2h3" stroke="#1b2230" stroke-width="2.1" />
+              <path d="M4.5 17.7v3M3 19.2h3" stroke="#5ff4ff" stroke-width="0.9" filter="url(#badge-sparkles-glow)" />
+            </g>
+            <circle class="spark" cx="11" cy="2.9" r="0.85" fill="#5ff4ff" stroke="#1b2230" stroke-width="0.6" />
+          </>
+        )
+      }
+      {
+        icon === "beaker" && (
+          <>
+            <defs>
+              <radialGradient id="badge-beaker-glass" cx="12" cy="15" r="8" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#123a66" />
+                <stop offset="0.7" stop-color="#0a1a33" />
+                <stop offset="1" stop-color="#050b18" />
+              </radialGradient>
+              <linearGradient id="badge-beaker-liquid" x1="0" y1="13.6" x2="0" y2="21" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#5ff4ff" />
+                <stop offset="1" stop-color="#0891b2" />
+              </linearGradient>
+              <clipPath id="badge-beaker-clip">
+                <path d="M10 3v6l-5 9a2 2 0 0 0 1.7 3h10.6a2 2 0 0 0 1.7-3l-5-9V3z" />
+              </clipPath>
+              <filter id="badge-beaker-glow" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="0.5" result="b" />
+                <feMerge>
+                  <feMergeNode in="b" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
+            <!-- Lab flask, as on the scanner: a dark rim pass under dark glass
+                 holding a glowing cyan liquid, with bubbles rising out of it. -->
+            <path d="M10 3v6l-5 9a2 2 0 0 0 1.7 3h10.6a2 2 0 0 0 1.7-3l-5-9V3z" fill="#1b2230" stroke="#1b2230" stroke-width="2.6" />
+            <path d="M8.3 3h7.4" stroke="#1b2230" stroke-width="2.6" />
+            <path d="M10 3v6l-5 9a2 2 0 0 0 1.7 3h10.6a2 2 0 0 0 1.7-3l-5-9V3z" fill="url(#badge-beaker-glass)" stroke="none" />
+            <g clip-path="url(#badge-beaker-clip)">
+              <rect class="liquid" x="2" y="13.6" width="20" height="8" fill="url(#badge-beaker-liquid)" stroke="none" opacity="0.9" />
+              <path class="liquid" d="M4 13.6h16" stroke="#fff" stroke-width="0.7" opacity="0.8" filter="url(#badge-beaker-glow)" />
+            </g>
+            <path d="M10 3v6l-5 9a2 2 0 0 0 1.7 3h10.6a2 2 0 0 0 1.7-3l-5-9V3z" stroke="#5ff4ff" stroke-width="0.5" opacity="0.6" />
+            <path d="M8.8 3h6.4" stroke="#7c8797" stroke-width="1" />
+            <path d="M8.9 10.4l-2.6 4.8" stroke="#fff" stroke-width="0.6" opacity="0.6" />
+            <g fill="#fff" stroke="none" filter="url(#badge-beaker-glow)">
+              <circle class="bubble bubble-1" cx="11" cy="18" r="0.7" />
+              <circle class="bubble bubble-2" cx="14" cy="17.5" r="0.6" />
+              <circle class="bubble bubble-3" cx="12.5" cy="19" r="0.5" />
+            </g>
+          </>
+        )
+      }
+      {
+        icon === "robot" && (
+          <>
+            <defs>
+              <linearGradient id="badge-robot-metal" x1="0" y1="8" x2="0" y2="20" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#d7dee8" />
+                <stop offset="0.55" stop-color="#7c8797" />
+                <stop offset="1" stop-color="#2b3340" />
+              </linearGradient>
+              <radialGradient id="badge-robot-visor" cx="12" cy="13.8" r="6" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#123a66" />
+                <stop offset="0.7" stop-color="#0a1a33" />
+                <stop offset="1" stop-color="#050b18" />
+              </radialGradient>
+              <clipPath id="badge-robot-clip">
+                <rect x="6" y="10.6" width="12" height="6.4" rx="2.4" />
+              </clipPath>
+              <filter id="badge-robot-glow" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="0.5" result="b" />
+                <feMerge>
+                  <feMergeNode in="b" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
+            <!-- Sci-fi bot, as on the scanner: a gunmetal head on a dark rim,
+                 a dark glass visor with glowing cyan eyes and a scan line, and
+                 a red beacon on a twitching antenna. -->
+            <g class="antenna">
+              <path d="M12 8.4V4.6" stroke="#1b2230" stroke-width="2.2" />
+              <path d="M12 8.4V4.6" stroke="#7c8797" stroke-width="0.9" />
+              <circle class="beacon" cx="12" cy="3.4" r="1.4" fill="#ff5f7a" stroke="#1b2230" stroke-width="0.7" filter="url(#badge-robot-glow)" />
+            </g>
+            <rect x="2.2" y="11.8" width="2.4" height="4.4" rx="0.9" fill="#1b2230" stroke="none" />
+            <rect x="19.4" y="11.8" width="2.4" height="4.4" rx="0.9" fill="#1b2230" stroke="none" />
+            <rect x="4" y="8" width="16" height="12" rx="3.2" fill="url(#badge-robot-metal)" stroke="#1b2230" stroke-width="1.4" />
+            <path d="M6.6 9.4h6.2" stroke="#fff" stroke-width="0.6" opacity="0.6" />
+            <rect x="6" y="10.6" width="12" height="6.4" rx="2.4" fill="url(#badge-robot-visor)" stroke="#5ff4ff" stroke-width="0.6" filter="url(#badge-robot-glow)" />
+            <g clip-path="url(#badge-robot-clip)">
+              <rect class="visor-scan" x="6" y="10.6" width="12" height="0.6" fill="#5ff4ff" stroke="none" opacity="0.7" />
+            </g>
+            <g class="eyes" fill="#5ff4ff" stroke="none" filter="url(#badge-robot-glow)">
+              <circle cx="9.3" cy="13.8" r="1.3" />
+              <circle cx="14.7" cy="13.8" r="1.3" />
+            </g>
+          </>
+        )
+      }
+      {
+        icon === "rocket" && (
+          <>
+            <defs>
+              <linearGradient id="badge-rocket-hull" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0" stop-color="#ffb3bd" />
+                <stop offset="0.35" stop-color="#ff4d5e" />
+                <stop offset="0.75" stop-color="#d1142d" />
+                <stop offset="1" stop-color="#6b0f1f" />
+              </linearGradient>
+              <linearGradient id="badge-rocket-silver" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0" stop-color="#d7dee8" />
+                <stop offset="0.55" stop-color="#7c8797" />
+                <stop offset="1" stop-color="#2b3340" />
+              </linearGradient>
+              <filter id="badge-rocket-glow" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="0.5" result="b" />
+                <feMerge>
+                  <feMergeNode in="b" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
+            <!-- A Thunderbird 3 style rocket: a slim glossy red hull with a
+                 white band, two outrigger engine pods on struts, silver
+                 nozzles and a cyan plasma flame from each engine, all on a
+                 dark rim. Drawn upright, then tilted for take-off. -->
+            <g class="rocket">
+              <g transform="rotate(45 12 12)">
+                <g class="flame" stroke="none" filter="url(#badge-rocket-glow)">
+                  <path d="M10.2 18.2Q12 24.6 13.8 18.2z" fill="#ff5f7a" opacity="0.9" />
+                  <path d="M10.9 18.2Q12 22.4 13.1 18.2z" fill="#5ff4ff" />
+                  <path d="M11.5 18.2Q12 20.4 12.5 18.2z" fill="#fff" />
+                  <path d="M5.6 18.6Q6.9 23 8.2 18.6z" fill="#ff5f7a" opacity="0.9" />
+                  <path d="M6.2 18.6Q6.9 21.2 7.6 18.6z" fill="#5ff4ff" />
+                  <path d="M15.8 18.6Q17.1 23 18.4 18.6z" fill="#ff5f7a" opacity="0.9" />
+                  <path d="M16.4 18.6Q17.1 21.2 17.8 18.6z" fill="#5ff4ff" />
+                </g>
+                <!-- Struts -->
+                <path d="M8 13.4h2M8 15.8h2M14 13.4h2M14 15.8h2" stroke="#1b2230" stroke-width="1.6" />
+                <path d="M8 13.4h2M8 15.8h2M14 13.4h2M14 15.8h2" stroke="#7c8797" stroke-width="0.6" />
+                <!-- Nozzles -->
+                <g fill="url(#badge-rocket-silver)" stroke="#1b2230" stroke-width="0.9">
+                  <path d="M10.3 16.8h3.4l.4 1.6h-4.2z" />
+                  <path d="M5.8 17.2h2.2l.3 1.4H5.5z" />
+                  <path d="M16 17.2h2.2l.3 1.4h-2.8z" />
+                </g>
+                <!-- Outrigger pods -->
+                <g fill="url(#badge-rocket-hull)" stroke="#1b2230" stroke-width="1.1" stroke-linejoin="round">
+                  <path d="M6.9 8.6C7.9 9.8 8.3 11.2 8.3 12.4v4.9H5.5v-4.9C5.5 11.2 5.9 9.8 6.9 8.6z" />
+                  <path d="M17.1 8.6c-1 1.2-1.4 2.6-1.4 3.8v4.9h2.8v-4.9c0-1.2-.4-2.6-1.4-3.8z" />
+                </g>
+                <!-- Hull -->
+                <path d="M12 1.4c2.1 2.4 2.6 5.6 2.6 8.8V17H9.4v-6.8c0-3.2.5-6.4 2.6-8.8z" fill="url(#badge-rocket-hull)" stroke="#1b2230" stroke-width="1.2" stroke-linejoin="round" />
+                <!-- White band, nose tip and window -->
+                <path d="M9.9 8.4h4.2" stroke="#f1f5f9" stroke-width="1.2" />
+                <path d="M12 1.4c.6.7 1 1.4 1.3 2.2h-2.6c.3-.8.7-1.5 1.3-2.2z" fill="#1b2230" stroke="none" />
+                <circle cx="12" cy="5.8" r="0.9" fill="#0a1a33" stroke="#5ff4ff" stroke-width="0.5" filter="url(#badge-rocket-glow)" />
+                <!-- Gloss -->
+                <path d="M10.8 4.4Q10.2 7 10.2 10M6.3 11v4" stroke="#fff" stroke-width="0.5" opacity="0.7" fill="none" />
+              </g>
+            </g>
+          </>
+        )
+      }
+      {
+        icon === "wormhole" && (
+          <>
+            <defs>
+              <radialGradient id="badge-wormhole-space" cx="12" cy="12" r="10" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#020611" />
+                <stop offset="0.5" stop-color="#0a1a33" />
+                <stop offset="1" stop-color="#123a66" />
+              </radialGradient>
+              <radialGradient id="badge-wormhole-arm" cx="12" cy="12" r="9.6" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#e6feff" />
+                <stop offset="0.35" stop-color="#5ff4ff" />
+                <stop offset="1" stop-color="#5ff4ff" stop-opacity="0.15" />
+              </radialGradient>
+              <clipPath id="badge-wormhole-clip">
+                <circle cx="12" cy="12" r="9.3" />
+              </clipPath>
+              <filter id="badge-wormhole-glow" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="0.45" result="b" />
+                <feMerge>
+                  <feMergeNode in="b" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
+            <!-- A wormhole seen head on, all in cyan: spiral arms wind into a
+                 dark throat on a dark rim, turning as rings of light fall in. -->
+            <circle cx="12" cy="12" r="10" fill="url(#badge-wormhole-space)" stroke="#1b2230" stroke-width="1.4" />
+            <g clip-path="url(#badge-wormhole-clip)">
+              <g fill="none" stroke="#5ff4ff" stroke-width="0.4">
+                <circle class="warp-ring warp-ring-1" cx="12" cy="12" r="8.6" />
+                <circle class="warp-ring warp-ring-2" cx="12" cy="12" r="8.6" />
+                <circle class="warp-ring warp-ring-3" cx="12" cy="12" r="8.6" />
+              </g>
+              <g class="swirl" fill="none" stroke="url(#badge-wormhole-arm)" stroke-width="0.9" filter="url(#badge-wormhole-glow)">
+                <!-- Invisible disc, so the group's box is centred on the icon -->
+                <circle cx="12" cy="12" r="10" stroke="none" />
+                <path d="M13.50 12.00 L13.54 11.64 L13.49 11.27 L13.36 10.90 L13.14 10.55 L12.82 10.24 L12.42 10.00 L11.96 9.85 L11.45 9.80 L10.92 9.87 L10.39 10.08 L9.89 10.41 L9.46 10.87 L9.12 11.44 L8.91 12.11 L8.86 12.84 L8.98 13.61 L9.28 14.36 L9.77 15.07 L10.44 15.68 L11.27 16.14 L12.23 16.42 L13.29 16.48 L14.38 16.30 L15.46 15.84 L16.46 15.12 L17.31 14.15 L17.96 12.94 L18.34 11.56 L18.40 10.04 L18.10 8.48 L17.43 6.94 L16.37 5.52 L14.95 4.32 L13.21 3.42 L11.21 2.92 L9.03 2.87" transform="rotate(0 12 12)" />
+                <path d="M13.50 12.00 L13.54 11.64 L13.49 11.27 L13.36 10.90 L13.14 10.55 L12.82 10.24 L12.42 10.00 L11.96 9.85 L11.45 9.80 L10.92 9.87 L10.39 10.08 L9.89 10.41 L9.46 10.87 L9.12 11.44 L8.91 12.11 L8.86 12.84 L8.98 13.61 L9.28 14.36 L9.77 15.07 L10.44 15.68 L11.27 16.14 L12.23 16.42 L13.29 16.48 L14.38 16.30 L15.46 15.84 L16.46 15.12 L17.31 14.15 L17.96 12.94 L18.34 11.56 L18.40 10.04 L18.10 8.48 L17.43 6.94 L16.37 5.52 L14.95 4.32 L13.21 3.42 L11.21 2.92 L9.03 2.87" transform="rotate(60 12 12)" opacity="0.45" stroke-width="0.5" />
+                <path d="M13.50 12.00 L13.54 11.64 L13.49 11.27 L13.36 10.90 L13.14 10.55 L12.82 10.24 L12.42 10.00 L11.96 9.85 L11.45 9.80 L10.92 9.87 L10.39 10.08 L9.89 10.41 L9.46 10.87 L9.12 11.44 L8.91 12.11 L8.86 12.84 L8.98 13.61 L9.28 14.36 L9.77 15.07 L10.44 15.68 L11.27 16.14 L12.23 16.42 L13.29 16.48 L14.38 16.30 L15.46 15.84 L16.46 15.12 L17.31 14.15 L17.96 12.94 L18.34 11.56 L18.40 10.04 L18.10 8.48 L17.43 6.94 L16.37 5.52 L14.95 4.32 L13.21 3.42 L11.21 2.92 L9.03 2.87" transform="rotate(120 12 12)" />
+                <path d="M13.50 12.00 L13.54 11.64 L13.49 11.27 L13.36 10.90 L13.14 10.55 L12.82 10.24 L12.42 10.00 L11.96 9.85 L11.45 9.80 L10.92 9.87 L10.39 10.08 L9.89 10.41 L9.46 10.87 L9.12 11.44 L8.91 12.11 L8.86 12.84 L8.98 13.61 L9.28 14.36 L9.77 15.07 L10.44 15.68 L11.27 16.14 L12.23 16.42 L13.29 16.48 L14.38 16.30 L15.46 15.84 L16.46 15.12 L17.31 14.15 L17.96 12.94 L18.34 11.56 L18.40 10.04 L18.10 8.48 L17.43 6.94 L16.37 5.52 L14.95 4.32 L13.21 3.42 L11.21 2.92 L9.03 2.87" transform="rotate(180 12 12)" opacity="0.45" stroke-width="0.5" />
+                <path d="M13.50 12.00 L13.54 11.64 L13.49 11.27 L13.36 10.90 L13.14 10.55 L12.82 10.24 L12.42 10.00 L11.96 9.85 L11.45 9.80 L10.92 9.87 L10.39 10.08 L9.89 10.41 L9.46 10.87 L9.12 11.44 L8.91 12.11 L8.86 12.84 L8.98 13.61 L9.28 14.36 L9.77 15.07 L10.44 15.68 L11.27 16.14 L12.23 16.42 L13.29 16.48 L14.38 16.30 L15.46 15.84 L16.46 15.12 L17.31 14.15 L17.96 12.94 L18.34 11.56 L18.40 10.04 L18.10 8.48 L17.43 6.94 L16.37 5.52 L14.95 4.32 L13.21 3.42 L11.21 2.92 L9.03 2.87" transform="rotate(240 12 12)" />
+                <path d="M13.50 12.00 L13.54 11.64 L13.49 11.27 L13.36 10.90 L13.14 10.55 L12.82 10.24 L12.42 10.00 L11.96 9.85 L11.45 9.80 L10.92 9.87 L10.39 10.08 L9.89 10.41 L9.46 10.87 L9.12 11.44 L8.91 12.11 L8.86 12.84 L8.98 13.61 L9.28 14.36 L9.77 15.07 L10.44 15.68 L11.27 16.14 L12.23 16.42 L13.29 16.48 L14.38 16.30 L15.46 15.84 L16.46 15.12 L17.31 14.15 L17.96 12.94 L18.34 11.56 L18.40 10.04 L18.10 8.48 L17.43 6.94 L16.37 5.52 L14.95 4.32 L13.21 3.42 L11.21 2.92 L9.03 2.87" transform="rotate(300 12 12)" opacity="0.45" stroke-width="0.5" />
+              </g>
+            </g>
+            <circle cx="12" cy="12" r="9.3" stroke="#5ff4ff" stroke-width="0.4" opacity="0.5" />
+            <circle class="core" cx="12" cy="12" r="1.3" fill="#e6feff" stroke="none" filter="url(#badge-wormhole-glow)" />
+          </>
+        )
+      }
+    </svg>
+  </span><Fragment set:html={lead} /></span>{rest && " "}<Fragment set:html={rest} />
+</strong>
+
+<style>
+  /* The whole phrase is the pill. It stays inline so long phrases can wrap,
+     and each wrapped line gets its own rounded ends. */
+  .badge-group {
+    padding: 0.1em 0.6em 0.1em 0.3em;
+    border-radius: 9999px;
+    background: white;
+    color: #0f172a;
+    /* Gotham Book thickened with a hairline stroke, to sit between Book and
+       Bold (no Medium weight is loaded) */
+    font-weight: 450;
+    -webkit-text-stroke: 0.04em currentColor;
+    text-shadow: none;
+    white-space: normal;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+    box-shadow:
+      0 1px 2px rgb(0 0 0 / 0.25),
+      0 0 18px rgb(255 255 255 / 0.15);
+    transition: box-shadow 0.25s;
+  }
+
+  .badge-group:hover {
+    box-shadow:
+      0 2px 6px rgb(0 0 0 / 0.3),
+      0 0 28px rgb(255 255 255 / 0.4);
+  }
+
+  .badge-lead {
+    white-space: nowrap;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.2em;
+    height: 1.2em;
+    margin-right: 0.25em;
+    vertical-align: -0.2em;
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .badge svg {
+    width: 85%;
+    height: 85%;
+    overflow: visible;
+  }
+
+  /* Only the animated parts (they all have a class): fill-box would also
+     re-centre the static rotate() transforms on the wave hand and break it. */
+  .badge svg [class] {
+    transform-box: fill-box;
+    /* Paused off screen; the script below sets .in-view */
+    animation-play-state: paused;
+  }
+
+  .badge-group.in-view .badge svg [class] {
+    animation-play-state: running;
+  }
+
+  .badge-group:hover .badge {
+    transform: scale(1.12) rotate(-4deg);
+  }
+
+  /* Wave: a bigger, full-colour hand that rocks from the wrist while the
+     motion lines flicker */
+  .badge-group[data-icon="wave"] .badge svg {
+    width: 115%;
+    height: 115%;
+  }
+  .hand {
+    transform-origin: 45% 100%;
+  }
+  .motion {
+    animation: motion 0.6s ease-in-out infinite alternate;
+  }
+  @keyframes motion {
+    from { opacity: 1; }
+    to { opacity: 0.25; }
+  }
+  .hand {
+    animation: wave 1.2s ease-in-out infinite;
+  }
+  @keyframes wave {
+    0%, 60%, 100% { transform: rotate(0); }
+    10%, 30% { transform: rotate(16deg); }
+    20%, 40% { transform: rotate(-10deg); }
+    50% { transform: rotate(8deg); }
+  }
+
+  /* Search: a sci-fi scanner, a scan line sweeps the glass while the
+     dashed ring orbits and the target pings */
+  .badge-group[data-icon="search"] .badge svg {
+    width: 110%;
+    height: 110%;
+    /* Sit lower so the orbit ring and the bob stay inside the pill */
+    transform: translateY(0.12em);
+  }
+  .lens {
+    transform-origin: center;
+    animation: scan 3s ease-in-out infinite;
+  }
+  @keyframes scan {
+    0%, 100% { transform: translate(0, 0); }
+    25% { transform: translate(-1px, -0.5px); }
+    50% { transform: translate(1px, -1px); }
+    75% { transform: translate(1px, 0); }
+  }
+  .scanline {
+    animation: scanline 1.6s linear infinite;
+  }
+  @keyframes scanline {
+    from { transform: translateY(0); opacity: 0; }
+    15%, 85% { opacity: 0.85; }
+    to { transform: translateY(11px); opacity: 0; }
+  }
+  .orbit {
+    transform-origin: center;
+    animation: orbit 6s linear infinite;
+  }
+  @keyframes orbit {
+    to { transform: rotate(360deg); }
+  }
+  .ping {
+    transform-origin: center;
+    animation: ping 1.2s ease-in-out infinite;
+  }
+  @keyframes ping {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.3; transform: scale(0.6); }
+  }
+  .strip {
+    animation: strip 1.6s ease-in-out infinite alternate;
+  }
+  @keyframes strip {
+    from { opacity: 1; }
+    to { opacity: 0.4; }
+  }
+
+  /* Chart: a holo readout, bars rebuild from the axis, staggered, then the
+     trend line traces over them while a sweep crosses the glass */
+  .badge-group[data-icon="chart"] .badge svg {
+    width: 105%;
+    height: 105%;
+  }
+  .bar {
+    transform-origin: bottom;
+    animation: grow 2.4s cubic-bezier(0.34, 1.56, 0.64, 1) infinite;
+  }
+  .bar-2 { animation-delay: 0.1s; }
+  .bar-3 { animation-delay: 0.2s; }
+  @keyframes grow {
+    0% { transform: scaleY(0); }
+    25%, 100% { transform: scaleY(1); }
+  }
+  .trace {
+    animation: trace 2.4s ease-out infinite;
+  }
+  @keyframes trace {
+    0%, 20% { stroke-dashoffset: 1; opacity: 1; }
+    55%, 85% { stroke-dashoffset: 0; opacity: 1; }
+    100% { stroke-dashoffset: 0; opacity: 0; }
+  }
+  .sweep {
+    animation: sweep 2.4s linear infinite;
+  }
+  @keyframes sweep {
+    from { transform: translateX(0); opacity: 0; }
+    15%, 85% { opacity: 0.15; }
+    to { transform: translateX(16.6px); opacity: 0; }
+  }
+
+  /* Sparkles: an energy star that pulses and turns a quarter, while the
+     cyan glints twinkle and a spark orbits the ring */
+  .badge-group[data-icon="sparkles"] .badge svg {
+    width: 110%;
+    height: 110%;
+    transform: translateY(0.06em);
+  }
+  .star {
+    transform-origin: center;
+    animation: spin-pulse 2.4s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+  }
+  .badge svg .spark {
+    /* Turn around the star's centre, not the dot's own (beats the fill-box rule) */
+    transform-box: view-box;
+    transform-origin: 11px 11.5px;
+    animation: orbit 3s linear infinite;
+  }
+  .twinkle {
+    animation: twinkle 0.8s ease-in-out infinite alternate;
+  }
+  .twinkle-2 { animation-delay: 0.4s; }
+  .twinkle {
+    transform-origin: center;
+  }
+  @keyframes spin-pulse {
+    0%, 30% { transform: rotate(0) scale(1); }
+    50% { transform: rotate(45deg) scale(0.82); }
+    70%, 100% { transform: rotate(90deg) scale(1); }
+  }
+  @keyframes twinkle {
+    from { opacity: 1; transform: scale(1); }
+    to { opacity: 0.15; transform: scale(0.5); }
+  }
+
+  /* Beaker: a lab flask whose glowing liquid sloshes while bubbles rise
+     and pop */
+  .badge-group[data-icon="beaker"] .badge svg {
+    width: 105%;
+    height: 105%;
+  }
+  .liquid {
+    animation: slosh 1.6s ease-in-out infinite alternate;
+  }
+  @keyframes slosh {
+    from { transform: translateY(0); }
+    to { transform: translateY(0.6px); }
+  }
+  .bubble-3 { animation-delay: 0.9s; }
+  .bubble {
+    animation: bubble 1.2s ease-in infinite;
+  }
+  .bubble-2 { animation-delay: 0.5s; }
+  @keyframes bubble {
+    0% { transform: translateY(0) scale(1); opacity: 1; }
+    80% { opacity: 1; }
+    100% { transform: translateY(-8px) scale(1.8); opacity: 0; }
+  }
+
+  /* Robot: a sci-fi bot that blinks, scans its visor and twitches its
+     antenna while the beacon pings */
+  .badge-group[data-icon="robot"] .badge svg {
+    width: 110%;
+    height: 110%;
+  }
+  .visor-scan {
+    animation: visor-scan 1.6s linear infinite;
+  }
+  @keyframes visor-scan {
+    from { transform: translateY(0); opacity: 0; }
+    15%, 85% { opacity: 0.7; }
+    to { transform: translateY(5.8px); opacity: 0; }
+  }
+  .beacon {
+    transform-origin: center;
+    animation: ping 1.2s ease-in-out infinite;
+  }
+  .eyes {
+    transform-origin: center;
+  }
+  .antenna {
+    transform-origin: bottom;
+  }
+  .eyes {
+    animation: blink 1.6s ease-in-out infinite;
+  }
+  .antenna {
+    animation: twitch 0.8s ease-in-out infinite;
+  }
+  @keyframes blink {
+    0%, 40%, 50%, 100% { transform: scaleY(1); }
+    45% { transform: scaleY(0.1); }
+  }
+  @keyframes twitch {
+    0%, 100% { transform: rotate(0); }
+    25% { transform: rotate(-18deg); }
+    75% { transform: rotate(18deg); }
+  }
+
+  /* Rocket: a Thunderbird 3 style rocket that rumbles with flickering
+     plasma flames,
+     launches out the top and re-enters from below */
+  .badge-group[data-icon="rocket"] .badge {
+    overflow: hidden;
+  }
+  .badge-group[data-icon="rocket"] .badge svg {
+    width: 110%;
+    height: 110%;
+  }
+  .flame {
+    transform-origin: 50% 0;
+  }
+  .rocket {
+    animation: launch 2s ease-in infinite;
+  }
+  .flame {
+    animation: flicker 0.15s ease-in-out infinite alternate;
+  }
+  @keyframes launch {
+    0%, 30% { transform: translate(0, 0); }
+    5%, 15%, 25% { transform: translate(-0.5px, 0.5px); }
+    10%, 20% { transform: translate(0.5px, -0.5px); }
+    55% { transform: translate(24px, -24px); }
+    56% { transform: translate(-24px, 24px); opacity: 0; }
+    57% { opacity: 1; }
+    80%, 100% { transform: translate(0, 0); }
+  }
+  @keyframes flicker {
+    from { transform: scale(1, 0.85); }
+    to { transform: scale(1.1, 1.3); }
+  }
+
+  /* Wormhole: spiral arms turn into the core while rings of light fall
+     down the tunnel */
+  .badge-group[data-icon="wormhole"] .badge svg {
+    width: 100%;
+    height: 100%;
+    /* A full disc reads high next to lowercase text */
+    translate: 0 0.06em;
+  }
+  /* Both spin and shrink about the middle of their own (centred) boxes */
+  .swirl,
+  .warp-ring {
+    transform-origin: center;
+  }
+  .swirl {
+    animation: swirl 4s linear infinite;
+  }
+  .warp-ring {
+    opacity: 0;
+    animation: warp-ring 1.8s ease-in infinite;
+  }
+  .warp-ring-2 { animation-delay: -0.6s; }
+  .warp-ring-3 { animation-delay: -1.2s; }
+  .core {
+    transform-origin: center;
+    animation: core-pulse 1.8s ease-in-out infinite;
+  }
+  @keyframes core-pulse {
+    50% { transform: scale(1.35); }
+  }
+  @keyframes swirl {
+    to { transform: rotate(-360deg); }
+  }
+  @keyframes warp-ring {
+    0% { transform: scale(1); opacity: 0; }
+    25% { opacity: 0.5; }
+    100% { transform: scale(0.12); opacity: 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .badge,
+    .badge * {
+      animation: none !important;
+      transform: none;
+    }
+  }
+</style>
+
+
+<script>
+  let observer: IntersectionObserver | undefined;
+
+  document.addEventListener("astro:page-load", () => {
+    observer?.disconnect();
+    observer = new IntersectionObserver((entries) =>
+      entries.forEach((e) => e.target.classList.toggle("in-view", e.isIntersecting)),
+    );
+    document.querySelectorAll(".badge-group").forEach((badge) => observer!.observe(badge));
+  });
+
+  document.addEventListener("astro:before-swap", () => {
+    observer?.disconnect();
+    observer = undefined;
+  });
+</script>

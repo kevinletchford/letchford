@@ -1,0 +1,96 @@
+---
+// A sideways-scrolling row of screenshots, in the style of Apple's product
+// galleries: scrolling down carries on down the page, while a swipe, a
+// sideways trackpad scroll or the arrow buttons move along the row. Each item
+// snaps to the left edge and the next one shows at the right.
+// It's a slide like any other to scripts/slide-scroll.ts (`data-slide-inner`).
+export type GalleryItem = {
+  image: string;
+  alt: string;
+  caption: string;
+  gradient: string;
+  href?: string;
+  linkLabel?: string;
+};
+
+interface Props {
+  id: string;
+  items: GalleryItem[];
+  label?: string;
+}
+
+const { id, items, label = "Gallery" } = Astro.props;
+const paddle =
+  "grid place-items-center size-11 rounded-full bg-white/10 text-white backdrop-blur transition hover:bg-white/20 disabled:opacity-35 disabled:pointer-events-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white";
+---
+
+<section id={id} data-gallery class="min-h-[100svh] flex items-center pt-24 pb-20">
+  <div data-slide-inner class="w-full">
+    <ul
+      data-gallery-track
+      tabindex="0"
+      aria-label={label}
+      class="flex gap-6 md:gap-10 overflow-x-auto overscroll-x-contain snap-x snap-mandatory scroll-smooth px-6 md:px-16 xl:px-24 scroll-px-6 md:scroll-px-16 xl:scroll-px-24 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden focus-visible:outline-none"
+    >
+      {
+        items.map(({ image, alt, caption, gradient, href, linkLabel = "See the project" }) => (
+          <li class="w-[85vw] max-w-3xl md:max-w-none md:w-[60vw] shrink-0 snap-start gallery__item">
+            <div class:list={["w-full rounded-2xl bg-gradient-to-t overflow-hidden", gradient]}>
+              <img src={image} alt={alt} width="1600" height="1000" loading="lazy" class="drop-shadow-2xl w-full" />
+            </div>
+            <p class="mt-5 text-center md:text-lg m-auto text-balance max-w-[34ch]">
+              {caption}
+              {href && (
+                <a href={href} class="block mt-2 text-sm text-red-400 hover:text-red-300">
+                  {linkLabel} →
+                </a>
+              )}
+            </p>
+          </li>
+        ))
+      }
+    </ul>
+
+    <div class="mt-6 flex justify-end gap-3 px-6 md:px-16 xl:px-24">
+      <button type="button" data-gallery-prev class={paddle} aria-label="Previous" disabled>
+        <svg viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M15 5l-7 7 7 7" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </button>
+      <button type="button" data-gallery-next class={paddle} aria-label="Next">
+        <svg viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </button>
+    </div>
+  </div>
+</section>
+
+<script>
+  // The arrows step one item at a time and switch off at either end of the row.
+  document.addEventListener("astro:page-load", () => {
+    document.querySelectorAll<HTMLElement>("[data-gallery]").forEach((gallery) => {
+      if (gallery.hasAttribute("data-inited")) return;
+      gallery.setAttribute("data-inited", "");
+      const track = gallery.querySelector<HTMLElement>("[data-gallery-track]");
+      const prev = gallery.querySelector<HTMLButtonElement>("[data-gallery-prev]");
+      const next = gallery.querySelector<HTMLButtonElement>("[data-gallery-next]");
+      if (!track || !prev || !next) return;
+
+      const step = () => {
+        const [first, second] = track.children as HTMLCollectionOf<HTMLElement>;
+        return second ? second.offsetLeft - first.offsetLeft : track.clientWidth;
+      };
+      const update = () => {
+        prev.disabled = track.scrollLeft <= 2;
+        next.disabled = track.scrollLeft >= track.scrollWidth - track.clientWidth - 2;
+      };
+
+      prev.addEventListener("click", () => track.scrollBy({ left: -step() }));
+      next.addEventListener("click", () => track.scrollBy({ left: step() }));
+      track.addEventListener("scroll", update, { passive: true });
+      new ResizeObserver(update).observe(track);
+      update();
+    });
+  });
+</script>

@@ -1,0 +1,32 @@
+---
+// A quiet, static row of client logos with a small label in front.
+// Logos are knocked out to white and dimmed so mixed brand colours read as
+// a footnote on the dark slides.
+export type Logo = { src: string; name: string };
+
+interface Props {
+  logos: Logo[];
+  label?: string;
+  class?: string;
+}
+
+const { logos, label, class: className = "" } = Astro.props;
+---
+
+<div
+  class:list={[
+    "flex flex-wrap items-center justify-center md:justify-start gap-x-6 xl:gap-x-8 gap-y-4",
+    className,
+  ]}
+>
+  {label && <p class="w-full xl:w-auto text-center md:text-left text-sm text-white/60">{label}</p>}
+  <ul class="contents">
+    {
+      logos.map(({ src, name }) => (
+        <li>
+          <img src={src} alt={name} loading="lazy" class="block h-6 lg:h-7 w-auto opacity-40 brightness-0 invert" />
+        </li>
+      ))
+    }
+  </ul>
+</div>

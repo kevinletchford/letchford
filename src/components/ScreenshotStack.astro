@@ -1,0 +1,251 @@
+---
+// A vertical deck of screenshots: the first image sits in front and the rest
+// peek out above it, staggered to the right. Visitors slide through the deck
+// by clicking or dragging the cards, or with the up/down keys. The
+// front card slides down and out, then tucks in at the back.
+// The peeks fan apart as the slide settles (scripts/slide-scroll.ts tweens
+// `--spread` on `[data-screenshot-stack]`) and lift a little further on hover.
+export type StackImage = {
+  image: string;
+  alt: string;
+  /** Width / height of the screenshot, so its card fits it uncropped. Defaults to 16:10. */
+  ratio?: string;
+};
+
+interface Props {
+  images: StackImage[];
+  caption?: string;
+  href?: string;
+  linkLabel?: string;
+  class?: string;
+}
+
+const { images, caption, href, linkLabel, class: className = "" } = Astro.props;
+---
+
+<figure class:list={["min-w-0", className]}>
+  <div data-stack-deck>
+    <div
+      class="stack-stage"
+      tabindex="0"
+      role="group"
+      aria-roledescription="carousel"
+      aria-label="Screenshots, use the up and down arrow keys to slide through them"
+    >
+      <div data-screenshot-stack class="stack" style={`--count: ${images.length}`}>
+        {
+          images.map(({ image, alt, ratio = "16 / 10" }, i) => (
+            <div class="stack-layer" data-stack-card style={`--pos: ${i}; aspect-ratio: ${ratio}`} aria-hidden={i === 0 ? undefined : "true"}>
+              <img src={image} alt={alt} loading="lazy" draggable="false" class="size-full object-cover" />
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+  {
+    caption && (
+      <figcaption class="mt-4 text-sm md:text-base text-white/75 text-balance">
+        {caption}
+        {href && (
+          <a href={href} class="ml-1 whitespace-nowrap text-red-400 hover:text-red-300">
+            {linkLabel ?? "See the project"} →
+          </a>
+        )}
+      </figcaption>
+    )
+  }
+</figure>
+
+<style>
+  .stack-stage {
+    cursor: grab;
+    user-select: none;
+    border-radius: 0.75rem;
+    outline: none;
+  }
+  .stack-stage:active {
+    cursor: grabbing;
+  }
+  .stack-stage:focus-visible {
+    box-shadow: 0 0 0 2px rgb(112 193 255 / 0.6);
+  }
+
+  .stack {
+    --spread: 1;
+    --lift: 0;
+    --gap: clamp(1rem, 2.4vw, 1.9rem);
+    position: relative;
+    aspect-ratio: 16 / 10;
+    /* Room above and to the right of the front card for the peeks */
+    width: calc(100% - (var(--count) - 1) * var(--gap) * 1.8);
+    margin-top: calc((var(--count) - 1) * var(--gap));
+  }
+
+  .stack-layer {
+    --drag: 0px;
+    position: absolute;
+    /* Sized by its own aspect ratio, sitting on the bottom edge */
+    inset: auto 0 0;
+    overflow: hidden;
+    border-radius: 0.75rem;
+    border: 1px solid rgb(255 255 255 / 0.18);
+    background: rgb(0 0 0 / 0.6);
+    box-shadow:
+      0 0 0 1px rgb(112 193 255 / 0.08),
+      0 24px 50px rgb(0 0 0 / 0.45),
+      0 0 50px rgb(112 193 255 / 0.12);
+    transform-origin: 50% 0;
+    /* Each card further back sits a little higher and a little to the right */
+    transform: translate(
+        calc(var(--pos) * var(--gap) * 1.8 * (var(--spread) + var(--lift))),
+        calc(var(--pos) * var(--gap) * -1 * (var(--spread) + var(--lift)) + var(--drag))
+      )
+      scale(calc(1 - var(--pos) * 0.04));
+    z-index: calc(var(--count) - var(--pos));
+    transition:
+      transform 0.55s cubic-bezier(0.2, 0.8, 0.2, 1),
+      opacity 0.4s ease;
+  }
+
+  /* Cards further back fade into the scene so the front one reads first. */
+  .stack-layer::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: rgb(4 10 24 / calc(var(--pos) / var(--count) * 0.7));
+    transition: background 0.55s ease;
+  }
+
+  /* Following the pointer while dragged */
+  .stack-layer.dragging {
+    transition: none;
+  }
+
+  /* Sliding out below the deck, before tucking in at the back */
+  .stack-layer.out {
+    z-index: calc(var(--count) + 1);
+    transform: translateY(70%) rotate(-3deg) scale(1.02);
+    opacity: 0;
+  }
+
+  .stack-stage:hover .stack {
+    --lift: 0.3;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .stack-layer,
+    .stack-layer::after {
+      transition: none;
+    }
+    .stack-stage:hover .stack {
+      --lift: 0;
+    }
+  }
+</style>
+
+<script>
+  const OUT_MS = 380;
+  const DRAG_THRESHOLD = 50;
+
+  function initDeck(deck: HTMLElement) {
+    const stage = deck.querySelector<HTMLElement>(".stack-stage")!;
+    const cards = Array.from(deck.querySelectorAll<HTMLElement>("[data-stack-card]"));
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    // order[0] is the card in front
+    let order = cards.map((_, i) => i);
+    let busy = false;
+
+    const layout = () => {
+      order.forEach((card, pos) => {
+        cards[card].style.setProperty("--pos", String(pos));
+        cards[card].toggleAttribute("aria-hidden", pos !== 0);
+      });
+    };
+
+    // Front card slides down and out, then tucks in at the back.
+    const next = () => {
+      if (busy || cards.length < 2) return;
+      const front = cards[order[0]];
+      order = [...order.slice(1), order[0]];
+      if (reduceMotion) return layout();
+      busy = true;
+      front.classList.remove("dragging");
+      front.classList.add("out");
+      front.style.setProperty("--drag", "0px");
+      order.slice(0, -1).forEach((card, pos) => cards[card].style.setProperty("--pos", String(pos)));
+      setTimeout(() => {
+        front.classList.remove("out");
+        layout();
+        busy = false;
+      }, OUT_MS);
+    };
+
+    // Back card slides up from below into the front.
+    const prev = () => {
+      if (busy || cards.length < 2) return;
+      const back = cards[order[order.length - 1]];
+      order = [order[order.length - 1], ...order.slice(0, -1)];
+      if (reduceMotion) return layout();
+      busy = true;
+      back.style.transition = "none";
+      back.classList.add("out");
+      back.offsetWidth; // jump below the deck before animating in
+      back.style.transition = "";
+      back.classList.remove("out");
+      layout();
+      setTimeout(() => (busy = false), OUT_MS);
+    };
+
+    stage.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowDown" || e.key === "ArrowRight") next();
+      else if (e.key === "ArrowUp" || e.key === "ArrowLeft") prev();
+      else return;
+      e.preventDefault();
+    });
+
+    // Drag the front card down to send it to the back, or up to bring the
+    // back card forward. Touch only taps, so the page still scrolls.
+    let startY: number | null = null;
+    let moved = 0;
+    stage.addEventListener("pointerdown", (e) => {
+      if (busy) return;
+      startY = e.clientY;
+      moved = 0;
+      if (e.pointerType !== "touch") {
+        stage.setPointerCapture(e.pointerId);
+        cards[order[0]].classList.add("dragging");
+      }
+    });
+    stage.addEventListener("pointermove", (e) => {
+      if (startY === null || e.pointerType === "touch") return;
+      moved = e.clientY - startY;
+      cards[order[0]].style.setProperty("--drag", `${moved * 0.6}px`);
+    });
+    const release = () => {
+      if (startY === null) return;
+      startY = null;
+      const front = cards[order[0]];
+      front.classList.remove("dragging");
+      front.style.setProperty("--drag", "0px");
+      if (moved > DRAG_THRESHOLD) next();
+      else if (moved < -DRAG_THRESHOLD) prev();
+      else if (Math.abs(moved) < 5) next(); // a click or tap
+    };
+    stage.addEventListener("pointerup", release);
+    stage.addEventListener("pointercancel", () => {
+      startY = null;
+      cards[order[0]].classList.remove("dragging");
+      cards[order[0]].style.setProperty("--drag", "0px");
+    });
+  }
+
+  document.addEventListener("astro:page-load", () => {
+    document.querySelectorAll<HTMLElement>("[data-stack-deck]").forEach((deck) => {
+      if (deck.dataset.ready) return;
+      deck.dataset.ready = "true";
+      initDeck(deck);
+    });
+  });
+</script>
