@@ -32,7 +32,9 @@ const split = media || Astro.slots.has("aside");
     data-slide-inner
     class:list={[
       "mx-auto w-full grid items-center gap-8 md:gap-14",
-      split ? "max-w-7xl lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]" : "max-w-4xl text-center",
+      split
+        ? "max-w-7xl 2xl:max-w-[110rem] lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] 2xl:grid-cols-[minmax(0,4fr)_minmax(0,8fr)]"
+        : "max-w-4xl text-center",
     ]}
   >
     <div class="relative isolate">

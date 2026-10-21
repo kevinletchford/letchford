@@ -1,6 +1,9 @@
 // Runs `init` only while `el` is on or near the screen, and tears it down once
 // it scrolls well away, so heavy things (WebGL contexts) don't all stay alive
 // at once. `init` returns its own cleanup. Returns a cleanup that unmounts too.
+// Desktops have the memory to keep them, so there it mounts on first approach
+// and stays: rebuilding a context mid-scroll (new canvas, shader compile,
+// meshing) drops frames, and the inits already stop rendering off screen.
 //
 // Like the space scene's asset queue, mounts wait their turn: nothing starts
 // until the sky and the page's scene are in, phones also wait for an idle
@@ -45,7 +48,7 @@ export default function mountNearViewport(el: HTMLElement, init: (el: HTMLElemen
       if (near && !unmount && !queued) {
         queued = true;
         enqueue(mount);
-      } else if (!near && unmount) {
+      } else if (!near && unmount && getDeviceTier() !== "high") {
         unmount();
         unmount = undefined;
       }

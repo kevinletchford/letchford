@@ -34,7 +34,7 @@ const paddle =
     >
       {
         items.map(({ image, alt, caption, gradient, href, linkLabel = "See the project" }) => (
-          <li class="w-[85vw] max-w-3xl md:max-w-none md:w-[60vw] shrink-0 snap-start gallery__item">
+          <li class="w-[85vw] max-w-3xl md:max-w-none md:w-[60vw] lg:w-[min(75vw,calc((100svh-16rem)*1.6))] shrink-0 snap-start gallery__item">
             <div class:list={["w-full rounded-2xl bg-gradient-to-t overflow-hidden", gradient]}>
               <img src={image} alt={alt} width="1600" height="1000" loading="lazy" class="drop-shadow-2xl w-full" />
             </div>
