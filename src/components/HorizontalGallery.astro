@@ -4,6 +4,10 @@
 // sideways trackpad scroll or the arrow buttons move along the row. Each item
 // snaps to the left edge and the next one shows at the right.
 // It's a slide like any other to scripts/slide-scroll.ts (`data-slide-inner`).
+// Every image is shown whole at the same height, so the captions line up
+// and each item is as wide as its screenshot.
+import sharp from "sharp";
+
 export type GalleryItem = {
   image: string;
   alt: string;
@@ -20,6 +24,8 @@ interface Props {
 }
 
 const { id, items, label = "Gallery" } = Astro.props;
+// Read each screenshot's real size, so its slot is the right width before it loads.
+const sizes = await Promise.all(items.map(({ image }) => sharp(`public${image}`).metadata()));
 const paddle =
   "grid place-items-center size-11 rounded-full bg-white/10 text-white backdrop-blur transition hover:bg-white/20 disabled:opacity-35 disabled:pointer-events-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white";
 ---
@@ -33,10 +39,17 @@ const paddle =
       class="flex gap-6 md:gap-10 overflow-x-auto overscroll-x-contain snap-x snap-mandatory scroll-smooth px-6 md:px-16 xl:px-24 scroll-px-6 md:scroll-px-16 xl:scroll-px-24 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden focus-visible:outline-none"
     >
       {
-        items.map(({ image, alt, caption, gradient, href, linkLabel = "See the project" }) => (
-          <li class="w-[85vw] max-w-3xl md:max-w-none md:w-[60vw] lg:w-[min(75vw,calc((100svh-16rem)*1.6))] shrink-0 snap-start gallery__item">
-            <div class:list={["w-full aspect-[16/10] rounded-2xl bg-gradient-to-t overflow-hidden", gradient]}>
-              <img src={image} alt={alt} width="1600" height="1000" loading="lazy" class="drop-shadow-2xl size-full object-cover object-top" />
+        items.map(({ image, alt, caption, gradient, href, linkLabel = "See the project" }, i) => (
+          <li class="w-min shrink-0 snap-start gallery__item">
+            <div class:list={["rounded-2xl bg-gradient-to-t overflow-hidden", gradient]}>
+              <img
+                src={image}
+                alt={alt}
+                width={sizes[i].width}
+                height={sizes[i].height}
+                loading="lazy"
+                class="drop-shadow-2xl w-auto max-w-none h-[min(calc(85vw/1.6),30rem)] md:h-[calc(60vw/1.6)] lg:h-[min(calc(75vw/1.6),calc(100svh-16rem))]"
+              />
             </div>
             <p class="mt-5 text-center md:text-lg m-auto text-balance max-w-[34ch]">
               {caption}
