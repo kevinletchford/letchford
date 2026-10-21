@@ -9,3 +9,10 @@ export default function noWidows(html: string) {
     '$1<span class="whitespace-nowrap">$2 $3</span>$4',
   );
 }
+
+// For plain text: the words before the last two, and the last two, so a
+// template can wrap the pair in a no-wrap span.
+export const splitLastTwo = (text: string) => {
+  const words = text.split(" ");
+  return [words.slice(0, -2).join(" "), words.slice(-2).join(" ")] as const;
+};

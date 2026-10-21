@@ -1,5 +1,5 @@
 ---
-import noWidows from "../scripts/no-widows";
+import noWidows, { splitLastTwo } from "../scripts/no-widows";
 // A full-screen slide: headline and body, with an optional framed
 // screenshot (or any `aside` slot content) beside them. Without either it
 // becomes a centred statement.
@@ -22,9 +22,8 @@ interface Props {
 const { id, title, media } = Astro.props;
 const split = media || Astro.slots.has("aside");
 const body = noWidows(await Astro.slots.render("default"));
-// The caption's last two words stay together, as in the body (scripts/no-widows.ts).
-const captionWords = media?.caption?.split(" ") ?? [];
-const [captionLead, captionTail] = [captionWords.slice(0, -2).join(" "), captionWords.slice(-2).join(" ")];
+// The caption's last two words stay together, as in the body.
+const [captionLead, captionTail] = splitLastTwo(media?.caption ?? "");
 ---
 
 <section
