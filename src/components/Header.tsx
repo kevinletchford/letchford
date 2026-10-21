@@ -166,7 +166,7 @@ export default function Header() {
 
         {/* Desktop center nav (hidden on mobile) */}
         <div className="col-span-3 hidden items-center justify-center md:flex">
-          <nav className="flex items-center justify-between gap-6 rounded-full border border-white/20 px-6 md:backdrop-blur-3xl">
+          <nav className="flex items-center justify-between gap-6 rounded-full border border-white/20 px-6 bg-black/20 md:backdrop-blur-md">
             <a className="py-2 text-white/70" href="/">
               About
             </a>
@@ -206,7 +206,7 @@ export default function Header() {
         {/* Right controls (desktop) */}
         <div className="hidden items-center justify-end gap-4 md:flex">
           <a
-            className="flex items-center justify-between gap-6 rounded-full border border-white/20 px-6 py-2 text-white/70 md:backdrop-blur-3xl"
+            className="flex items-center justify-between gap-6 rounded-full border border-white/20 px-6 py-2 text-white/70 bg-black/20 md:backdrop-blur-md"
             href="/contact/"
           >
             Contact
@@ -224,7 +224,7 @@ export default function Header() {
             aria-expanded={mobileOpen}
             aria-controls="mobile-menu"
             aria-label={mobileOpen ? "Close menu" : "Open menu"}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/20 md:backdrop-blur-3xl"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/20 md:backdrop-blur-md"
           >
             {/* Burger / close icon */}
             <span className="relative block h-4 w-4">
