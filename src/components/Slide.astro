@@ -1,4 +1,5 @@
 ---
+import noWidows from "../scripts/no-widows";
 // A full-screen slide: headline and body, with an optional framed
 // screenshot (or any `aside` slot content) beside them. Without either it
 // becomes a centred statement.
@@ -20,6 +21,14 @@ interface Props {
 
 const { id, title, media } = Astro.props;
 const split = media || Astro.slots.has("aside");
+const body = noWidows(await Astro.slots.render("default"));
+// "Title: the rest" captions get the title set apart as a heading.
+const [captionTitle, captionText] = media?.caption?.includes(": ")
+  ? [media.caption.slice(0, media.caption.indexOf(": ")), media.caption.slice(media.caption.indexOf(": ") + 2)]
+  : [undefined, media?.caption];
+const captionWords = captionText ? (captionText[0].toUpperCase() + captionText.slice(1)).split(" ") : [];
+// The last two words stay together, as in the body (scripts/no-widows.ts).
+const [captionLead, captionTail] = [captionWords.slice(0, -2).join(" "), captionWords.slice(-2).join(" ")];
 ---
 
 <section
@@ -59,7 +68,7 @@ const split = media || Astro.slots.has("aside");
           split ? "text-base/7 md:text-lg/8 xl:text-xl/9" : "text-lg/8 md:text-2xl/10 max-w-3xl mx-auto",
         ]}
       >
-        <slot />
+        <Fragment set:html={body} />
       </div>
     </div>
 
@@ -75,8 +84,11 @@ const split = media || Astro.slots.has("aside");
             />
           </div>
           {media.caption && (
-            <figcaption class="mt-4 text-sm md:text-base text-white/75 text-balance">
-              {media.caption}
+            <figcaption class="mt-5 max-w-[52ch] border-l-2 border-red-400/70 pl-4 text-sm/6 md:text-base/7 text-pretty">
+              {captionTitle && <span class="block font-medium text-white">{captionTitle}</span>}
+              <span class="text-white/65">
+                {captionLead} <span class="whitespace-nowrap">{captionTail}</span>
+              </span>
               {media.href && (
                 <a href={media.href} class="ml-1 whitespace-nowrap text-red-400 hover:text-red-300">
                   {media.linkLabel ?? "See the project"} →

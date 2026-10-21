@@ -1,4 +1,5 @@
 ---
+import noWidows from "../scripts/no-widows";
 // The closing slide: the starfield jumps to warp as it arrives, the headline
 // slams in word by word behind a shockwave, and the call to action glows with a spinning border.
 // The entrance is a timeline in scripts/slide-scroll.ts (`[data-finale]`),
@@ -13,6 +14,7 @@ interface Props {
 
 const { id, title, email } = Astro.props;
 const words = title.split(" ");
+const body = noWidows(await Astro.slots.render("default"));
 ---
 
 <section
@@ -61,7 +63,7 @@ const words = title.split(" ");
       data-finale-body
       class="mt-[clamp(1rem,3svh,2rem)] max-w-3xl space-y-[clamp(0.5rem,1.5svh,1rem)] text-base/7 sm:text-lg/8 xl:text-xl/9 text-white/80 text-pretty [text-shadow:0_1px_12px_rgb(0_0_0/0.5)] [&_strong]:text-white"
     >
-      <slot />
+      <Fragment set:html={body} />
     </div>
 
     <div data-finale-cta class="mt-[clamp(1.25rem,4.5svh,3rem)] flex flex-col items-center gap-[clamp(0.75rem,2svh,1.25rem)]">
