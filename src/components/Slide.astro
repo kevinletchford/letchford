@@ -74,19 +74,18 @@ const [captionLead, captionTail] = [captionWords.slice(0, -2).join(" "), caption
 
     {
       media && (
-        <figure class="min-w-0">
-          <div class="aspect-[16/10] rounded-2xl overflow-hidden border border-white/15 bg-black/40 shadow-[0_0_60px_rgb(112_193_255/0.15)]">
-            <img
-              src={media.image}
-              alt={media.alt}
-              loading="lazy"
-              class="size-full object-cover object-top"
-            />
-          </div>
+        <figure class="min-w-0 rounded-2xl overflow-hidden border border-white/15 bg-[#050b18]/80 shadow-[0_0_60px_rgb(112_193_255/0.15)]">
+          <img
+            src={media.image}
+            alt={media.alt}
+            loading="lazy"
+            class="block w-full aspect-[16/10] object-cover object-top"
+          />
+          {/* The caption is the card's footer, so the screenshot and caption read as one piece. */}
           {media.caption && (
-            <figcaption class="mt-5 max-w-[52ch] border-l-2 border-red-400/70 pl-4 text-sm/6 md:text-base/7 text-pretty">
+            <figcaption class="border-t border-white/10 px-5 py-4 md:px-7 md:py-5 text-sm/6 md:text-base/7 text-pretty">
               {captionTitle && <span class="block font-medium text-white">{captionTitle}</span>}
-              <span class="text-white/65">
+              <span class="text-white/70">
                 {captionLead} <span class="whitespace-nowrap">{captionTail}</span>
               </span>
               {media.href && (
