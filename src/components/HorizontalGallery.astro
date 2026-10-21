@@ -1,7 +1,8 @@
 ---
 // A sideways-scrolling row of screenshots, in the style of Apple's product
 // galleries: scrolling down carries on down the page, while a swipe, a
-// sideways trackpad scroll or the arrow buttons move along the row. Each item
+// sideways trackpad scroll, dragging with the mouse or the arrow buttons move
+// along the row. Each item
 // snaps to the left edge and the next one shows at the right.
 // It's a slide like any other to scripts/slide-scroll.ts (`data-slide-inner`).
 // Every image is shown whole at the same height, so the captions line up
@@ -26,8 +27,9 @@ interface Props {
 const { id, items, label = "Gallery" } = Astro.props;
 // Read each screenshot's real size, so its slot is the right width before it loads.
 const sizes = await Promise.all(items.map(({ image }) => sharp(`public${image}`).metadata()));
+// Solid light paddles, as on Apple's galleries, so they read clearly over the scene.
 const paddle =
-  "grid place-items-center size-11 rounded-full bg-white/10 text-white backdrop-blur transition hover:bg-white/20 disabled:opacity-35 disabled:pointer-events-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white";
+  "grid place-items-center size-12 rounded-full bg-[#d2d2d7]/90 text-[#1d1d1f] shadow-lg shadow-black/30 backdrop-blur-md transition hover:bg-[#e8e8ed] active:scale-95 disabled:opacity-40 disabled:pointer-events-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white";
 ---
 
 <section id={id} data-gallery class="min-h-[100svh] flex items-center pt-24 pb-20">
@@ -36,7 +38,7 @@ const paddle =
       data-gallery-track
       tabindex="0"
       aria-label={label}
-      class="flex gap-6 md:gap-10 overflow-x-auto overscroll-x-contain snap-x snap-mandatory scroll-smooth px-6 md:px-16 xl:px-24 scroll-px-6 md:scroll-px-16 xl:scroll-px-24 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden focus-visible:outline-none"
+      class="flex gap-6 md:gap-10 overflow-x-auto overscroll-x-contain snap-x snap-mandatory scroll-smooth cursor-grab data-[dragging]:snap-none data-[dragging]:scroll-auto data-[dragging]:cursor-grabbing data-[dragging]:select-none px-6 md:px-16 xl:px-24 scroll-px-6 md:scroll-px-16 xl:scroll-px-24 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden focus-visible:outline-none"
     >
       {
         items.map(({ image, alt, caption, gradient, href, linkLabel = "See the project" }, i) => (
@@ -48,13 +50,14 @@ const paddle =
                 width={sizes[i].width}
                 height={sizes[i].height}
                 loading="lazy"
-                class="drop-shadow-2xl w-auto max-w-none h-[min(calc(85vw/1.6),30rem)] md:h-[calc(60vw/1.6)] lg:h-[min(calc(75vw/1.6),calc(100svh-16rem))]"
+                draggable="false"
+                class="drop-shadow-2xl w-auto max-w-none h-[min(calc(85vw/1.6),30rem)] md:h-[calc(60vw/1.6)] lg:h-[min(calc(75vw/1.6),calc(100svh-23rem))]"
               />
             </div>
             <p class="mt-5 text-center md:text-lg m-auto text-balance max-w-[34ch]">
               {caption}
               {href && (
-                <a href={href} class="block mt-2 text-sm text-red-400 hover:text-red-300">
+                <a href={href} draggable="false" class="block mt-2 text-sm text-red-400 hover:text-red-300">
                   {linkLabel} →
                 </a>
               )}
@@ -66,12 +69,12 @@ const paddle =
 
     <div class="mt-6 flex justify-end gap-3 px-6 md:px-16 xl:px-24">
       <button type="button" data-gallery-prev class={paddle} aria-label="Previous" disabled>
-        <svg viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <svg viewBox="0 0 24 24" class="size-6" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
           <path d="M15 5l-7 7 7 7" stroke-linecap="round" stroke-linejoin="round" />
         </svg>
       </button>
       <button type="button" data-gallery-next class={paddle} aria-label="Next">
-        <svg viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <svg viewBox="0 0 24 24" class="size-6" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
           <path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round" />
         </svg>
       </button>
@@ -81,6 +84,11 @@ const paddle =
 
 <script>
   // The arrows step one item at a time and switch off at either end of the row.
+  // A mouse can drag the row too; it settles on the next item in the direction
+  // of the drag, or back where it was after a small nudge.
+  const DRAG_THRESHOLD = 5; // px before a press becomes a drag
+  const FLICK = 40; // px of drag that's enough to move on an item
+
   document.addEventListener("astro:page-load", () => {
     document.querySelectorAll<HTMLElement>("[data-gallery]").forEach((gallery) => {
       if (gallery.hasAttribute("data-inited")) return;
@@ -90,20 +98,75 @@ const paddle =
       const next = gallery.querySelector<HTMLButtonElement>("[data-gallery-next]");
       if (!track || !prev || !next) return;
 
-      const step = () => {
-        const [first, second] = track.children as HTMLCollectionOf<HTMLElement>;
-        return second ? second.offsetLeft - first.offsetLeft : track.clientWidth;
+      // Where the row scrolls to for each item to sit at its snap point.
+      // Items vary in width, so they're measured rather than stepped evenly.
+      const stops = () => {
+        const pad = parseFloat(getComputedStyle(track).scrollPaddingLeft) || 0;
+        const origin = track.getBoundingClientRect().left - track.scrollLeft;
+        const max = track.scrollWidth - track.clientWidth;
+        return Array.from(track.children, (item) => Math.min(item.getBoundingClientRect().left - origin - pad, max));
+      };
+      const nearest = (left: number) => {
+        const all = stops();
+        return all.reduce((best, stop, i) => (Math.abs(stop - left) < Math.abs(all[best] - left) ? i : best), 0);
+      };
+      const goTo = (index: number) => {
+        const all = stops();
+        track.scrollTo({ left: all[Math.max(0, Math.min(index, all.length - 1))] });
       };
       const update = () => {
         prev.disabled = track.scrollLeft <= 2;
         next.disabled = track.scrollLeft >= track.scrollWidth - track.clientWidth - 2;
       };
 
-      prev.addEventListener("click", () => track.scrollBy({ left: -step() }));
-      next.addEventListener("click", () => track.scrollBy({ left: step() }));
+      prev.addEventListener("click", () => goTo(nearest(track.scrollLeft) - 1));
+      next.addEventListener("click", () => goTo(nearest(track.scrollLeft) + 1));
       track.addEventListener("scroll", update, { passive: true });
       new ResizeObserver(update).observe(track);
       update();
+
+      // Mouse dragging. Touch already swipes natively, so it's left alone.
+      let drag: { id: number; x: number; left: number; from: number; moved: boolean } | null = null;
+      let suppressClick = false;
+      track.addEventListener("pointerdown", (e) => {
+        if (e.pointerType !== "mouse" || e.button !== 0) return;
+        drag = { id: e.pointerId, x: e.clientX, left: track.scrollLeft, from: nearest(track.scrollLeft), moved: false };
+      });
+      track.addEventListener("pointermove", (e) => {
+        if (!drag || e.pointerId !== drag.id) return;
+        const dx = e.clientX - drag.x;
+        if (!drag.moved) {
+          if (Math.abs(dx) < DRAG_THRESHOLD) return;
+          drag.moved = true;
+          track.setPointerCapture(e.pointerId);
+          // Snapping and smooth scrolling off, so the row follows the pointer exactly.
+          track.dataset.dragging = "";
+        }
+        track.scrollLeft = drag.left - dx;
+      });
+      const endDrag = (e: PointerEvent) => {
+        if (!drag || e.pointerId !== drag.id) return;
+        const { moved, x, from } = drag;
+        drag = null;
+        if (!moved) return;
+        delete track.dataset.dragging;
+        const dx = e.clientX - x;
+        goTo(Math.abs(dx) < FLICK ? from : nearest(track.scrollLeft) === from ? from - Math.sign(dx) : nearest(track.scrollLeft));
+        // The release would otherwise click a link the drag ended on.
+        suppressClick = e.type === "pointerup";
+        setTimeout(() => (suppressClick = false));
+      };
+      track.addEventListener("pointerup", endDrag);
+      track.addEventListener("pointercancel", endDrag);
+      track.addEventListener(
+        "click",
+        (e) => {
+          if (!suppressClick) return;
+          e.preventDefault();
+          e.stopPropagation();
+        },
+        true,
+      );
     });
   });
 </script>

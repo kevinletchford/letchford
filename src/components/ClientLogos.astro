@@ -1,8 +1,9 @@
 ---
 // A quiet, static row of client logos with a small label in front.
 // Logos are knocked out to white and dimmed so mixed brand colours read as
-// a footnote on the dark slides.
-export type Logo = { src: string; name: string };
+// a footnote on the dark slides. `largeOnly` logos join the row on wide
+// screens, where there's room for more.
+export type Logo = { src: string; name: string; largeOnly?: boolean };
 
 interface Props {
   logos: Logo[];
@@ -22,8 +23,8 @@ const { logos, label, class: className = "" } = Astro.props;
   {label && <p class="w-full xl:w-auto text-center md:text-left text-sm text-white/60">{label}</p>}
   <ul class="contents">
     {
-      logos.map(({ src, name }) => (
-        <li>
+      logos.map(({ src, name, largeOnly }) => (
+        <li class:list={[largeOnly && "hidden xl:block"]}>
           <img src={src} alt={name} loading="lazy" class="block h-6 lg:h-7 w-auto opacity-40 brightness-0 invert" />
         </li>
       ))

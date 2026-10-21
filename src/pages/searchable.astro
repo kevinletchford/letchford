@@ -52,14 +52,23 @@ const sitebulbStack: StackImage[] = [
   { image: "/case-studies/open-crawl/1.jpg", alt: "" },
 ];
 
-// A few of the best-known names from the sitebulb.com client logos.
+// The sitebulb.com client logos: the best-known five everywhere, and the
+// rest on wide screens where there's room.
 const sitebulbClients: Logo[] = [
-  ["vogue", "Vogue"],
-  ["deliveroo", "Deliveroo"],
-  ["jaguar-land-rover", "Jaguar Land Rover"],
-  ["lloyds-banking", "Lloyds Banking Group"],
-  ["upwork", "Upwork"],
-].map(([file, name]) => ({ src: `/logos/sitebulb-customers/${file}.svg`, name }));
+  ...[
+    ["vogue", "Vogue"],
+    ["deliveroo", "Deliveroo"],
+    ["jaguar-land-rover", "Jaguar Land Rover"],
+    ["lloyds-banking", "Lloyds Banking Group"],
+    ["upwork", "Upwork"],
+  ].map(([file, name]) => ({ file, name })),
+  ...[
+    ["7-eleven", "7-Eleven"],
+    ["classpass", "ClassPass"],
+    ["carfax", "Carfax"],
+    ["costar", "CoStar"],
+  ].map(([file, name]) => ({ file, name, largeOnly: true })),
+].map(({ file, ...logo }) => ({ src: `/logos/sitebulb-customers/${file}.svg`, ...logo }));
 
 const labsWork: GalleryItem[] = [
   {
