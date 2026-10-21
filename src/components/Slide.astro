@@ -22,12 +22,8 @@ interface Props {
 const { id, title, media } = Astro.props;
 const split = media || Astro.slots.has("aside");
 const body = noWidows(await Astro.slots.render("default"));
-// "Title: the rest" captions get the title set apart as a heading.
-const [captionTitle, captionText] = media?.caption?.includes(": ")
-  ? [media.caption.slice(0, media.caption.indexOf(": ")), media.caption.slice(media.caption.indexOf(": ") + 2)]
-  : [undefined, media?.caption];
-const captionWords = captionText ? (captionText[0].toUpperCase() + captionText.slice(1)).split(" ") : [];
-// The last two words stay together, as in the body (scripts/no-widows.ts).
+// The caption's last two words stay together, as in the body (scripts/no-widows.ts).
+const captionWords = media?.caption?.split(" ") ?? [];
 const [captionLead, captionTail] = [captionWords.slice(0, -2).join(" "), captionWords.slice(-2).join(" ")];
 ---
 
@@ -84,7 +80,6 @@ const [captionLead, captionTail] = [captionWords.slice(0, -2).join(" "), caption
           {/* The caption is the card's footer, so the screenshot and caption read as one piece. */}
           {media.caption && (
             <figcaption class="border-t border-white/10 px-5 py-4 md:px-7 md:py-5 text-sm/6 md:text-base/7 text-pretty">
-              {captionTitle && <span class="block font-medium text-white">{captionTitle}</span>}
               <span class="text-white/70">
                 {captionLead} <span class="whitespace-nowrap">{captionTail}</span>
               </span>
