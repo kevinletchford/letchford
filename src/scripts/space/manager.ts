@@ -43,6 +43,7 @@ export class Manager {
   currentKey: string | null = null;
   private session: AbortController | null = null;
   private bootPromise: Promise<void> = Promise.resolve();
+  private settledPromise: Promise<void> = Promise.resolve();
   private mountChain: Promise<void> = Promise.resolve();
   currentDispose: (() => void) | null = null;
   shootingStars?: ShootingStars;
@@ -74,6 +75,18 @@ export class Manager {
   }
 
   whenReady(): Promise<void> { return this._readyPromise; }
+
+  /**
+   * Resolves once the sky and the current page's scene are in. Heavy page
+   * extras that don't go through the asset queue (their own WebGL contexts)
+   * wait for this so they don't compete with it. Waits a frame first, so a
+   * navigation's load has started by the time it's read.
+   */
+  async whenSettled(): Promise<void> {
+    await nextFrame();
+    await this.bootPromise;
+    await this.settledPromise;
+  }
   get ready(): boolean { return this._ready; }
 
   getCamera(): THREE.PerspectiveCamera {
@@ -134,7 +147,7 @@ async init({ canvasId }: { canvasId: string }): Promise<void> {
     // Tracked by the preloader: the first page isn't "loaded" until the sky is in.
     this.bootPromise = this.assets
       .bind(new AbortController().signal)
-      .texture(byTier(this.tier, { high: "/stars/stars.jpg", mid: "/stars/stars.webp" }))
+      .texture(byTier(this.tier, { high: "/stars/stars.jpg", mid: "/stars/stars-4k.webp" }))
       .then((starsTex) => {
         starsTex.colorSpace = THREE.SRGBColorSpace;
         starsTex.mapping = THREE.EquirectangularReflectionMapping;
@@ -288,6 +301,12 @@ async init({ canvasId }: { canvasId: string }): Promise<void> {
   async loadForPath(path: string, { force = false }: { force?: boolean } = {}) {
     const key = this.routeToKey(path);
     if (key === this.currentKey && !force) return;
+    const load = this.load(key);
+    this.settledPromise = load.catch(() => {});
+    return load;
+  }
+
+  private async load(key: string) {
 
     // Cancel anything the previous navigation was still loading, so a slow page
     // can't add its objects on top of the page we've moved to.
@@ -450,6 +469,7 @@ export const SpaceManagerAPI = {
   getWorld: () => Manager.I().getWorld(),
   getPageLayer: () => Manager.I().getPageLayer(),
   whenReady: () => Manager.I().whenReady(),
+  whenSettled: () => Manager.I().whenSettled(),
   onTick: (fn: (dt: number, t: number) => void) => Manager.I().onTick(fn),
   setParam: (key: string, value: number) => Manager.I().setParam(key, value),
 };

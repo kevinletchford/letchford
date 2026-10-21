@@ -3,6 +3,7 @@
 // distance field of soft-blended capsules, meshed once with marching cubes.
 // Returns a cleanup function.
 import * as THREE from "three";
+import { isMobileDevice } from "./space/device";
 import { MarchingCubes } from "three/examples/jsm/objects/MarchingCubes.js";
 import vertexShader from "@src/shaders/holographic/vertex.glsl";
 import fragmentShader from "@src/shaders/holographic/fragment.glsl";
@@ -22,6 +23,7 @@ const DIGITS: { from: Vec3; to: Vec3; radius: number }[] = [
 
 const EXTENT = 1.6; // half-size of the meshed volume, in hand units
 const RESOLUTION = 80;
+const RESOLUTION_MOBILE = 56; // about a third of the samples
 const WRIST_PIVOT = -0.7; // hand-unit height the wave swings around (base of the palm)
 
 // Waving is driven by shaking the pointer side to side: each change of direction
@@ -61,11 +63,35 @@ const handDistance = (x: number, y: number, z: number) => {
   return smin(ellipsoid(x, y, z, PALM.center, PALM.radii), fingers, 0.18);
 };
 
+// Sampled once per resolution and kept, since the hand is unmounted and
+// remounted as it scrolls in and out of view.
+const fieldCache = new Map<number, Float32Array>();
+const sampleField = (size: number, halfsize: number) => {
+  let field = fieldCache.get(size);
+  if (field) return field;
+  field = new Float32Array(size * size * size);
+  for (let k = 0; k < size; k++) {
+    const z = ((k - halfsize) / halfsize) * EXTENT;
+    for (let j = 0; j < size; j++) {
+      const y = ((j - halfsize) / halfsize) * EXTENT;
+      for (let i = 0; i < size; i++) {
+        const x = ((i - halfsize) / halfsize) * EXTENT;
+        field[i + j * size + k * size * size] = -handDistance(-x, y, z);
+      }
+    }
+  }
+  fieldCache.set(size, field);
+  return field;
+};
+
 export default function initHologramHand(container: HTMLElement) {
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  // Phones get a lighter context: no MSAA and a lower pixel ratio, so the
+  // page's WebGL contexts fit in mobile Safari's memory together.
+  const lowPower = isMobileDevice();
+  const renderer = new THREE.WebGLRenderer({ antialias: !lowPower, alpha: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, lowPower ? 1.5 : 2));
   renderer.domElement.classList.add("block", "size-full");
   container.appendChild(renderer.domElement);
 
@@ -85,21 +111,11 @@ export default function initHologramHand(container: HTMLElement) {
     blending: THREE.AdditiveBlending,
   });
 
-  // Mesh the distance field once. MarchingCubes treats field > isolation as inside
+  // Mesh the distance field. MarchingCubes treats field > isolation as inside
   // and spans [-1, 1] locally, so sample at EXTENT and scale the mesh back up.
-  const surface = new MarchingCubes(RESOLUTION, material, false, false, 60000);
+  const surface = new MarchingCubes(lowPower ? RESOLUTION_MOBILE : RESOLUTION, material, false, false, 60000);
   surface.isolation = 0;
-  const { size, halfsize, field } = surface;
-  for (let k = 0; k < size; k++) {
-    const z = ((k - halfsize) / halfsize) * EXTENT;
-    for (let j = 0; j < size; j++) {
-      const y = ((j - halfsize) / halfsize) * EXTENT;
-      for (let i = 0; i < size; i++) {
-        const x = ((i - halfsize) / halfsize) * EXTENT;
-        field[i + j * size + k * size * size] = -handDistance(-x, y, z);
-      }
-    }
-  }
+  surface.field.set(sampleField(surface.size, surface.halfsize));
   surface.update();
   surface.scale.setScalar(EXTENT);
   surface.position.y = -WRIST_PIVOT;
@@ -219,6 +235,8 @@ export default function initHologramHand(container: HTMLElement) {
     surface.geometry.dispose();
     material.dispose();
     renderer.dispose();
+    renderer.forceContextLoss();
     renderer.domElement.remove();
+    container.style.opacity = "";
   };
 }

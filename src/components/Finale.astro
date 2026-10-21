@@ -279,6 +279,13 @@ const words = title.split(" ");
     50% { opacity: 0.55; }
   }
 
+  /* The blurred glow and spinning border repaint every frame, so they only
+     run while the slide is on screen (the script below sets .in-view). */
+  .finale:not(.in-view),
+  .finale:not(.in-view) * {
+    animation-play-state: paused !important;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .finale-shimmer,
     .finale-cta,
@@ -392,6 +399,7 @@ const words = title.split(" ");
     document.querySelectorAll<HTMLElement>("[data-finale]").forEach((section) => {
       if (section.dataset.warpReady) return;
       section.dataset.warpReady = "true";
+      new IntersectionObserver(([entry]) => section.classList.toggle("in-view", entry.isIntersecting)).observe(section);
       initWarp(section);
     });
   });

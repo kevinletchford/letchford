@@ -477,6 +477,12 @@ const [lead, rest] = split ? [split[1], split[2]] : [html, ""];
     animation-play-state: running;
   }
 
+  /* Rules below that set the `animation` shorthand reset the play state, so
+     pause again with enough weight to win over them. */
+  .badge-group:not(.in-view) .badge svg [class] {
+    animation-play-state: paused;
+  }
+
   .badge-group:hover .badge {
     transform: scale(1.12) rotate(-4deg);
   }

@@ -16,6 +16,7 @@ const { class: className = "" } = Astro.props;
 
 <script>
   import initHologramTelescope from "../scripts/hologram-telescope";
+  import mountNearViewport from "../scripts/mount-near-viewport";
 
   const cleanups: Array<() => void> = [];
 
@@ -23,7 +24,7 @@ const { class: className = "" } = Astro.props;
     document.querySelectorAll<HTMLElement>("[data-hologram-telescope]").forEach((el) => {
       if (el.hasAttribute("data-inited")) return;
       el.setAttribute("data-inited", "");
-      cleanups.push(initHologramTelescope(el));
+      cleanups.push(mountNearViewport(el, initHologramTelescope));
     });
   });
 
