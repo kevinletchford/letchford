@@ -2,6 +2,7 @@
 // holograms. It turns as its slide scrolls through the viewport, and the tube
 // tips up towards the sky as the slide settles. Returns a cleanup function.
 import * as THREE from "three";
+import { isMobileDevice } from "./space/device";
 import vertexShader from "@src/shaders/holographic/vertex.glsl";
 import fragmentShader from "@src/shaders/holographic/fragment.glsl";
 
@@ -80,8 +81,11 @@ const buildTelescope = (material: THREE.Material) => {
 export default function initHologramTelescope(container: HTMLElement) {
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  // Phones get a lighter context: no MSAA and a lower pixel ratio, so the
+  // page's WebGL contexts fit in mobile Safari's memory together.
+  const lowPower = isMobileDevice();
+  const renderer = new THREE.WebGLRenderer({ antialias: !lowPower, alpha: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, lowPower ? 1.5 : 2));
   renderer.domElement.classList.add("block", "size-full");
   container.appendChild(renderer.domElement);
 
@@ -184,6 +188,8 @@ export default function initHologramTelescope(container: HTMLElement) {
     });
     material.dispose();
     renderer.dispose();
+    renderer.forceContextLoss();
     renderer.domElement.remove();
+    container.style.opacity = "";
   };
 }
