@@ -17,10 +17,13 @@ export default function initSlideScroll(article: HTMLElement) {
   const sections = Array.from(article.querySelectorAll<HTMLElement>(":scope > section"));
 
   // A lighter catch-up than the smoother's default, so the slide
-  // transitions keep up with the scroll.
+  // transitions keep up with the scroll. Touch screens scroll natively (the
+  // smoother's smoothTouch is off), and smooth() would turn smoothing on for
+  // them too, leaving the page dragging behind the finger.
   const smoother = (window as any).Smoother;
-  const previousSmooth = smoother?.smooth();
-  smoother?.smooth(0.5);
+  const touch = ScrollTrigger.isTouch === 1;
+  const previousSmooth = touch ? undefined : smoother?.smooth();
+  if (!touch) smoother?.smooth(0.5);
 
   if (!reduceMotion) {
     sections.forEach((section, i) => {
